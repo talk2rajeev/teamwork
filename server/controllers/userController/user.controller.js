@@ -1,4 +1,4 @@
-import {userService} from '../../services/userService/user.service.js';
+import * as userService from '../../services/userService/user.service.js';
 
 
 async function createUserLoginController(req,res) {
@@ -28,20 +28,35 @@ async function updateUserProfileController(req,res) {
 }
 
 async function getUsersController(req,res) {
-    const users = await userService.getUsers();
-    res.send(users);
+    try {
+        const users = await userService.getUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 async function getUserByIdController(req,res) {
     const id = req.params.id;
-    const users = await userService.getUserById(id);
-    res.send(users);
+    try {
+        const user = await userService.getUserById(id);
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            // If user is not found, return 404
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
-export { createUserLoginController,
+export { 
+    createUserLoginController,
     updateUserProfileController,
     getUsersController,
-    getUserByIdController };
+    getUserByIdController 
+};
 
 
 

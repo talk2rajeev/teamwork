@@ -1,14 +1,13 @@
 import {pool} from '../../config/dbConfig/database.js';
 import { encodePassword } from '../../utils/bcrypt.js'
 
-export default class UserService {
-    async  createUserLogin(userData) {
+    async  function createUserLogin(userData) {
         const {fname, lname, username, password, role} = userData;
         const encodedPassword = encodePassword(password);
         console.log({fname, lname, username, password, role});
         try{
             const [result] = await pool.query(`insert into users (username, password, createdAt) values(?,?,?)`, [username, encodedPassword, new Date().toISOString()]);
-            const profileId = await createUserProfile({fname, lname, role, userId: result.insertId});
+            await createUserProfile({fname, lname, role, userId: result.insertId});
             return { userId: result.insertId, fname, lname, role };
         } catch(err) {
             throw new Error(`Failed to create User Login: ${err.message}`);
@@ -16,17 +15,17 @@ export default class UserService {
         
     }
 
-    async  createUserProfile(userData) {
+    async function createUserProfile(userData) {
         const {fname, lname, role, userId} = userData;
         try {
-            const [result, ...meta] = await pool.query(`insert into user_profile (fname, lname, role, userId, createdAt) values(?,?,?,?,?)`, [fname, lname, role, userId, new Date().toISOString()]).catch(err => console.log(err));
+            const [result, ...meta] = await pool.query(`insert into user_profile (fname, lname, role, userId, createdAt) values(?,?,?,?,?)`, [fname, lname, role, userId, new Date().toISOString()]);
             return result.insertId;
         } catch(err) {
             throw new Error(`Failed to create User Profile: ${err.message}`);
         };
     }
 
-    async  updateUserProfile(userData, userId) {
+    async function  updateUserProfile(userData, userId) {
         try {
 
             const query = "Update user_profile SET " + Object.keys(userData).map(key => `${key} = ?`).join(',')+ " WHERE userId = ?";
@@ -39,28 +38,21 @@ export default class UserService {
         };
     }
 
-    async  getUsers() {
+    async function  getUsers() {
         try {
-            const [data, ...meta] = await pool.query("select * from users").catch(err => console.log(err));
+            const [data, ...meta] = await pool.query("SELECT users.userId, users.username, user_profile.fname, user_profile.lname, user_profile.role FROM users INNER JOIN user_profile ON users.userId=user_profile.userId");
             return data;
         } catch(err) {
             throw new Error(`Failed to get User detail: ${err.message}`);
         };
     }
 
-    async  getUserById(id) {
+    async function  getUserById(id) {
         try {
-            const [data, ...meta] = await pool.query(`select * from users where userId = ?`, [id]).catch(err => console.log(err));
+            const [data, ...meta] = await pool.query(`select * from users where userId = ?`, [id]);
             return data;
         } catch(err) {
             throw new Error(`Failed to get User by id: ${err.message}`);
         };
     }
-}
-
-const userService = new UserService();
-export {
-    userService
-}
-
-// export { getUsers, getUserById, createUserLogin, updateUserProfile };
+export { getUsers, getUserById, createUserLogin, updateUserProfile };
