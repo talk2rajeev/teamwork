@@ -50,104 +50,123 @@ describe('Team Controller', () => {
         });
     });
 
-    // describe('Update Team', () => {
-    //     it('should update team name', async () => {
+    describe('Update Team', () => {
+        it('should update team name', async () => {
             
-    //         // Mock the userService function to return mockValue
-    //         teamService.updateTeam.mockResolvedValueOnce(true);
+            // Mock the userService function to return mockValue
+            teamService.updateTeam.mockResolvedValueOnce(true);
 
-    //         const req = { body: {"teamName": "New Team"}, params: {id: 1} };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
+            const req = { body: {"teamName": "New Team"}, params: {id: 1} };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
 
-    //         // Call the controller function
-    //         await updateTeamController(req, res);
+            // Call the controller function
+            await updateTeamController(req, res);
 
-    //         // Expectations
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith({ message: 'Team updated successfully' });  
-    //     })
-    // });    
-
-    // describe('GET /users/:id', () => {
-    //     it('should get user by id', async () => {
-    //         const mock = {
-    //             "userId": 1,
-    //             "username": "testuser",
-    //             "createdAt": "2024-02-08T15:43:39.037Z",
-    //             "password": "23424321m34213423k4"
-    //           };
-            
-            
-    //         // Mock the userService function to return mockValue
-    //         userService.getUserById.mockResolvedValueOnce(mock);
-
-    //         const req = { params: {id: 1} };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
-
-    //         // Call the controller function
-    //         await getUserByIdController(req, res);
-
-    //         // Expectations
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith(mock);
-    //     });
-
-    //     it('should return a empty arr if user with the given ID is not found', async () => {
-    //         // Mock the userService function to return undefined (user not found)
-    //         userService.getUserById.mockResolvedValueOnce([]);
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({ message: 'Team updated successfully' });  
+        })
+        it('should throw an error when updating user', async () => {
+            // Mock query error
+            const errorMessage = 'Database error';
+            teamService.updateTeam.mockRejectedValueOnce(new Error(errorMessage));
       
-    //         // Mock request and response objects
-    //         const req = { params: { id: '999' } };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
-      
-    //         // Call the controller function
-    //         await getUserByIdController(req, res);
-      
-    //         // Expectations
-    //         expect(userService.getUserById).toHaveBeenCalledWith('999');
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith([]);
-    //       });
-    // });
+            const req = { body: { teamName: 'New NEXT GEN TEAM' }, params: {id: 1} };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
 
-    // describe('GET /getAllUsers', () => {
-    //     it('should return all users', async () => {
-    //         const mock = [{
-    //             "userId": 1,
-    //             "username": "User1",
-    //             "fname": "John",
-    //             "lname": "S",
-    //             "role": "Admin"
-    //           }];
+            await updateTeamController(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(teamService.createTeam).toHaveBeenCalledWith("NEXT GEN TEAM");
+            expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
+        });
+    });    
+
+    describe('GET /team/:id', () => {
+        it('should get team by id', async () => {
+            const mock = {
+                "teamId": 1,
+                "teamName": "test team",
+                "createdAt": "2024-02-08T15:43:39.037Z",
+              };
             
             
-    //         // Mock the userService function to return mockValue
-    //         userService.getUsers.mockResolvedValueOnce(mock);
+            // Mock the userService function to return mockValue
+            teamService.getTeamById.mockResolvedValueOnce(mock);
 
-    //         const req = {};
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
+            const req = { params: {id: 1} };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
 
-    //         // Call the controller function
-    //         await getUsersController(req, res);
+            // Call the controller function
+            await getTeamByIdController(req, res);
 
-    //         // Expectations
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith(mock);
-    //     });
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
 
-    // });
+        it('should return a empty arr if team with the given ID is not found', async () => {
+            // Mock the userService function to return undefined (user not found)
+            teamService.getTeamById.mockResolvedValueOnce([]);
+      
+            // Mock request and response objects
+            const req = { params: { id: '999' } };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+      
+            // Call the controller function
+            await getTeamByIdController(req, res);
+      
+            // Expectations
+            expect(teamService.getTeamById).toHaveBeenCalledWith('999');
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith([]);
+          });
+    });
+
+    describe('GET /getAllTeams', () => {
+        it('should return all teams', async () => {
+            const mock = [{
+                "teamId": 1,
+                "teamName": "test team",
+                "createdAt": "2024-02-08T15:43:39.037Z",
+              },
+              {
+                "teamId": 2,
+                "teamName": "test team 2",
+                "createdAt": "2024-02-08T15:43:39.037Z",
+              }];
+            
+            
+            // Mock the userService function to return mockValue
+            teamService.getTeams.mockResolvedValueOnce(mock);
+
+            const req = {};
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+
+            // Call the controller function
+            await getTeamsController(req, res);
+
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
+
+    });
 
 
    
