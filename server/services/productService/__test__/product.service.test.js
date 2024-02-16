@@ -11,16 +11,29 @@ jest.mock('../../../config/dbConfig/database.js', () => ({
   }));
   
   describe('Product Service', () => {
-    describe('createPproduct', () => {
+    describe('createProduct', () => { 
         it('should create product', async () => {
-            const mockUserId = 1;
-            pool.query.mockResolvedValueOnce({ insertId: mockUserId });
+            const mockProductId = 1;
+            pool.query.mockResolvedValueOnce({ insertId: mockProductId });
 
-            const productName = 'testProduct', userId = 1;
-            await productService.createProduct(productName, userId);
+            const productName = 'testProduct', userId = 1, createdAt = new Date().toISOString();
+            await productService.createProduct(productName, userId, createdAt);
 
-            expect(pool.query).toHaveBeenCalledWith(SQL_QUERIES.product.createProduct, [productName, userId, createdAt]);
+            expect(pool.query).toHaveBeenCalledWith(SQL_QUERIES.product.insertQuery, [productName, userId, createdAt]);
         });
+        it('should throw an error when database query fails', async () => {
+            // Mock query error
+            const errorMessage = 'Database error';
+            pool.query.mockRejectedValueOnce(new Error(errorMessage));
+      
+            // Call createProduct function
+            const productName = 'Test Product';
+            const userId = 123;
+            const createdAt = new Date().toISOString();
+      
+            // Expectations
+            await expect(productService.createProduct(productName, userId, createdAt)).rejects.toThrow(`Failed to create product: ${errorMessage}`);
+          });
     });
 
     describe('getProductById', () => {
@@ -68,6 +81,37 @@ jest.mock('../../../config/dbConfig/database.js', () => ({
           expect(pool.query).toHaveBeenCalledWith(SQL_QUERIES.product.getAllQuery);
           await expect(productService.getProducts()).rejects.toThrow(`Failed to get products: ${errorMessage}`);
         });
-      });
+    });
+
+    describe('updateProduct', () => {
+        it('should update an existing product', async () => {
+          // Mock query result
+          const productId = 1;
+          const productName = 'Updated Product';
+          pool.query.mockResolvedValueOnce({ affectedRows: 1 });
+    
+          // Call updateProduct function
+          const result = await productService.updateProduct(productName, productId);
+    
+          // Expectations
+          expect(pool.query).toHaveBeenCalledWith(
+            SQL_QUERIES.product.updateQuery,
+            [productName, productId]
+          );
+          expect(result).toEqual({ affectedRows: 1 });
+        });
+        it('should throw an error when database query fails', async () => {
+            // Mock query error
+            const errorMessage = 'Database error';
+            pool.query.mockRejectedValueOnce(new Error(errorMessage));
+      
+            // Call updateProduct function
+            const productId = 1;
+            const productName = 'Updated Product';
+      
+            // Expectations
+            await expect(productService.updateProduct(productName, productId)).rejects.toThrow(`Failed to update product: ${errorMessage}`);
+        });
+    });    
 
   });
