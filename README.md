@@ -5,23 +5,19 @@
 
 
 ## Node server
-    ### Start server
-    ```
+
+### Start server
+    
     cd server
     npm run dev
-    ```
 
-    ### Unit test of Node server
-    For testing whole app
+### Unit test of Node server
+#### For testing whole app
     ```npm run test```
 
-    If you are getting below error, that means you need to install jest
-    ```zsh: command not found: jest```
+If you are getting ```zsh: command not found: jest``` error, then you need to install jest globally using ```npm install -g jest``` command
+    
 
-    #### install jest
-    ```npm install -g jest```
+#### For testing a single file
+    npm run test -- controllers/teamController/__test__/team.controller.test.js
 
-    For testing a single file
-    ```npm run test -- file_relative_path```
-    Example
-    ```npm run test -- controllers/teamController/__test__/team.controller.test.js```
