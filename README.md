@@ -13,7 +13,7 @@
 
 ### Unit test of Node server
 #### For testing whole app
-    ```npm run test```
+    npm run test
 
 If you are getting ```zsh: command not found: jest``` error, then you need to install jest globally using ```npm install -g jest``` command
     
