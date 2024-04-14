@@ -2,10 +2,10 @@ import * as teamService from '../../services/teamService/team.service.js';
 
 
 async function createTeamController(req,res) {
-    const {teamName} = req.body;
+    const {teamName, createdById} = req.body;
     try {
         // const userId = await userProfileService.saveUserProfile(fname, lname, role);
-        const data = await teamService.createTeam(teamName);
+        const data = await teamService.createTeam(teamName, createdById);
         res.status(201).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -51,11 +51,43 @@ async function getTeamByIdController(req,res) {
     }
 };
 
+async function assignRoleToTeamController(req, res) {
+    const {teamId, profileId, roleId} = req.body;
+    try {
+        const data = await teamService.assignRoleToTeam(teamId, profileId, roleId);
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+async function updateUserRoleInTeamController(req, res) {
+ const {roleId, userTeamRoleId} = req.body;
+    try {
+        const data = await teamService.updateUserRoleInTeam(roleId, userTeamRoleId);
+        res.status(201).json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+async function getAllTeamsWithUsersController(req,res) {
+    try {
+        const users = await teamService.getAllTeamsWithUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export { 
     createTeamController,
     updateTeamController,
     getTeamsController,
     getTeamByIdController,
+    assignRoleToTeamController,
+    updateUserRoleInTeamController,
+    getAllTeamsWithUsersController
 };
 
 

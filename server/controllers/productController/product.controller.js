@@ -4,7 +4,8 @@ import * as productService from '../../services/productService/product.service.j
 async function createProductController(req,res) {
     const {productName, userId} = req.body;
     try {
-        const data = await productService.createProduct(productName, userId);
+        const createdAt = new Date().toISOString();
+        const data = await productService.createProduct(productName, userId, createdAt);
         res.status(201).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });

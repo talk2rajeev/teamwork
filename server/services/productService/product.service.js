@@ -1,10 +1,11 @@
 import {pool} from '../../config/dbConfig/database.js';
 import {SQL_QUERIES} from '../../utils/queries.js';
 
-async function createProduct(productName, userId) {
+async function createProduct(productName, userId, createdAt) {
     try{
-        const [result, ...meta] = await pool.query(SQL_QUERIES.product.insertQuery, [productName, userId, new Date().toISOString()]);
-        return result;
+        console.log(productName, userId, createdAt);
+        const result = await pool.query(SQL_QUERIES.product.insertQuery, [productName, userId, createdAt]);
+        return result[0];
     } catch(err) {
         throw new Error(`Failed to create product: ${err.message}`);
     };

@@ -2,23 +2,22 @@ import {pool} from '../../config/dbConfig/database.js';
 import { encodePassword } from '../../utils/bcrypt.js'
 
     async  function createUserLogin(userData) {
-        const {fname, lname, username, password, role} = userData;
+        const {fname, lname, username, password} = userData;
         const encodedPassword = encodePassword(password);
-        console.log({fname, lname, username, password, role});
         try{
-            const [result] = await pool.query(`insert into users (username, password, createdAt) values(?,?,?)`, [username, encodedPassword, new Date().toISOString()]);
-            await createUserProfile({fname, lname, role, userId: result.insertId});
-            return { userId: result.insertId, fname, lname, role };
+            const [result] = await pool.query(`insert into user_login (username, password) values(?,?)`, [username, encodedPassword]);
+            const loginId = result.insertId;
+            await createUserProfile({fname, lname, loginId});
+            return { loginId, fname, lname };
         } catch(err) {
             throw new Error(`Failed to create User Login: ${err.message}`);
-        };
-        
+        };   
     }
 
     async function createUserProfile(userData) {
-        const {fname, lname, role, userId} = userData;
+        const {fname, lname, loginId} = userData;
         try {
-            const [result, ...meta] = await pool.query(`insert into user_profile (fname, lname, role, userId, createdAt) values(?,?,?,?,?)`, [fname, lname, role, userId, new Date().toISOString()]);
+            const [result, ...meta] = await pool.query(`insert into user_profile (fname, lname, loginId) values(?,?,?)`, [fname, lname, loginId]);
             return result.insertId;
         } catch(err) {
             throw new Error(`Failed to create User Profile: ${err.message}`);
@@ -28,7 +27,7 @@ import { encodePassword } from '../../utils/bcrypt.js'
     async function  updateUserProfile(userData, userId) {
         try {
 
-            const query = "Update user_profile SET " + Object.keys(userData).map(key => `${key} = ?`).join(',')+ " WHERE userId = ?";
+            const query = "Update user_profile SET " + Object.keys(userData).map(key => `${key} = ?`).join(',')+ " WHERE profileId = ?";
             const params = [...Object.values(userData), userId];
             const result = await pool.query(query, params);
         
@@ -40,7 +39,7 @@ import { encodePassword } from '../../utils/bcrypt.js'
 
     async function  getUsers() {
         try {
-            const [data, ...meta] = await pool.query("SELECT users.userId, users.username, user_profile.fname, user_profile.lname, user_profile.role FROM users INNER JOIN user_profile ON users.userId=user_profile.userId");
+            const [data, ...meta] = await pool.query("SELECT user_login.loginId, user_login.username, user_profile.fname, user_profile.lname FROM user_login INNER JOIN user_profile ON user_login.loginId=user_profile.loginId");
             return data;
         } catch(err) {
             throw new Error(`Failed to get User detail: ${err.message}`);
@@ -49,7 +48,7 @@ import { encodePassword } from '../../utils/bcrypt.js'
 
     async function  getUserById(id) {
         try {
-            const [data, ...meta] = await pool.query(`select * from users where userId = ?`, [id]);
+            const [data, ...meta] = await pool.query(`select * from user_profile where profileId = ?`, [id]);
             return data;
         } catch(err) {
             throw new Error(`Failed to get User by id: ${err.message}`);

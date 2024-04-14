@@ -22,5 +22,9 @@ export const SQL_QUERIES = {
             JOIN 
             user_profile ON users.userId = user_profile.userId where productId = ?`,
         updateQuery: `Update product SET productName = ? WHERE productId = ?`         
+    },
+    user: {
+        createUserLogin: 'insert into users (username, password, createdAt) values(?,?,?)',
+        createUserProfile: 'insert into user_profile (fname, lname, roleId, userId, createdAt) values(?,?,?,?,?)',
     }
 };
