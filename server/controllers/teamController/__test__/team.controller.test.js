@@ -13,7 +13,7 @@ describe('Team Controller', () => {
     
     describe('create Team', () => {
         it('should create a team', async () => {
-            const mock = {"teamId": 1, "teamName": "NEXT GEN TEAM", "createdAt": "2024-02-10T13:21:45.184Z"};
+            const mock = {"teamId": 1, "teamName": "NEXT GEN TEAM", "createdById": 2};
             
             teamService.createTeam.mockResolvedValueOnce(mock);
             
@@ -31,12 +31,12 @@ describe('Team Controller', () => {
             expect(res.json).toHaveBeenCalledWith(mock);
         });
 
-        it('should throw an error when create user fails', async () => {
+        it('should throw an error when create team fails', async () => {
             // Mock query error
             const errorMessage = 'Database error';
             teamService.createTeam.mockRejectedValueOnce(new Error(errorMessage));
       
-            const req = { body: { teamId: 1, teamName: 'NEXT GEN TEAM' } };
+            const req = { body: { teamId: 1, teamName: 'NEXT GEN TEAM', createdById: 2 } };
             const res = {
               status: jest.fn().mockReturnThis(),
               json: jest.fn()
@@ -45,7 +45,7 @@ describe('Team Controller', () => {
             await createTeamController(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(teamService.createTeam).toHaveBeenCalledWith("NEXT GEN TEAM");
+            expect(teamService.createTeam).toHaveBeenCalledWith("NEXT GEN TEAM", 2);
             expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
         });
     });
@@ -69,12 +69,12 @@ describe('Team Controller', () => {
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({ message: 'Team updated successfully' });  
         })
-        it('should throw an error when updating user', async () => {
+        it('should throw an error when updating team', async () => {
             // Mock query error
             const errorMessage = 'Database error';
             teamService.updateTeam.mockRejectedValueOnce(new Error(errorMessage));
       
-            const req = { body: { teamName: 'New NEXT GEN TEAM' }, params: {id: 1} };
+            const req = { body: { teamName: 'NEXT GEN TEAM' }, params: {id: 1} };
             const res = {
               status: jest.fn().mockReturnThis(),
               json: jest.fn()
@@ -83,7 +83,6 @@ describe('Team Controller', () => {
             await updateTeamController(req, res);
 
             expect(res.status).toHaveBeenCalledWith(500);
-            expect(teamService.createTeam).toHaveBeenCalledWith("NEXT GEN TEAM");
             expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
         });
     });    

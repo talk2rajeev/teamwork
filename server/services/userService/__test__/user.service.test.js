@@ -18,7 +18,7 @@ jest.mock('../../../config/dbConfig/database.js', () => ({
         const userId = 1;
         const userData = await userService.getUserById(userId);
   
-        expect(pool.query).toHaveBeenCalledWith(`select * from users where userId = ?`, [userId]);
+        expect(pool.query).toHaveBeenCalledWith(`select * from user_profile where profileId = ?`, [userId]);
         expect(userData).toEqual(mockUserData);
       });
 
@@ -41,7 +41,7 @@ jest.mock('../../../config/dbConfig/database.js', () => ({
     
           const userData = await userService.getUsers();
     
-          expect(pool.query).toHaveBeenCalledWith('SELECT users.userId, users.username, user_profile.fname, user_profile.lname, user_profile.role FROM users INNER JOIN user_profile ON users.userId=user_profile.userId');
+          expect(pool.query).toHaveBeenCalledWith('SELECT user_login.loginId, user_login.username, user_profile.fname, user_profile.lname FROM user_login INNER JOIN user_profile ON user_login.loginId=user_profile.loginId');
           expect(userData).toEqual(mockUserData);
         });
   
@@ -51,7 +51,7 @@ jest.mock('../../../config/dbConfig/database.js', () => ({
           const errorMessage = 'Database error';
           pool.query.mockRejectedValueOnce(new Error(errorMessage));
     
-          expect(pool.query).toHaveBeenCalledWith('SELECT users.userId, users.username, user_profile.fname, user_profile.lname, user_profile.role FROM users INNER JOIN user_profile ON users.userId=user_profile.userId');
+          expect(pool.query).toHaveBeenCalledWith('SELECT user_login.loginId, user_login.username, user_profile.fname, user_profile.lname FROM user_login INNER JOIN user_profile ON user_login.loginId=user_profile.loginId');
           await expect(userService.getUsers()).rejects.toThrow(`Failed to get User detail: ${errorMessage}`);
         });
       });
