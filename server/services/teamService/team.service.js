@@ -29,12 +29,16 @@ async function  getTeamById(id) {
 }
 
 async function  updateTeam(teamName, teamId) {
-    try {
-        const result = await pool.query("Update team SET teamName = ? WHERE teamId = ?", [teamName, teamId]);
-        return result;
-    } catch(err) {
-        throw new Error(`Failed to update team: ${err.message}`);
-    };
+    if(teamName && teamId) {
+        try {
+            const result = await pool.query("Update team SET teamName = ? WHERE teamId = ?", [teamName, teamId]);
+            return result;
+        } catch(err) {
+            throw new Error(`Failed to update team: ${err.message}`);
+        };
+    } else {
+        throw new Error(`Failed to update team: teamName & teamId is mandatory`);
+    }
 }
 
 async function assignRoleToTeam(teamId, profileId, roleId) {

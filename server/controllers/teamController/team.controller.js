@@ -13,8 +13,8 @@ async function createTeamController(req,res) {
 }
 
 async function updateTeamController(req,res) {
-    const teamId = req.params.id;
     const {teamName} = req.body;
+    const teamId = req.params.id;
     try {
         const success = await teamService.updateTeam(teamName, teamId);
         if (success) {

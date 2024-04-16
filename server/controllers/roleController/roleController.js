@@ -1,5 +1,16 @@
 import * as roleService from '../../services/roleService/roleService.js';
 
+function formatRolesList(roles) {
+    return roles.map(r => ({
+        roleId: r.roleId,
+        roleName: r.roleName,
+        createdBy: {
+            profileId: r.profileId,
+            fname: r.fname,
+            lname: r.lname
+        }
+    }))
+}
 
 async function createRoleController(req,res) {
     const {roleName, createdById} = req.body;
@@ -30,7 +41,9 @@ async function updateRoleController(req,res) {
 async function getRolesController(req,res) {
     try {
         const users = await roleService.getRoles();
-        res.status(200).json(users);
+        const formattedRoles = formatRolesList(users);
+        console.log(formattedRoles);
+        res.status(200).json(formattedRoles);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
