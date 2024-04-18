@@ -10,5 +10,5 @@ export function generateAccessToken(user) {
 }
 
 export function generateRefreshToken(user) {
-    return jwt.sign({ username: user.username }, REFRESH_TOKEN_SECRET, { expiresIn: EXPIRE_TIME });
+    return jwt.sign({ username: user.username }, REFRESH_TOKEN_SECRET, { expiresIn: `${EXPIRE_TIME}m` });
 }
