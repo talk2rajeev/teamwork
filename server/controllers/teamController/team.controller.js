@@ -73,10 +73,21 @@ async function updateUserRoleInTeamController(req, res) {
 
 async function getAllTeamsWithUsersController(req,res) {
     try {
-        const users = await teamService.getAllTeamsWithUsers();
-        res.status(200).json(users);
+        const teamWithUsers = await teamService.getAllTeamsWithUsers();
+        
+        const map = {};
+        teamWithUsers.forEach(t => {
+            const teamUsers = map[t.team_name];
+            console.log(teamUsers);
+            if(teamUsers) {
+                teamUsers.push({first_name: t.first_name, last_name: t.last_name, role_name: t.role_name})
+            } else {
+                map[t.team_name] = [{first_name: t.first_name, last_name: t.last_name, role_name: t.role_name}]
+            }
+        });
+        res.status(200).json(map);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.message });s
     }
 };
 

@@ -42,7 +42,6 @@ async function getRolesController(req,res) {
     try {
         const users = await roleService.getRoles();
         const formattedRoles = formatRolesList(users);
-        console.log(formattedRoles);
         res.status(200).json(formattedRoles);
     } catch (error) {
         res.status(500).json({ error: error.message });
