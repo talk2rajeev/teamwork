@@ -1,4 +1,8 @@
 # Teamwork
+This project is not an unique idea, It solves what is already soved but in a simpler way. This project help in managaging taks, work items assigned to a member in the team. It helps in tracking all the team members work status. 
+
+This project is a full-stack project. It uses **Node** as server side programing, **React** as client side programming, **Jest** for Unit test and **Cypress** for E2E testing. 
+
 
 ### Database design
 <img width="1215" alt="image" src="https://github.com/talk2rajeev/teamwork/assets/13742861/bfb2b567-71ae-44be-be9f-d2421afdbac2">
