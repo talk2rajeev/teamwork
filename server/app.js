@@ -1,6 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import dotenv from 'dotenv';
+import cors from 'cors';
 // import {userRouter} from './controllers/userController/user.controller.js';
 // import { authRouter } from './controllers/authController/auth.controller.js';
 // import { authenticateToken } from './middlewares/authMiddleware/auth.middleware.js';
@@ -10,6 +11,8 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use('/api', appRouts);
 
