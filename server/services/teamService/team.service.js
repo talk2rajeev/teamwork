@@ -1,4 +1,5 @@
 import {pool} from '../../config/dbConfig/database.js';
+import {SQL_QUERIES} from '../../utils/queries.js';
 
 async function createTeam(teamName, createdById) {
     try{
@@ -22,6 +23,15 @@ async function  getTeams() {
 async function  getTeamById(id) {
     try {
         const [data, ...meta] = await pool.query(`select * from team where teamId = ?`, [id]);
+        return data;
+    } catch(err) {
+        throw new Error(`Failed to get Team by id: ${err.message}`);
+    };
+}
+
+async function  getTeamWithUsersById(id) {
+    try {
+        const [data, ...meta] = await pool.query(SQL_QUERIES.team.getTeamWithUsersByIdQuery, [id]);
         return data;
     } catch(err) {
         throw new Error(`Failed to get Team by id: ${err.message}`);
@@ -75,4 +85,4 @@ async function  getAllTeamsWithUsers() {
 }
 
 
-export { createTeam, getTeams, getTeamById, updateTeam, assignRoleToTeam, updateUserRoleInTeam, getAllTeamsWithUsers };
+export { createTeam, getTeams, getTeamById, getTeamWithUsersById, updateTeam, assignRoleToTeam, updateUserRoleInTeam, getAllTeamsWithUsers };

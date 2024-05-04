@@ -51,6 +51,20 @@ async function getTeamByIdController(req,res) {
     }
 };
 
+async function getTeamWithUsersByIdController(req,res) {
+    const id = req.params.id;
+    try {
+        const user = await teamService.getTeamWithUsersById(id);
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ error: 'Team not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 async function assignRoleToTeamController(req, res) {
     const {teamId, profileId, roleId} = req.body;
     try {
@@ -96,6 +110,7 @@ export {
     updateTeamController,
     getTeamsController,
     getTeamByIdController,
+    getTeamWithUsersByIdController,
     assignRoleToTeamController,
     updateUserRoleInTeamController,
     getAllTeamsWithUsersController
