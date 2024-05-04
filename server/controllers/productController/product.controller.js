@@ -1,10 +1,41 @@
 import * as productService from '../../services/productService/product.service.js';
+import * as teamService from '../../services/teamService/team.service.js';
 
+
+function getFormattedproduct(products) {
+    return products.map(p => {
+        const {productId, productName, profileId, fname, lname, teamId, teamName} = p;
+        return {
+            productId,
+            productName,
+            createdBy: {
+                profileId,
+                fname,
+                lname
+            },
+            team: {
+                teamId,
+                teamName
+            }
+        }
+    });
+}
+
+function getFormattedproductWithTeamUsers(products, teamsWithUsers) {
+    return products.map(p => {
+        return {
+            ...p,
+            team: {
+                ...p.team,
+                teamsWithUsers
+            }
+        }
+    });
+}
 
 async function createProductController(req,res) {
     const {productName, createdById, teamId} = req.body;
     try {
-        const createdAt = new Date().toISOString();
         const data = await productService.createProduct(productName, createdById, teamId);
         res.status(201).json(data);
     } catch (error) {
@@ -24,7 +55,8 @@ async function getAllProductsController(req,res) {
 async function getAllProductsWithTeamController(req,res) {
     try {
         const products = await productService.getProductsWithTeam();
-        res.status(200).json(products);
+        const formattedProduct = getFormattedproduct(products);
+        res.status(200).json(formattedProduct);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -48,17 +80,23 @@ async function updateProductController(req,res) {
 
 
 async function getProductByIdController(req,res) {
-    const prodictId = req.params.id;
-    // try {
-    //     const product = await productService.getProductById(prodictId);
-    //     if (user) {
-    //         res.status(200).json(product);
-    //     } else {
-    //         res.status(404).json({ error: 'Product not found' });
-    //     }
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+    const productId = req.params.id;
+    try {
+        const products = await productService.getProductById(productId);
+        const teamId = products[0]?.teamId;
+        if (products) {
+            const teamWithUsers = await teamService.getTeamWithUsersById(teamId);
+            const formattedProduct = getFormattedproduct(products);
+            const productWithTeamUsers = getFormattedproductWithTeamUsers(formattedProduct, teamWithUsers);
+            // const productWithTeamUsers = formattedProduct.map(p => ({...p, teamUsers: teamWithUsers}));
+            console.log('teamWithUsers ', teamWithUsers);
+            res.status(200).json(productWithTeamUsers);
+        } else {
+            res.status(404).json({ error: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 export { 

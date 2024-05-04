@@ -32,7 +32,7 @@ async function  getProducts() {
 
 async function  getProductsWithTeam() {
     try {
-        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductsWithTeam);
+        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductsWithTeamQuery);
         return data;
     } catch(err) {
         throw new Error(`Failed to get products: ${err.message}`);
@@ -41,8 +41,7 @@ async function  getProductsWithTeam() {
 
 async function  getProductById(id) {
     try {
-        const query = SQL_QUERIES.product.getByIdQuery;
-        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getByIdQuery, [id]);
+        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductByIdQuery, [id]);
         return data;
     } catch(err) {
         throw new Error(`Failed to get product by id: ${err.message}`);
