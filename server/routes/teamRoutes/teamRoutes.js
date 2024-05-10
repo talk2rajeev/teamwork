@@ -9,7 +9,7 @@ teamRoutes.post('/updateTeam/:id', teamController.updateTeamController);
 teamRoutes.get('/getAllTeams', teamController.getTeamsController);
 teamRoutes.get('/getTeamById/:id', teamController.getTeamByIdController);
 teamRoutes.get('/getTeamWithUsersById/:id', teamController.getTeamWithUsersByIdController);
-teamRoutes.post('/assignRoleToTeam', teamController.assignRoleToTeamController);
+teamRoutes.post('/assignUserRoleInTeam', teamController.assignUserRoleInTeamController);
 teamRoutes.post('/updateUserRoleInTeam', teamController.updateUserRoleInTeamController);
 teamRoutes.get('/getAllTeamsWithUsers', teamController.getAllTeamsWithUsersController);
 

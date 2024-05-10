@@ -65,10 +65,10 @@ async function getTeamWithUsersByIdController(req,res) {
     }
 };
 
-async function assignRoleToTeamController(req, res) {
+async function assignUserRoleInTeamController(req, res) {
     const {teamId, profileId, roleId} = req.body;
     try {
-        const data = await teamService.assignRoleToTeam(teamId, profileId, roleId);
+        const data = await teamService.assignUserRoleInTeam(teamId, profileId, roleId);
         res.status(201).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -111,7 +111,7 @@ export {
     getTeamsController,
     getTeamByIdController,
     getTeamWithUsersByIdController,
-    assignRoleToTeamController,
+    assignUserRoleInTeamController,
     updateUserRoleInTeamController,
     getAllTeamsWithUsersController
 };

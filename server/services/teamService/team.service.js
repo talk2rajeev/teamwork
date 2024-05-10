@@ -3,7 +3,7 @@ import {SQL_QUERIES} from '../../utils/queries.js';
 
 async function createTeam(teamName, createdById) {
     try{
-        const [result, ...meta] = await pool.query(`insert into team (teamName, createdById) values(?, ?)`, [teamName, createdById]);
+        const [result, ...meta] = await pool.query(SQL_QUERIES.team.insertQuery, [teamName, createdById]);
         return result;
     } catch(err) {
         throw new Error(`Failed to create team: ${err.message}`);
@@ -13,7 +13,7 @@ async function createTeam(teamName, createdById) {
 
 async function  getTeams() {
     try {
-        const [data, ...meta] = await pool.query("SELECT * from team");
+        const [data, ...meta] = await pool.query(SQL_QUERIES.team.getTeamsQuery);
         return data;
     } catch(err) {
         throw new Error(`Failed to get teams: ${err.message}`);
@@ -22,7 +22,7 @@ async function  getTeams() {
 
 async function  getTeamById(id) {
     try {
-        const [data, ...meta] = await pool.query(`select * from team where teamId = ?`, [id]);
+        const [data, ...meta] = await pool.query(SQL_QUERIES.team.getTeamByIdQuery, [id]);
         return data;
     } catch(err) {
         throw new Error(`Failed to get Team by id: ${err.message}`);
@@ -41,7 +41,7 @@ async function  getTeamWithUsersById(id) {
 async function  updateTeam(teamName, teamId) {
     if(teamName && teamId) {
         try {
-            const result = await pool.query("Update team SET teamName = ? WHERE teamId = ?", [teamName, teamId]);
+            const result = await pool.query(SQL_QUERIES.team.updateTeamQuery, [teamName, teamId]);
             return result;
         } catch(err) {
             throw new Error(`Failed to update team: ${err.message}`);
@@ -51,9 +51,9 @@ async function  updateTeam(teamName, teamId) {
     }
 }
 
-async function assignRoleToTeam(teamId, profileId, roleId) {
+async function assignUserRoleInTeam(teamId, profileId, roleId) {
     try{
-        const [result, ...meta] = await pool.query(`insert into user_team_role (teamId, profileId, roleId) values(?, ?, ?)`, [teamId, profileId, roleId]);
+        const [result, ...meta] = await pool.query(SQL_QUERIES.team.assignRoleToUserInTeamQuery, [teamId, profileId, roleId]);
         return result;
     } catch(err) {
         throw new Error(`Failed to assign role to Team: ${err.message}`);
@@ -63,7 +63,7 @@ async function assignRoleToTeam(teamId, profileId, roleId) {
 
 async function updateUserRoleInTeam(roleId, userTeamRoleId) {
     try{
-        const [result, ...meta] = await pool.query(`update user_team_role SET roleId = ? WHERE userTeamRoleId = ?`, [roleId, userTeamRoleId]);
+        const [result, ...meta] = await pool.query(SQL_QUERIES.team.updateUserRoleInTeamQuery, [roleId, userTeamRoleId]);
         return result;
     } catch(err) {
         throw new Error(`Failed to update role to Team: ${err.message}`);
@@ -85,4 +85,4 @@ async function  getAllTeamsWithUsers() {
 }
 
 
-export { createTeam, getTeams, getTeamById, getTeamWithUsersById, updateTeam, assignRoleToTeam, updateUserRoleInTeam, getAllTeamsWithUsers };
+export { createTeam, getTeams, getTeamById, getTeamWithUsersById, updateTeam, assignUserRoleInTeam, updateUserRoleInTeam, getAllTeamsWithUsers };
