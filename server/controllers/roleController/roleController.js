@@ -1,4 +1,4 @@
-import * as roleService from '../../services/roleService/roleService.js';
+import * as roleService from '../../services/roleService/role.service.js';
 
 function formatRolesList(roles) {
     return roles.map(r => ({
