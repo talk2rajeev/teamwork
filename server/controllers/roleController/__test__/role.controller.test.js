@@ -4,7 +4,8 @@ import {createRoleController,
     getRoleByIdController
 } from '../role.controller.js';
 import * as roleService from '../../../services/roleService/role.service.js';
-import * as roleFormatter from '../../../utils/formatter.js';
+import  * as roleFormatter from '../../../utils/formatter.js';
+
 
 
 
@@ -159,74 +160,79 @@ describe('Role Controller', () => {
           });
     });
 
-    describe('GET /getAllRoles', () => {
-        it('should return all users', async () => {
-            const mock = [{
-                "roleId": 1,
-                "roleName": "Admin",
-                "createdBy": {"fname": undefined, "lname": undefined, "profileId": undefined},
-            }];
-            
-            
-            // Mock the userService function to return mockValue
-            roleService.getRoles.mockResolvedValueOnce(mock);
 
-            const req = {};
+    describe('Get All Roles Controller', () => {
+        it('should fetch roles and return formatted roles list', async () => {
+          // Sample roles data from the database
+          const rolesFromDB = [
+            {
+              roleId: 1,
+              roleName: 'Admin',
+              profileId: 101,
+              fname: 'John',
+              lname: 'Doe',
+            },
+          ];
+      
+          // Expected formatted roles list
+          const expectedFormattedRoles = [
+            {
+              roleId: 1,
+              roleName: 'Admin',
+              createdBy: {
+                profileId: 101,
+                fname: 'John',
+                lname: 'Doe',
+              },
+            },
+          ];
+          
+          // Mock the return value of roleService.getRoles
+            roleService.getRoles.mockResolvedValue(rolesFromDB);
+
+            // Mock the res object for the controller
             const res = {
-              status: jest.fn().mockReturnThis(),
-              json: jest.fn()
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
             };
 
-            // Call the controller function
-            await getRolesController(req, res);
+            roleFormatter.formatRolesList.mockReturnValue(expectedFormattedRoles);
 
-            // Expectations
+            // Call the getRolesController function
+            await getRolesController(null, res);
+
+            // Check if roleService.getRoles was called
+            expect(roleService.getRoles).toHaveBeenCalled();
+
+            // Check if formatRolesList was called with the correct argument
+            expect(roleFormatter.formatRolesList).toHaveBeenCalledWith(rolesFromDB);
+
+            // Check if the response status and formatted roles list are correct
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith(mock);
+            expect(res.json).toHaveBeenCalledWith(expectedFormattedRoles);
         });
-
-        // it('should handle internal server error', async () => {
-
-        //     const roles = [{
-        //           roleId: 1,
-        //           roleName: 'Admin',
-        //           profileId: 101,
-        //           fname: 'John',
-        //           lname: 'Doe',
-        //         }];
-        //         const formattedRoles = [{
-        //             roleId: 1,
-        //             roleName: 'Admin',
-        //             createdBy: {
-        //             profileId: 101,
-        //             fname: 'John',
-        //             lname: 'Doe',
-        //             },
-        //         }];    
-            
-        //     roleFormatter.formatRolesList.mockReturnValue(formattedRoles);
-            
-        //     // Mock the userService function to return mockValue
-        //     roleService.getRoles.mockResolvedValueOnce(formattedRoles);
-
-        //     const req = {};
-        //     const res = {
-        //       status: jest.fn().mockReturnThis(),
-        //       json: jest.fn()
-        //     };
-
-        //     // Call the controller function
-        //     await getRolesController(req, res);
-
-        //     // Expectations
-        //     // expect(roleFormatter.formatRolesList).toHaveBeenCalledWith(roles);
-
-        //     expect(res.status).toHaveBeenCalledWith(500);
-        //     expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
-        // });
-
+      
+        it('should handle error and return status 500', async () => {
+          // Mock the roleService.getRoles function to throw an error
+          roleService.getRoles.mockRejectedValue(new Error('Database error'));
+      
+          // Mock the res object for the controller
+          const res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+          };
+      
+          // Call the getRolesController function
+          await getRolesController(null, res);
+      
+          // Check if roleService.getRoles was called
+          expect(roleService.getRoles).toHaveBeenCalled();
+      
+          // Check if the response status and error message are correct
+          expect(res.status).toHaveBeenCalledWith(500);
+          expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
     });
 
-
-   
+    
 });        

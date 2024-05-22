@@ -1,5 +1,5 @@
 import * as roleService from '../../services/roleService/role.service.js';
-import formatRolesList from '../../utils/formatter.js';
+import  * as roleFormatter from '../../utils/formatter.js';
 
 
 
@@ -35,8 +35,8 @@ async function updateRoleController(req,res) {
 
 async function getRolesController(req,res) {
     try {
-        const users = await roleService.getRoles();
-        const formattedRoles = formatRolesList(users);
+        const roles = await roleService.getRoles();
+        const formattedRoles = roleFormatter.formatRolesList(roles);
         res.status(200).json(formattedRoles);
     } catch (error) {
         res.status(500).json({ error: error.message });
