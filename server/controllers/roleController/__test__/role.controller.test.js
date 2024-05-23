@@ -47,6 +47,24 @@ describe('Role Controller', () => {
             expect(res.json).toHaveBeenCalledWith(mock);
         });
 
+        it('should throw an error when create team fails', async () => {
+            // Mock query error
+            const errorMessage = 'Database error';
+            roleService.createRole.mockRejectedValueOnce(new Error(errorMessage));
+      
+            const req = { body: { roleName: 'admin', createdById: 1 } };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+
+            await createRoleController(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(roleService.createRole).toHaveBeenCalledWith('admin', 1);
+            expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
+        });
+
         it('should throw error when service call fails with 500', async () => {
 
             const mock = {
