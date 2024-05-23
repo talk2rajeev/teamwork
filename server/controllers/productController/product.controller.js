@@ -1,43 +1,23 @@
 import * as productService from '../../services/productService/product.service.js';
 import * as teamService from '../../services/teamService/team.service.js';
-
-
-function getFormattedproduct(products) {
-    return products.map(p => {
-        const {productId, productName, profileId, fname, lname, teamId, teamName} = p;
-        return {
-            productId,
-            productName,
-            createdBy: {
-                profileId,
-                fname,
-                lname
-            },
-            team: {
-                teamId,
-                teamName
-            }
-        }
-    });
-}
-
-function getFormattedproductWithTeamUsers(products, teamsWithUsers) {
-    return products.map(p => {
-        return {
-            ...p,
-            team: {
-                ...p.team,
-                teamsWithUsers
-            }
-        }
-    });
-}
+import  * as formatter from '../../utils/formatter.js';
 
 async function createProductController(req,res) {
     const {productName, createdById, teamId} = req.body;
+    // try {
+    //     const data = await productService.createProduct(productName, createdById, teamId);
+    //     res.status(201).json(data);
+    // } catch (error) {
+    //     res.status(500).json({ error: error.message });
+    // }
     try {
-        const data = await productService.createProduct(productName, createdById, teamId);
-        res.status(201).json(data);
+        if(productName && createdById && teamId) {
+            // const userId = await userProfileService.saveUserProfile(fname, lname, role);
+            const data = await productService.createProduct(productName, createdById, teamId);
+            res.status(201).json(data);
+        } else {
+            res.status(500).json({ error: "productName, creator profile id and teamId is mandatory" });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -55,7 +35,7 @@ async function getAllProductsController(req,res) {
 async function getAllProductsWithTeamController(req,res) {
     try {
         const products = await productService.getProductsWithTeam();
-        const formattedProduct = getFormattedproduct(products);
+        const formattedProduct = formatter.getFormattedproduct(products);
         res.status(200).json(formattedProduct);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -86,8 +66,8 @@ async function getProductByIdController(req,res) {
         const teamId = products[0]?.teamId;
         if (products) {
             const teamWithUsers = await teamService.getTeamWithUsersById(teamId);
-            const formattedProduct = getFormattedproduct(products);
-            const productWithTeamUsers = getFormattedproductWithTeamUsers(formattedProduct, teamWithUsers);
+            const formattedProduct = formatter.getFormattedproduct(products);
+            const productWithTeamUsers = formatter.getFormattedproductWithTeamUsers(formattedProduct, teamWithUsers);
             // const productWithTeamUsers = formattedProduct.map(p => ({...p, teamUsers: teamWithUsers}));
             console.log('teamWithUsers ', teamWithUsers);
             res.status(200).json(productWithTeamUsers);
