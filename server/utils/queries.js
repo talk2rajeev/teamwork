@@ -52,6 +52,21 @@ export const SQL_QUERIES = {
     },
     epic: {
         createEpicQuery: 'insert into epic (epicName, epicDescription, createdById, productId) values(?,?,?,?)',
+        getEpics: 'select * from epic',
+        getEpicById: 'select * from epic WHERE epicId = ?',
         getEpicsByProductIdQuery: `SELECT * FROM epic WHERE productId = ?`,
+        getEpicByProductId: 'select * from epic where epicId = ?',
+    },
+    sprint: {
+        createSprintQuery: 'insert into sprint (sprintName, createdById, productId, startDate, endDate) values(?,?,?,?,?)',
+        getAllSprintQuery: 'SELECT * FROM sprint',
+        getSprintByIdQuery: 'SELECT * FROM sprint WHERE sprintId = ?',
+        getSprintByProductIdQuery: `SELECT s.sprintId, s.sprintName, s.createdAt, s.startDate, s.endDate,
+                up.fname, up.lname, up.profileId,
+                p.productName, p.productId
+        FROM sprint s
+        JOIN user_profile up ON up.profileId = s.createdById
+        JOIN product p ON s.productId = p.productId
+        WHERE s.productId =?`,
     }
 };
