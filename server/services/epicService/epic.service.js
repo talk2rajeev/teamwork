@@ -12,22 +12,9 @@ async function createEpic(payload) {
     
 }
 
-async function  updateEpic(edpicData, epicId) {
-    try {
-
-        const query = "Update epic SET " + Object.keys(edpicData).map(key => `${key} = ?`).join(',')+ " WHERE epicId = ?";
-        const params = [...Object.values(edpicData), epicId];
-        const result = await pool.query(query, params);
-    
-        return result;
-    } catch(err) {
-        throw new Error(`Failed to update Epic: ${err.message}`);
-    };
-}
-
 async function getEpics() {
     try{
-        const result = await pool.query(`select * from epic`);
+        const result = await pool.query(SQL_QUERIES.epic.getEpics);
         return result[0];
     } catch(err) {
         throw new Error(`Failed to get the epics: ${err.message}`);
@@ -37,12 +24,25 @@ async function getEpics() {
 
 async function getEpicById(epicId) {
     try{
-        const result = await pool.query(`select * from epic where productId = ${productId}`);
+        const result = await pool.query(SQL_QUERIES.epic.getEpicById, [epicId]);
         return result[0];
     } catch(err) {
         throw new Error(`Failed to get epic by epicId: ${err.message}`);
     };
     
+}
+
+async function  updateEpic(epicData, epicId) {
+    try {
+        console.log('eppicData ', epicData);
+        const query = "Update epic SET " + Object.keys(epicData).map(key => `${key} = ?`).join(',')+ " WHERE epicId = ?";
+        const params = [...Object.values(epicData), epicId];
+        const result = await pool.query(query, params);
+    
+        return result;
+    } catch(err) {
+        throw new Error(`Failed to update Epic: ${err.message}`);
+    };
 }
 
 async function getEpicsByProductId(productId) {
