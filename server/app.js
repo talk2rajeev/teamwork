@@ -2,10 +2,15 @@ import express from 'express';
 import 'express-async-errors';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// import {userRouter} from './controllers/userController/user.controller.js';
-// import { authRouter } from './controllers/authController/auth.controller.js';
-// import { authenticateToken } from './middlewares/authMiddleware/auth.middleware.js';
 import appRouts from './routes/appRoutes.js'
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+// Define __dirname in ES module scope
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
@@ -15,10 +20,8 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api', appRouts);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-// app.use('/api/user', authenticateToken, userRouter);
-// app.use('/api/auth', authRouter);
 
 app.use((err, req, res, next) => {
     console.log('Something went wrong ', err);
