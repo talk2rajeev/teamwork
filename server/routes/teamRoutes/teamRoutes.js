@@ -5,7 +5,7 @@ const teamRoutes = express.Router();
 
 
 teamRoutes.post('/createTeam', teamController.createTeamController);
-teamRoutes.post('/updateTeam/:id', teamController.updateTeamController);
+teamRoutes.put('/updateTeam/:id', teamController.updateTeamController);
 teamRoutes.get('/getAllTeams', teamController.getTeamsController);
 teamRoutes.get('/getTeamById/:id', teamController.getTeamByIdController);
 teamRoutes.get('/getTeamWithUsersById/:id', teamController.getTeamWithUsersByIdController);
