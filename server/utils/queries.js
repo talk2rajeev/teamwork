@@ -68,5 +68,57 @@ export const SQL_QUERIES = {
         JOIN user_profile up ON up.profileId = s.createdById
         JOIN product p ON s.productId = p.productId
         WHERE s.productId =?`,
+    },
+    userStory: {
+        createUserStoryQuery: 'insert into user_story (title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId) values(?,?,?,?,?,?,?,?,?)',
+        createBugQuery: 'insert into user_story ( title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId, userStoryType, priority) values(?,?,?,?,?,?,?,?,?,?,?)',
+        getUserStoriesBySprintId: 'SELECT * FROM user_story WHERE sprintId = ?',
+        getUserStoriesByProductId: 'SELECT * FROM user_story WHERE productId = ?',
+        getUserStoriesByEpicId: 'SELECT * FROM user_story WHERE epicId = ?',
+        getDetailedUserStoriesBySprintId: `SELECT us.title, us.description, us.userStoryPoint, us.createdAt, us.userStoryType, us.priority,
+                up.fname as assignedToFname, up.lname as assignedToLname, up.profileId as assignedtoId,
+                s.status, s.statusId,
+                p.productName, p.productId,
+                e.epicName, e.epicId,
+                sp.sprintName, sp.sprintId,
+                upr.fname as reportedByFname, upr.lname as reportedByLname, upr.profileId as sotryReporterid
+            FROM user_story us
+            JOIN user_profile up ON up.profileId = us.assignedToUserId
+            JOIN user_story_status s ON s.statusId = us.statusId
+            JOIN product p ON p.productId = us.productid
+            JOIN epic e ON e.epicId = us.epicId
+            JOIN sprint sp ON sp.sprintId = us.sprintId
+            JOIN user_profile upr ON upr.profileId = us.reporterUserId
+            WHERE us.sprintID = ?`,
+        getDetailedUserStoriesByProductId: `SELECT us.title, us.description, us.userStoryPoint, us.createdAt, us.userStoryType, us.priority,
+                up.fname as assignedToFname, up.lname as assignedToLname, up.profileId as assignedtoId, 
+                s.status, s.statusId,
+                p.productName, p.productId,
+                e.epicName, e.epicId,
+                sp.sprintName, sp.sprintId,
+                upr.fname as reportedByFname, upr.lname as reportedByLname, upr.profileId as sotryReporterid
+            FROM user_story us
+            JOIN user_profile up ON up.profileId = us.assignedToUserId
+            JOIN user_story_status s ON s.statusId = us.statusId
+            JOIN product p ON p.productId = us.productid
+            JOIN epic e ON e.epicId = us.epicId
+            JOIN sprint sp ON sp.sprintId = us.sprintId
+            JOIN user_profile upr ON upr.profileId = us.reporterUserId
+            WHERE us.productId = ?`,
+        getDetailedUserStoriesByEpicId: `SELECT us.title, us.description, us.userStoryPoint, us.createdAt, us.userStoryType, us.priority,
+                up.fname as assignedToFname, up.lname as assignedToLname, up.profileId as assignedtoId, 
+                s.status, s.statusId,
+                p.productName, p.productId,
+                e.epicName, e.epicId,
+                sp.sprintName, sp.sprintId,
+                upr.fname as reportedByFname, upr.lname as reportedByLname, upr.profileId as sotryReporterid
+            FROM user_story us
+            JOIN user_profile up ON up.profileId = us.assignedToUserId
+            JOIN user_story_status s ON s.statusId = us.statusId
+            JOIN product p ON p.productId = us.productid
+            JOIN epic e ON e.epicId = us.epicId
+            JOIN sprint sp ON sp.sprintId = us.sprintId
+            JOIN user_profile upr ON upr.profileId = us.reporterUserId
+            WHERE us.epicId = ?`,
     }
 };
