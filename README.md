@@ -1,5 +1,6 @@
 # Teamwork
-This project is not an unique idea, It solves what is already soved but in a simpler way. This project help in managaging taks, work items assigned to a member in the team. It helps in tracking all the team members work status. 
+This project is not an unique idea, It solves what is already soved but in a simpler way. This project help in tracking the 
+progress of work. It helps in distributing tasks, managaging taks in the team. It helps in tracking the status. 
 
 This project is a full-stack project. It uses **Node** as server side programing, **React** as client side programming, **Jest** for Unit test and **Cypress** for E2E testing. 
 
