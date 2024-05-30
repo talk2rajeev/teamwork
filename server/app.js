@@ -2,10 +2,11 @@ import express from 'express';
 import 'express-async-errors';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import appRouts from './routes/appRoutes.js'
-
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import appRouts from './routes/appRoutes.js'
+
 
 
 // Define __dirname in ES module scope
