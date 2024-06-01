@@ -3,7 +3,6 @@ import {SQL_QUERIES} from '../../utils/queries.js';
 
 async function createProduct(productName, profileId, teamId) {
     try{
-        console.log(productName, profileId, teamId);
         let query;
         let values;
         if(teamId) {
@@ -23,16 +22,7 @@ async function createProduct(productName, profileId, teamId) {
 
 async function  getProducts() {
     try {
-        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProducts);
-        return data;
-    } catch(err) {
-        throw new Error(`Failed to get products: ${err.message}`);
-    };
-}
-
-async function  getProductsWithTeam() {
-    try {
-        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductsWithTeamQuery);
+        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductsQuery);
         return data;
     } catch(err) {
         throw new Error(`Failed to get products: ${err.message}`);
@@ -68,4 +58,14 @@ async function  updateProduct(productName, productId, teamId) {
     };
 }
 
-export { createProduct, getProducts, getProductsWithTeam, getProductById, updateProduct };
+async function  getProductsWithTeam() {
+    try {
+        const [data, ...meta] = await pool.query(SQL_QUERIES.product.getProductsWithTeamQuery);
+        return data;
+    } catch(err) {
+        throw new Error(`Failed to get products: ${err.message}`);
+    };
+}
+
+
+export { createProduct, getProducts, getProductById, updateProduct, getProductsWithTeam };

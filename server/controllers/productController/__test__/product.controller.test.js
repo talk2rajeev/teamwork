@@ -313,8 +313,6 @@ describe('Product Controller', () => {
 
             expect(formatter.getFormattedproductWithTeamUsers).toHaveBeenCalledWith(formattedProduct, mockTeamUserFromDB);
 
-            console.log('Response status:', res.status.mock.calls);
-
             const productWithTeamUsers = formatter.getFormattedproductWithTeamUsers(formattedProduct, mockTeamUserFromDB)
 
             // Expectations

@@ -68,8 +68,7 @@ async function getProductByIdController(req,res) {
             const teamWithUsers = await teamService.getTeamWithUsersById(teamId);
             const formattedProduct = formatter.getFormattedproduct(products);
             const productWithTeamUsers = formatter.getFormattedproductWithTeamUsers(formattedProduct, teamWithUsers);
-            // const productWithTeamUsers = formattedProduct.map(p => ({...p, teamUsers: teamWithUsers}));
-            console.log('teamWithUsers ', teamWithUsers);
+            
             res.status(200).json(productWithTeamUsers);
         } else {
             res.status(404).json({ error: 'Product not found' });

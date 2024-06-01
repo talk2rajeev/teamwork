@@ -2,7 +2,7 @@ export const SQL_QUERIES = {
     product: {
         insertWithTeamQuery: 'insert into product (productName, createdById, teamId) values(?,?,?)',
         insertWithoutTeamQuery: 'insert into product (productName, createdById) values(?,?)',
-        getProducts: `SELECT * from product`,
+        getProductsQuery: `SELECT * from product`,
         getProductsWithTeamQuery: `SELECT product.productId, product.productName, 
             user_profile.profileId, user_profile.fname, user_profile.lname,
             team.teamId, team.teamName
@@ -71,7 +71,7 @@ export const SQL_QUERIES = {
     },
     userStory: {
         createUserStoryQuery: 'insert into user_story (title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId) values(?,?,?,?,?,?,?,?,?)',
-        createBugQuery: 'insert into user_story ( title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId, userStoryType, priority) values(?,?,?,?,?,?,?,?,?,?,?)',
+        createBugQuery: 'insert into user_story (title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId, userStoryType, priority) values(?,?,?,?,?,?,?,?,?,?,?)',
         getUserStoriesBySprintId: 'SELECT * FROM user_story WHERE sprintId = ?',
         getUserStoriesByProductId: 'SELECT * FROM user_story WHERE productId = ?',
         getUserStoriesByEpicId: 'SELECT * FROM user_story WHERE epicId = ?',
