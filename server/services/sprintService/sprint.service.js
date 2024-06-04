@@ -23,12 +23,10 @@ async function getAllSprints() {
 }
 
 async function  updateSprint(payload, sprintId) {
-    console.log('payload ', payload);
     if(payload && sprintId) {
         try {
             const query = "UPDATE sprint SET " + Object.keys(payload).map(key => `${key} = ?`).join(',')+ " WHERE sprintId = ?";
             const params = [...Object.values(payload), sprintId];
-            console.log('params ', params);
             const result = await pool.query(query, [...params]);
             return result;
         } catch(err) {

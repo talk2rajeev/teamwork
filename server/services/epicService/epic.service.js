@@ -34,7 +34,6 @@ async function getEpicById(epicId) {
 
 async function  updateEpic(epicData, epicId) {
     try {
-        console.log('eppicData ', epicData);
         const query = "Update epic SET " + Object.keys(epicData).map(key => `${key} = ?`).join(',')+ " WHERE epicId = ?";
         const params = [...Object.values(epicData), epicId];
         const result = await pool.query(query, params);

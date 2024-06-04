@@ -12,7 +12,6 @@ async function createRole(roleName, createdById) {
 
 async function getRoles() {
     try {
-        console.log('get Roles service called');
         const [data, ...meta] = await pool.query("SELECT role.roleId, role.roleName, user_profile.profileId, user_profile.fname, user_profile.lname from role INNER JOIN user_profile ON role.createdById = user_profile.profileId");
         return data;
     } catch(err) {
