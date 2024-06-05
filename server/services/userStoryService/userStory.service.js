@@ -66,7 +66,7 @@ async function getDetailedUserStoriesBySprintId(sprintId) {
         const [result, ...meta] = await pool.query(SQL_QUERIES.userStory.getDetailedUserStoriesBySprintId, [sprintId]);
         return result;
     } catch(err) {
-        throw new Error(`Failed to get user stories by epicId: ${err.message}`);
+        throw new Error(`Failed to get detailed user stories by sprintId: ${err.message}`);
     }; 
 }
 
@@ -75,7 +75,7 @@ async function getDetailedUserStoriesByProductId(productId) {
         const [result, ...meta] = await pool.query(SQL_QUERIES.userStory.getDetailedUserStoriesByProductId, [productId]);
         return result;
     } catch(err) {
-        throw new Error(`Failed to get user stories by epicId: ${err.message}`);
+        throw new Error(`Failed to get detailed user stories by productId: ${err.message}`);
     }; 
 }
 
@@ -84,7 +84,7 @@ async function getDetailedUserStoriesByEpicId(epicId) {
         const [result, ...meta] = await pool.query(SQL_QUERIES.userStory.getDetailedUserStoriesByEpicId, [epicId]);
         return result;
     } catch(err) {
-        throw new Error(`Failed to get user stories by epicId: ${err.message}`);
+        throw new Error(`Failed to get detailed user stories by epicId: ${err.message}`);
     }; 
 }
 
