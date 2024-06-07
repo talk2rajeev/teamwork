@@ -111,51 +111,56 @@ describe('UserStory', () => {
 
     });
 
-    // describe('Update Product ', () => {
-    //     it('should update Product ', async () => {
+    describe('Update userStory ', () => {
+        const reqPayload = {
+            "title": "updated title",
+            "description": "<p>updated description</p>",
+            "priority": "p2",
+            "epicId": 2
+        };
+        it('should update userStory ', async () => {
             
             
-    //         const req = {
-    //             params: { id: 1 }, // Sample role ID
-    //             body: { productName: "test product", productId: 1, teamId: 1 }, // New role name to update
-    //         };
-    //         const res = {
-    //             status: jest.fn().mockReturnThis(),
-    //             json: jest.fn(),
-    //         };
+            const req = {
+                params: { id: 1 }, // Sample role ID
+                body: {...reqPayload},
+            };
+            const res = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
 
-    //         // Mock the roleService function to return mockValue
-    //         productService.updateProduct.mockResolvedValueOnce(true);
+            // Mock the roleService function to return mockValue
+            userStoryService.updateUserStory.mockResolvedValueOnce(true);
 
-    //         // Call the controller function
-    //         await updateProductController(req, res);
+            // Call the controller function
+            await updateUserStoryController(req, res);
 
-    //         // Expectations
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         // expect(res.json).toHaveBeenCalledWith({ message: 'Role updated successfully' });  
-    //     });
-    //     it('should handle internal server error', async () => {
-    //         const req = {
-    //           params: { id: 1 }, // Sample role ID
-    //           body: { productName: "test product", productId: 1, teamId: 1 }, // New role name to update
-    //         };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn(),
-    //         };
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200); 
+        });
+        it('should handle internal server error', async () => {
+            const req = {
+              params: { id: 1 }, // Sample role ID
+              body: { ...reqPayload }, // New role name to update
+            };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            };
         
-    //         // Mock the roleService.updateRole function to throw an error
-    //         productService.updateProduct.mockRejectedValue(new Error('Database error'));
+            // Mock the roleService.updateRole function to throw an error
+            userStoryService.updateUserStory.mockRejectedValue(new Error('Database error'));
         
-    //         // Call the updateRoleController function with the mock request and response objects
-    //         await updateProductController(req, res);
+            // Call the updateRoleController function with the mock request and response objects
+            await updateUserStoryController(req, res);
         
-    //         // Check if the response status and error message are correct
-    //         expect(res.status).toHaveBeenCalledWith(500);
-    //         expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
-    //     });
+            // Check if the response status and error message are correct
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
 
-    // });    
+    });    
 
     // describe('Get all products Product ', () => {
     //     it('should get All the Products ', async () => {
