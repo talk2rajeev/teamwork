@@ -18,8 +18,13 @@ async function createUserStoryController(req,res) {
 async function createBugController(req,res) {
     const payload = req.body;
     try {
-        const data = await userStoryService.createBug(payload);
-        res.status(201).json(data);
+        const {title, description, userStoryId, reporterUserId, productId, userStoryType, priority} = payload;
+        if(title, description, userStoryId, reporterUserId, productId, userStoryType, priority) {
+            const data = await userStoryService.createBug(payload);
+            res.status(201).json(data);
+        } else {
+            res.status(400).json({ error: "Bad request, please check your request payload" });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
