@@ -347,6 +347,68 @@ describe('UserStory', () => {
 
     });
 
+    describe('getUserStoriesByEpicId congtroller ', () => {
+        it('should return All userStories for given epicId ', async () => {
+            const mock = [{
+                "userStoryId": 1,
+                "title": "create user login module",
+                "description": "<p>Create a user login module. It should contain username and password filed. </p><p>Password field should not be less than 8 characters and not more than 16 characters. </p><p>password filed should be combination of:  </p><ol><li>alphabet</li><li>number</li><li>special character</li></ol><p>refer this <a href='https://www.w3schools.com/tags/att_input_type_password.asp' rel='noopener noreferrer' target='_blank'>doc</a> for more detail. </p><p><img src='https://static.lukew.com/hidepass1.png' alt=''> </p>",
+                "statusId": 1,
+                "assignedToUserId": 1,
+                "reporterUserId": 2,
+                "createdAt": "2024-05-27T14:08:02.000Z",
+                "userStoryPoint": 5,
+                "productId": 1,
+                "epicId": 1,
+                "sprintId": 1,
+                "userStoryType": "userStory",
+                "isDuplicate": "no",
+                "originalStoryId": null,
+                "priority": null
+            }];
+
+            // Mock the roleService function to return mockValue
+            userStoryService.getUserStoriesByEpicId.mockResolvedValueOnce(mock);
+            const epicId = 1;
+            const req = { body: {}, params: {id: epicId}  };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+
+            // Call the controller function
+            await getUserStoriesByEpicIdController(req, res);
+
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
+
+        it('should handle error and return status 500', async () => {
+            // Mock the roleService.getRoles function to throw an error
+            userStoryService.getUserStoriesByEpicId.mockRejectedValue(new Error('Database error'));
+        
+            const epicId = 1;
+            const req = { body: {}, params: {id: epicId}  };
+            // Mock the res object for the controller
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            };
+        
+            // Call the getRolesController function
+            await getUserStoriesByEpicIdController(req, res);
+        
+            // Check if roleService.getRoles was called
+            expect(userStoryService.getUserStoriesByEpicId).toHaveBeenCalled();
+        
+            // Check if the response status and error message are correct
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
+
+    });
+
     // describe('getAllProductsWithTeam Controller', () => {
     //     it('should fetch all products with their team detail', async () => {
     //         // Sample roles data from the database
