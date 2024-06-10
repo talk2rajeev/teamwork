@@ -88,7 +88,7 @@ async function getDetailedUserStoriesBySprintIdController(req,res) {
     }
 }
 
-async function getDetailedUserStoriesByProductId(req,res) {
+async function getDetailedUserStoriesByProductIdController(req,res) {
     const productId = req.params.id;
     try {
         const data = await userStoryService.getDetailedUserStoriesByProductId(productId);
@@ -98,7 +98,7 @@ async function getDetailedUserStoriesByProductId(req,res) {
     }
 }
 
-async function getDetailedUserStoriesByEpicId(req,res) {
+async function getDetailedUserStoriesByEpicIdController(req,res) {
     const epicId = req.params.id;
     try {
         const data = await userStoryService.getDetailedUserStoriesByEpicId(epicId);
@@ -116,6 +116,6 @@ export {
     getUserStoriesByProductIdController,
     getUserStoriesByEpicIdController,
     getDetailedUserStoriesBySprintIdController,
-    getDetailedUserStoriesByProductId,
-    getDetailedUserStoriesByEpicId
+    getDetailedUserStoriesByProductIdController,
+    getDetailedUserStoriesByEpicIdController
 }

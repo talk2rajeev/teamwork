@@ -5,12 +5,11 @@ import {createUserStoryController,
     getUserStoriesByProductIdController,
     getUserStoriesByEpicIdController,
     getDetailedUserStoriesBySprintIdController,
-    getDetailedUserStoriesByProductId,
-    getDetailedUserStoriesByEpicId
+    getDetailedUserStoriesByProductIdController,
+    getDetailedUserStoriesByEpicIdController,
 } from '../userStory.controller.js';
 import * as userStoryService from '../../../services/userStoryService/userStory.service.js';
 
-import  * as formatter from '../../../utils/formatter.js';
 
 
 jest.mock('../../../services/userStoryService/userStory.service.js', () => ({
@@ -24,15 +23,6 @@ jest.mock('../../../services/userStoryService/userStory.service.js', () => ({
     getDetailedUserStoriesByProductId: jest.fn(),
     getDetailedUserStoriesByEpicId: jest.fn(),
 }));
-
-// jest.mock('../../../services/teamService/team.service.js', () => ({
-//     getTeamWithUsersById: jest.fn(),
-// }));
-
-// jest.mock('../../../utils/formatter.js', () => ({
-//     getFormattedproduct: jest.fn(),
-//     getFormattedproductWithTeamUsers: jest.fn(),
-// }));
 
 const reqPayload = {
     "title": "Title of the user story",
@@ -409,175 +399,205 @@ describe('UserStory', () => {
 
     });
 
-    // describe('getAllProductsWithTeam Controller', () => {
-    //     it('should fetch all products with their team detail', async () => {
-    //         // Sample roles data from the database
-    //         const productFromDB = [
-    //             {
-    //                 "productId": 1,
-    //                 "productName": "Next Gen Product",
-    //                 "createdAt": "2024-04-21T09:22:16.000Z",
-    //                 "createdById": 2,
-    //                 "teamId": 2
-    //             },
-    //         ];
-      
-    //         // Expected formatted roles list
-    //         const expectedFormattedProducts = [
-    //             {
-    //                 "productId": 1,
-    //                 "productName": "Next Gen Product",
-    //                 "createdBy": {
-    //                     "profileId": 2,
-    //                     "fname": "Amit",
-    //                     "lname": "Kumar"
-    //                 },
-    //                 "team": {
-    //                     "teamId": 2,
-    //                     "teamName": "OPDS"
-    //                 }
-    //             },
-    //         ];
-          
-    //         // Mock the return value of roleService.getRoles
-    //         productService.getProductsWithTeam.mockResolvedValue(productFromDB);
+    describe('getDetailedUserStoriesBySprintId congtroller ', () => {
+        it('should return detailed userStories for given sprintId ', async () => {
+            const mock = [{
+                "title": "create user login module",
+                "description": "<p>Create a user login module. It should contain username and password filed. </p><p>Password field should not be less than 8 characters and not more than 16 characters. </p><p>password filed should be combination of:  </p><ol><li>alphabet</li><li>number</li><li>special character</li></ol><p>refer this <a href='https://www.w3schools.com/tags/att_input_type_password.asp' rel='noopener noreferrer' target='_blank'>doc</a> for more detail. </p><p><img src='https://static.lukew.com/hidepass1.png' alt=''> </p>",
+                "userStoryPoint": 5,
+                "createdAt": "2024-05-27T14:08:02.000Z",
+                "userStoryType": "userStory",
+                "priority": null,
+                "assignedToFname": "Rajeev",
+                "assignedToLname": "sharma",
+                "assignedtoId": 1,
+                "status": "New",
+                "statusId": 1,
+                "productName": "Next Gen Product",
+                "productId": 1,
+                "epicName": "Customer Feedback",
+                "epicId": 1,
+                "sprintName": "May2024_2nd_sprint_UI_team",
+                "sprintId": 1,
+                "reportedByFname": "Amit",
+                "reportedByLname": "Kumar",
+                "sotryReporterid": 2
+            }];
 
-    //         // Mock the res object for the controller
-    //         const res = {
-    //             status: jest.fn().mockReturnThis(),
-    //             json: jest.fn(),
-    //         };
+            // Mock the roleService function to return mockValue
+            userStoryService.getDetailedUserStoriesBySprintId.mockResolvedValueOnce(mock);
+            const sprintId = 1;
+            const req = { body: {}, params: {id: sprintId}  };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
 
-    //         formatter.getFormattedproduct.mockReturnValue(expectedFormattedProducts);
+            // Call the controller function
+            await getDetailedUserStoriesBySprintIdController(req, res);
 
-    //         // Call the getRolesController function
-    //         await getAllProductsWithTeamController(null, res);
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
 
-    //         // Check if roleService.getRoles was called
-    //         expect(productService.getProductsWithTeam).toHaveBeenCalled();
-
-    //         // Check if formatRolesList was called with the correct argument
-    //         expect(formatter.getFormattedproduct).toHaveBeenCalledWith(productFromDB);
-
-    //         // Check if the response status and formatted roles list are correct
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith(expectedFormattedProducts);
-    //     });
-      
-    //     it('should handle error and return status 500', async () => {
-    //       // Mock the roleService.getRoles function to throw an error
-    //       productService.getProductsWithTeam.mockRejectedValue(new Error('Database error'));
-      
-    //       // Mock the res object for the controller
-    //       const res = {
-    //         status: jest.fn().mockReturnThis(),
-    //         json: jest.fn(),
-    //       };
-      
-    //       // Call the getRolesController function
-    //       await getAllProductsWithTeamController(null, res);
-      
-    //       // Check if roleService.getRoles was called
-    //       expect(productService.getProductsWithTeam).toHaveBeenCalled();
-      
-    //       // Check if the response status and error message are correct
-    //       expect(res.status).toHaveBeenCalledWith(500);
-    //       expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
-    //     });
-    // });
-
-    // describe('GET /product/:id', () => {
-    //     it('should get product with team and users by productId', async () => {
-    //         const mockProductFromDB = [{
-    //             "productId": 1,
-    //             "productName": "Test product",
-    //             "profileId": 2,
-    //             "fname": "John",
-    //             "lname": "Doe",
-    //             "teamId": 2,
-    //             "teamName": "Test team",
-    //         }];
-
-    //         const mockTeamUserFromDB = [{
-    //             "profileId": 1,
-    //             "fname": "John",
-    //             "lname": "Doe",
-    //             "teamId": 2,
-    //             "teamName": "Test team",
-    //         }];
-            
-    //         // Mock the userService function to return mockValue
-    //         productService.getProductById.mockResolvedValueOnce(mockProductFromDB);
-
-    //         teamService.getTeamWithUsersById.mockResolvedValueOnce(mockTeamUserFromDB);
-            
-            
-    //         const req = { params: {id: 1} };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
-
-
-    //         // Call the controller function
-    //         await getProductByIdController(req, res);
-
-    //         expect(productService.getProductById).toHaveBeenCalled();
-
-    //         const formattedProduct = formatter.getFormattedproduct(mockProductFromDB);
-    //         // Check if formatRolesList was called with the correct argument
-    //         expect(formatter.getFormattedproduct).toHaveBeenCalledWith(mockProductFromDB);
-
-
-    //         expect(formatter.getFormattedproductWithTeamUsers).toHaveBeenCalledWith(formattedProduct, mockTeamUserFromDB);
-
-    //         const productWithTeamUsers = formatter.getFormattedproductWithTeamUsers(formattedProduct, mockTeamUserFromDB)
-
-    //         // Expectations
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith(productWithTeamUsers);
-    //     });
-
-
-    //     it('should handle error and return status 500', async () => {
-    //         // Mock the roleService.getRoles function to throw an error
-    //         productService.getProductById.mockRejectedValue(new Error('Database error'));
+        it('should handle error and return status 500', async () => {
+            // Mock the roleService.getRoles function to throw an error
+            userStoryService.getDetailedUserStoriesBySprintId.mockRejectedValue(new Error('Database error'));
         
-    //         // Mock the res object for the controller
-    //         const req = { params: {id: 2} };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn(),
-    //         };
+            const sprintId = 1;
+            const req = { body: {}, params: {id: sprintId}  };
+            // Mock the res object for the controller
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            };
         
-    //         // Call the getRolesController function
-    //         await getProductByIdController(req, res);
+            // Call the getRolesController function
+            await getDetailedUserStoriesBySprintIdController(req, res);
         
-    //         // Check if roleService.getRoles was called
-    //         expect(productService.getProductById).toHaveBeenCalled();
+            // Check if roleService.getRoles was called
+            expect(userStoryService.getDetailedUserStoriesBySprintId).toHaveBeenCalled();
         
-    //         // Check if the response status and error message are correct
-    //         expect(res.status).toHaveBeenCalledWith(500);
-    //         expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
-    //     });
+            // Check if the response status and error message are correct
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
 
-    //     it('should throw an error when fetching prod by id fails', async () => {
-    //         // Mock query error
-    //         const errorMessage = 'Database error';
-    //         productService.getProductById.mockRejectedValueOnce(new Error(errorMessage));
-      
-    //         const req = { params: {id: 1} };
-    //         const res = {
-    //           status: jest.fn().mockReturnThis(),
-    //           json: jest.fn()
-    //         };
+    });
 
-    //         await getProductByIdController(req, res);
+    describe('getDetailedUserStoriesByProductId congtroller ', () => {
+        it('should return detailed userStories for given productId ', async () => {
+            const mock = [{
+                "title": "create user login module",
+                "description": "<p>Create a user login module. It should contain username and password filed. </p><p>Password field should not be less than 8 characters and not more than 16 characters. </p><p>password filed should be combination of:  </p><ol><li>alphabet</li><li>number</li><li>special character</li></ol><p>refer this <a href='https://www.w3schools.com/tags/att_input_type_password.asp' rel='noopener noreferrer' target='_blank'>doc</a> for more detail. </p><p><img src='https://static.lukew.com/hidepass1.png' alt=''> </p>",
+                "userStoryPoint": 5,
+                "createdAt": "2024-05-27T14:08:02.000Z",
+                "userStoryType": "userStory",
+                "priority": null,
+                "assignedToFname": "Rajeev",
+                "assignedToLname": "sharma",
+                "assignedtoId": 1,
+                "status": "New",
+                "statusId": 1,
+                "productName": "Next Gen Product",
+                "productId": 1,
+                "epicName": "Customer Feedback",
+                "epicId": 1,
+                "sprintName": "May2024_2nd_sprint_UI_team",
+                "sprintId": 1,
+                "reportedByFname": "Amit",
+                "reportedByLname": "Kumar",
+                "sotryReporterid": 2
+            }];
 
-    //         expect(res.status).toHaveBeenCalledWith(500);
-    //         expect(productService.getProductById).toHaveBeenCalled();
-    //         expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
-    //     });
-    // });
+            // Mock the roleService function to return mockValue
+            userStoryService.getDetailedUserStoriesByProductId.mockResolvedValueOnce(mock);
+            const productId = 1;
+            const req = { body: {}, params: {id: productId}  };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+
+            // Call the controller function
+            await getDetailedUserStoriesByProductIdController(req, res);
+
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
+
+        it('should handle error and return status 500', async () => {
+            // Mock the roleService.getRoles function to throw an error
+            userStoryService.getDetailedUserStoriesByProductId.mockRejectedValue(new Error('Database error'));
+        
+            const sprintId = 1;
+            const req = { body: {}, params: {id: sprintId}  };
+            // Mock the res object for the controller
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            };
+        
+            // Call the getRolesController function
+            await getDetailedUserStoriesByProductIdController(req, res);
+        
+            // Check if roleService.getRoles was called
+            expect(userStoryService.getDetailedUserStoriesByProductId).toHaveBeenCalled();
+        
+            // Check if the response status and error message are correct
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
+
+    });
+
+    describe('getDetailedUserStoriesByEpicId congtroller ', () => {
+        it('should return detailed userStories for given epicId ', async () => {
+            const mock = [{
+                "title": "create user login module",
+                "description": "<p>Create a user login module. It should contain username and password filed. </p><p>Password field should not be less than 8 characters and not more than 16 characters. </p><p>password filed should be combination of:  </p><ol><li>alphabet</li><li>number</li><li>special character</li></ol><p>refer this <a href='https://www.w3schools.com/tags/att_input_type_password.asp' rel='noopener noreferrer' target='_blank'>doc</a> for more detail. </p><p><img src='https://static.lukew.com/hidepass1.png' alt=''> </p>",
+                "userStoryPoint": 5,
+                "createdAt": "2024-05-27T14:08:02.000Z",
+                "userStoryType": "userStory",
+                "priority": null,
+                "assignedToFname": "Rajeev",
+                "assignedToLname": "sharma",
+                "assignedtoId": 1,
+                "status": "New",
+                "statusId": 1,
+                "productName": "Next Gen Product",
+                "productId": 1,
+                "epicName": "Customer Feedback",
+                "epicId": 1,
+                "sprintName": "May2024_2nd_sprint_UI_team",
+                "sprintId": 1,
+                "reportedByFname": "Amit",
+                "reportedByLname": "Kumar",
+                "sotryReporterid": 2
+            }];
+
+            // Mock the roleService function to return mockValue
+            userStoryService.getDetailedUserStoriesByEpicId.mockResolvedValueOnce(mock);
+            const epicId = 1;
+            const req = { body: {}, params: {id: epicId}  };
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn()
+            };
+
+            // Call the controller function
+            await getDetailedUserStoriesByEpicIdController(req, res);
+
+            // Expectations
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mock);
+        });
+
+        it('should handle error and return status 500', async () => {
+            // Mock the roleService.getRoles function to throw an error
+            userStoryService.getDetailedUserStoriesByEpicId.mockRejectedValue(new Error('Database error'));
+        
+            const sprintId = 1;
+            const req = { body: {}, params: {id: sprintId}  };
+            // Mock the res object for the controller
+            const res = {
+              status: jest.fn().mockReturnThis(),
+              json: jest.fn(),
+            };
+        
+            // Call the getRolesController function
+            await getDetailedUserStoriesByEpicIdController(req, res);
+        
+            // Check if roleService.getRoles was called
+            expect(userStoryService.getDetailedUserStoriesByEpicId).toHaveBeenCalled();
+        
+            // Check if the response status and error message are correct
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ error: 'Database error' });
+        });
+
+    });
     
 });        

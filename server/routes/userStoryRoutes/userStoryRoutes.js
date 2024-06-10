@@ -10,7 +10,7 @@ userStoryRoutes.get('/getUserStoriesBySprintId/:id', userStoryController.getUser
 userStoryRoutes.get('/getUserStoriesByProductId/:id', userStoryController.getUserStoriesByProductIdController);
 userStoryRoutes.get('/getUserStoriesByEpicId/:id', userStoryController.getUserStoriesByEpicIdController);
 userStoryRoutes.get('/getDetailedUserStoriesBySprintId/:id', userStoryController.getDetailedUserStoriesBySprintIdController);
-userStoryRoutes.get('/getDetailedUserStoriesByProductId/:id', userStoryController.getDetailedUserStoriesByProductId);
-userStoryRoutes.get('/getDetailedUserStoriesByEpicId/:id', userStoryController.getDetailedUserStoriesByEpicId);
+userStoryRoutes.get('/getDetailedUserStoriesByProductId/:id', userStoryController.getDetailedUserStoriesByProductIdController);
+userStoryRoutes.get('/getDetailedUserStoriesByEpicId/:id', userStoryController.getDetailedUserStoriesByEpicIdController);
 
 export { userStoryRoutes };
