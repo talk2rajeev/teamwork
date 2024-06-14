@@ -1,20 +1,28 @@
 import React, {useState} from 'react';
 import { FaBug } from "react-icons/fa";
 import * as coreComponents from '../../components/core-components';
+import {loginAsync, logout, loginDetails} from './loginSlice';
+import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import { Logo } from '../../components/logo/Logo';
 
+const inputNames = {
+    userName: 'username',
+    password: 'password',
+};
+
 const Login: React.FC =() =>{
-    const inputNames = {
-        userName: 'username',
-        password: 'password',
-    };
+
+
+    const loginDetail = useAppSelector(loginDetails);
+    const dispatch = useAppDispatch();
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    const btnClick = () => {
+    const login = () => {
         const reqPayload = {username, password};
         console.log(reqPayload);
+        dispatch(loginAsync(reqPayload));
     }
 
     const onInputChange = (event: React.ChangeEvent<HTMLInputElement>, data: any) => {
@@ -27,6 +35,7 @@ const Login: React.FC =() =>{
     }
     
     const isLoginButtonDisabled = (username === '' || username.length < 5) || (password === '' || password.length < 5);
+    const loading = loginDetail?.status === 'loading';
 
     return (
         <div className='h-screen bg-gray-100 flex justify-center'>
@@ -54,70 +63,11 @@ const Login: React.FC =() =>{
                     <coreComponents.Button 
                         label="Login"
                         type="primary"
-                        clickHandler={btnClick}
+                        clickHandler={login}
                         disabled={isLoginButtonDisabled}
+                        loading={loading}
                     />
                 </div>
-                {/* <div className='p-2'>
-                    <coreComponents.Input 
-                        label='Address'
-                        required={true}
-                        error='Hey, wait fot me. This is Address field cant be empty. !Address field cant be empty !!!'
-                        type='text'
-                        placeholder='test'
-                        data={[1,2,3,4,5]}
-                        dataAttribute='123'
-                        onchange={(e, d)=>{console.log(e.target.value, e.target.dataset)}}
-                    />
-                </div>
-                
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="Error"
-                        type="error"
-                        clickHandler={btnClick}
-                        disabled={true}
-                    />
-                </div>
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="Primary"
-                        type="primary"
-                        clickHandler={btnClick}
-                    />
-                </div>
-                
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="default"
-                        type="default"
-                        clickHandler={btnClick}
-                    />
-                </div>
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="success"
-                        type="success"
-                        clickHandler={btnClick}
-                        disabled={true}
-                    />
-                </div>
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="warning"
-                        type="warning"
-                        clickHandler={btnClick}
-                    />
-                </div>
-                <div className='p-2'>
-                    <coreComponents.Button 
-                        label="error"
-                        type="error"
-                        clickHandler={btnClick}
-                        disabled={true}
-                        loading={true}
-                    />
-                </div> */}
             </div>
         </div>
     );

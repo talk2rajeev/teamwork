@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from './app/store';
+import { store } from './appStore/store';
 import App from './App';
 import Layout from './components/layout/Layout';
 import Login from './pages/login/Login';
