@@ -119,3 +119,11 @@
     font-style: italic;
   }
  /*Google font End*/ 
+
+ .border-1 {
+  border-width: 1px;
+ }
+
+ .max-h-152 {
+   max-height: 38rem
+ }

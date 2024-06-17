@@ -3,7 +3,7 @@ import { FaBug } from "react-icons/fa";
 import * as coreComponents from '../../components/core-components';
 import {loginAsync, logout, loginDetails} from './loginSlice';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
-import { Logo } from '../../components/logo/Logo';
+import { Logo } from '../../components/appComponents/logo/Logo';
 
 const inputNames = {
     userName: 'username',

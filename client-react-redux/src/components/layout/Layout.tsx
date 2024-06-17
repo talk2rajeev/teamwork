@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-import PageHeader from '../pageHeader/pageHeader';
+import PageHeader from '../appComponents/pageHeader/pageHeader';
 
 type layoutProps = {
     children: React.ReactNode

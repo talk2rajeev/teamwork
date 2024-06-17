@@ -4,7 +4,7 @@ import * as authControllers from '../../controllers/authController/auth.controll
 const authRouts = express.Router();
 
 authRouts.post('/login', authControllers.login);
-authRouts.post('/token', authControllers.token)
+authRouts.post('/token', authControllers.token);
 
 export { authRouts };
 

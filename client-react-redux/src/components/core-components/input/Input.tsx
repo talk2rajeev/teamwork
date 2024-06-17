@@ -1,4 +1,3 @@
-import { error } from 'console';
 import React from 'react'
 
 type propsType = {
@@ -13,14 +12,15 @@ type propsType = {
     dataAttribute?: string,
     data?: any,
     error?: string,
+    classes?: string,
 }
-const Input = ({label, type, placeholder, name, value, onchange, disabled, required, dataAttribute, data, error}: propsType) => {
+const Input = ({label, type, placeholder, name, value, onchange, disabled, required, dataAttribute, data, error, classes}: propsType) => {
     const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         onchange(event, data);
     }
-    const inputclasses = `text-slate-700 text-xs w-full p-3 bg-gray-100`;
+    const inputclasses = `text-slate-700 text-xs w-full p-3 bg-gray-100 ${classes}`;
     return <>
-        {label ? <span className='text-xs w-full text-slate-700'>{label}{required ? <span className='text-red-400'>*</span> : ''}</span> : ''}
+        {label ? <div className='text-xs w-full text-slate-700 mb-2'>{label}{required ? <span className='text-red-400'>*</span> : ''}</div> : ''}
         <input 
             data-attr={dataAttribute}
             type={type} 
