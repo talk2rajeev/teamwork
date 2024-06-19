@@ -24,25 +24,6 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, size = 'md', children }
   const sizeClass = SIZE_MAP[size];
 
   return (
-    // <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 h-5/6 scroll scroll-smooth">
-    //   <div className={`bg-white rounded-lg shadow-lg w-full p-4 ${sizeClass}`}>
-    //     <div className="flex justify-between items-center border-b pb-2">
-    //       <h2 className="text-xl font-semibold">{title}</h2>
-    //       <button onClick={onClose} className="text-gray-600 hover:text-gray-900">
-    //         <IoMdClose />
-    //       </button>
-    //     </div>
-    //     <div className="mt-4">
-    //       {children}
-    //     </div>
-    //     <div className="mt-4 flex justify-end border-t pt-2">
-    //       <button onClick={onClose} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-    //         Close
-    //       </button>
-    //     </div>
-    //   </div>
-    // </div>
-
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className={`relative bg-white rounded-lg shadow-lg max-w-lg w-full ${sizeClass}`}>
         <div className="flex justify-between items-center border-b p-4">
