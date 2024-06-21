@@ -1,12 +1,35 @@
-import react from 'react';
+import react, {useState} from 'react';
 import axios from 'axios';
 import * as coreComponents from '../../core-components';
 import 'react-quill/dist/quill.snow.css';
 import QuillEditor from '../../quillEditor/QuillEditor';
 
-const CreateStory = () => {
-    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>, data?: any) => {
+type createStoryProps = {
+    type?: 'userStory' | 'bug',
+}
 
+type bugReqPayloadType = {
+    title: string,
+    description: string,
+    statusId?: number,
+    assignedToUserId: number,
+    reporterUserId: number,
+    userStoryPoint?: number,
+    productId: number,
+    epicId?: number,
+    userStoryType?: string,
+    sprintId?: number,
+    priority?: number,
+};
+
+type userStoryReqPayloadType = Omit<bugReqPayloadType, 'userStoryType' | 'priority'>
+
+const CreateStory: React.FC<createStoryProps> = ({type}) => {
+    const [reqPayload, setReqPayload] = useState<bugReqPayloadType | userStoryReqPayloadType>();
+
+
+    const onInputChange = (event: React.ChangeEvent<HTMLInputElement>, data?: any) => {
+        console.log(event.target.name, event.target.value);
     }
 
     const handleSubmit = async (e: any) => {
@@ -20,6 +43,18 @@ const CreateStory = () => {
             alert('Error saving post');
         }
     };
+
+    const validateBugReqPayload = () => {
+        const payload = {
+            // title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId
+        }
+    }
+
+    const validateUserStoryReqPayload = () => {
+        const payload = {
+            // title, description, statusId, assignedToUserId, reporterUserId, userStoryPoint, productId, epicId, sprintId
+        }
+    }
 
     const descriptionChange = (content: string) => {
 
