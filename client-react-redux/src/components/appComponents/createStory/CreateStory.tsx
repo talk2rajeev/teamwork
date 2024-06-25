@@ -25,6 +25,13 @@ type bugReqPayloadType = {
 type userStoryReqPayloadType = Omit<bugReqPayloadType, 'userStoryType' | 'priority'>
 
 const CreateStory: React.FC<createStoryProps> = ({type}) => {
+
+    // TODO: assignedTo, QA engineer as autoSelect (value from product team)
+    // Date as date component
+    // product, epic as auto select dropdown from db 
+    // status as select combobox
+    // render priority conditional for bug as combobox
+    
     const [reqPayload, setReqPayload] = useState<bugReqPayloadType | userStoryReqPayloadType>();
 
 

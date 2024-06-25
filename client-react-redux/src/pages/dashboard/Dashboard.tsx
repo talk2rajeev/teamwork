@@ -8,7 +8,7 @@ import * as coreComponents from '../../components/core-components';
 
 const Dashboard: React.FC = () => {
 
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
       clickHandler={openModal}
     />  
     <Modal isOpen={isModalOpen} onClose={closeModal} title="Modal Title" size='lg'>
-      <h1>asfdasdf </h1>
+      <CreateStory />
     </Modal>
   </Layout>;
 };
