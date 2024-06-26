@@ -127,3 +127,7 @@
  .max-h-152 {
    max-height: 38rem
  }
+
+.ql-container {
+  min-height: 120px;
+}
