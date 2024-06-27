@@ -26,11 +26,13 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, size = 'md', children }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className={`relative bg-white rounded-lg shadow-lg max-w-lg w-full ${sizeClass}`}>
-        <div className="flex justify-between items-center border-b p-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-900">
-            <IoMdClose />
-          </button>
+        <div className=" border-b p-4">
+          <h2 className="text-center text-xl text-gray-700 font-semibold center">{title}</h2>
+          <div className='absolute top-5 right-2'>
+            <button onClick={onClose} className="text-gray-600 hover:text-gray-900">
+              <IoMdClose />
+            </button>
+          </div>
         </div>
         <div className="pl-4 pr-4 min-h-28 max-h-152 overflow-y-auto">
           {children}
