@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
       type="primary"
       clickHandler={openModal}
     />  
-    <Modal isOpen={isModalOpen} onClose={closeModal} title="Modal Title" size='lg'>
+    <Modal isOpen={isModalOpen} onClose={closeModal} title="Create User Story" size='lg'>
       <CreateStory />
     </Modal>
   </Layout>;
