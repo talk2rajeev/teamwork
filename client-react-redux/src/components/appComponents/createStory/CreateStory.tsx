@@ -64,8 +64,10 @@ const CreateStory: React.FC<createStoryProps> = ({type}) => {
     }
 
     const descriptionChange = (content: string) => {
-
+        // name: descriptionChange
     }
+
+    const createdDate = new Date().toISOString().slice(0,10);
 
     return <div className='user-story-container bg-white p-2'>
         <div className='p-2 mb-4'>
@@ -111,46 +113,34 @@ const CreateStory: React.FC<createStoryProps> = ({type}) => {
 
             <div className='grid grid-cols-2 gap-4'>
                 <div className='p-2'>
-                    <coreComponents.Input 
-                        label='Product'
-                        type='text'
-                        name='productName'
-                        placeholder='Product name'
-                        onchange={onInputChange}
-                        classes='text-base bg-white border-1 border-slate-300 outline-slate-400'
+                    <coreComponents.SearchableCombobox 
+                        items={['Sprint.1a', 'Sprint.1b', 'Sprint.2a', 'Sprint.2b', 'Sprint.3a', 'Sprint.3b']}
+                        onSelect={ ((item: string) => {console.log(item)}) }
+                        label='Product Name'
                     />
                 </div>
                 <div className='p-2'>
-                    <coreComponents.Input 
+                    <coreComponents.SearchableCombobox 
+                        items={['UI mockups & wireframe', 'Customer Feedback', 'UI/UX enhancement', 'UI Bugs']}
+                        onSelect={ ((item: string) => {console.log(item)}) }
                         label='Epic'
-                        type='text'
-                        name='epicName'
-                        placeholder='Epic'
-                        onchange={onInputChange}
-                        classes='text-base bg-white border-1 border-slate-300 outline-slate-400'
                     />
                 </div>
             </div>
 
             <div className='grid grid-cols-2 gap-4'>
                 <div className='p-2'>
-                    <coreComponents.Input 
+                    <coreComponents.SearchableCombobox 
+                        items={['Rajeev sharma', 'Amit', 'Pankaj', 'Avinash']}
+                        onSelect={ ((item: string) => {console.log(item)}) }
                         label='Assigned to'
-                        type='text'
-                        name='assignedTo'
-                        placeholder='Assigned to'
-                        onchange={onInputChange}
-                        classes='text-base bg-white border-1 border-slate-300 outline-slate-400'
                     />
                 </div>
                 <div className='p-2'>
-                    <coreComponents.Input 
+                    <coreComponents.SearchableCombobox 
+                        items={['Pankaj', 'Avinash', 'Rajeev sharma', 'Amit']}
+                        onSelect={ ((item: string) => {console.log(item)}) }
                         label='QA Engineer'
-                        type='text'
-                        name='qaengineer'
-                        placeholder='QA Engineer'
-                        onchange={onInputChange}
-                        classes='text-base bg-white border-1 border-slate-300 outline-slate-400'
                     />
                 </div>
             </div>
@@ -167,12 +157,12 @@ const CreateStory: React.FC<createStoryProps> = ({type}) => {
                     />
                 </div>
                 <div className='p-2'>
-                    <coreComponents.Input 
+                    <coreComponents.DateInput 
                         label='Date'
-                        type='text'
                         name='date'
-                        placeholder='Date'
+                        value={createdDate}
                         onchange={onInputChange}
+                        disabled={true}
                         classes='text-base bg-white border-1 border-slate-300 outline-slate-400'
                     />
                 </div>
