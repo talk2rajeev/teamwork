@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import { login, logoutAsyncApi } from './loginAPI';
+import {setSessionStorage} from '../../utils/storage/storage';
 
 export interface loginState {
   tokens: {
     accessToken: string,
     refreshToken: string,
     expiresIn: number,
+    expireTime: number,
   } | null;
   status: 'idle' | 'loading' | 'failed';
 }
@@ -70,7 +72,8 @@ export const loginSlice = createSlice({
         state.status = 'idle';
         state.tokens = action.payload;
         if(action.payload.accessToken && action.payload.refreshToken && action.payload.expiresIn) {
-            //TODO: store token in sessionStorage
+          setSessionStorage('login', JSON.stringify(state));
+            //sessionStorage.setItem('login', JSON.stringify(state));
         }
       })
       .addCase(loginAsync.rejected, (state) => {
