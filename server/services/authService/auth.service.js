@@ -5,4 +5,16 @@ async function findUserByUsername(username) {
     return users;
 }
 
-export { findUserByUsername }
+async function getUserDetail(loginId) {
+    const query = `SELECT up.fname, up.lname, t.teamName, t.teamId, r.roleName, r.roleId, ul.username
+        FROM user_profile up
+        JOIN  user_login ul ON up.loginId = ul.loginId 
+        JOIN user_team_role utr ON up.profileId = utr.profileId
+        JOIN team t ON utr.teamId = t.teamId
+        JOIN role r ON utr.roleId = r.roleId
+        WHERE ul.loginId = ?`
+    const [users, ...meta] = await pool.query(query, [loginId]).catch(err => console.log(err));
+    return users;
+}
+
+export { findUserByUsername, getUserDetail }
