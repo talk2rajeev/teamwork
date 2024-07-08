@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import { login, logoutAsyncApi } from './loginAPI';
+import { AuthUtil } from '../../utils/auth/auth';
 import {setSessionStorage} from '../../utils/storage/storage';
 
 export interface loginState {
@@ -26,7 +27,7 @@ const initialState: loginState = {
 export const loginAsync = createAsyncThunk(
   'auth/login',
   async (reqPayload: { username: string; password: string; }) => {
-    const response = await login(reqPayload);
+    const response = await AuthUtil.login(reqPayload);
     // The value we return becomes the `fulfilled` action payload
     return JSON.parse(response);
   }
