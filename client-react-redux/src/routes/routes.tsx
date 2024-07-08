@@ -1,31 +1,28 @@
 import React from 'react';
 import { HashRouter,  Routes, Route } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 
 import Login from '../pages/login/Login';
-import Layout from '../components/layout/Layout';
 import Dashboard from '../pages/dashboard/Dashboard';
 import SprintBoard from '../pages/sprintBoard/SprintBoard';
 import Epics from '../pages/epics/Epics';
 import Backlogs from '../pages/backlogs/Backlogs';
 import Profile from '../pages/profile/Profile';
 import ProtectedRoute from '../components/appComponents/protectedRoute/ProtectedRoute';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from '../appStore/store';
-import {getSessionStorage} from '../utils/storage/storage';
+import { AuthUtil } from '../utils/auth/auth';
+
 
 const AppRoutes: React.FC = () => {
 
   const loginDetail = useSelector((state: RootState) => state.login);
-  const login = getSessionStorage('login');
-
-  let isLoggedIn = false;
-  console.log(loginDetail.tokens);
-  if(loginDetail.tokens?.expiresIn && (new Date().getTime()) < loginDetail.tokens?.expireTime) {
-    isLoggedIn = true
+  
+  let loginTrue = false;
+  if(AuthUtil.isLoggedIn() || loginDetail.tokens?.expiresIn && (new Date().getTime()) < loginDetail.tokens?.expireTime) {
+    loginTrue = true
   }
   
-  const isAuthenticated = isLoggedIn;
+  const isAuthenticated = loginTrue;
 
   return (
     <HashRouter>
