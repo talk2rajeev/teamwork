@@ -31,9 +31,7 @@ const Button = ({label, type, clickHandler, disabled, dataAttribute, data, loadi
     }
 
     let buttonClasses = `rounded-sm text-xs w-full p-3 transform transition duration-300 ease-in-out  ${cssClassMap[type]} ${disabled ? 'disabled:opacity-50' : '' }`; 
-    // if(disabled) {
-    //     buttonClasses+=' disabled:opacity-50';
-    // }
+
     const buttonTextContent = loading ? <span className='flex justify-center items-center'><Spinner />{label}</span> : label;
     
     return dataAttribute ? <button data-attr={dataAttribute} onClick={onclick} className={buttonClasses} disabled={disabled}>{buttonTextContent}</button>

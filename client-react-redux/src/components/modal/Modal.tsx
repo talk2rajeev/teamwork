@@ -8,6 +8,7 @@ interface ModalProps {
   title?: string;
   size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl',
   children: React.ReactNode;
+  footer?: boolean,
 }
 
 const SIZE_MAP = {
@@ -19,7 +20,7 @@ const SIZE_MAP = {
   xl: 'max-w-screen-xl',
 };
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, title, size = 'md', children }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, title, size = 'md', children, footer=false }) => {
   if (!isOpen) return null;
   const sizeClass = SIZE_MAP[size];
 
@@ -37,11 +38,16 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, size = 'md', children }
         <div className="pl-4 pr-4 min-h-28 max-h-152 overflow-y-auto">
           {children}
         </div>
-        <div className="flex justify-end p-2 border-t">
-          <button onClick={onClose} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-            Close
-          </button>
-        </div>
+        {
+          footer && <div className="flex justify-end p-2 border-t">
+            <button onClick={onClose} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-blue-700">
+              Close
+            </button>
+            <button onClick={onClose} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+              Close
+            </button>
+          </div>
+        }
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { NavItems } from '../../../utils/constants';
+import { NavItems } from '../../../utils/constants/constants';
 // import { useAppSelector, useAppDispatch } from '../../app/hooks';
 // import { selectCount } from '../../features/counter/counterSlice';
 import { useDispatch, useSelector } from "react-redux";

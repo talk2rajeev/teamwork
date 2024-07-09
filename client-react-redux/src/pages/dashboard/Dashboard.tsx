@@ -4,13 +4,14 @@ import CreateStory from '../../components/appComponents/createStory/CreateStory'
 import Modal from '../../components/modal/Modal';
 import Popover from '../../components/popover/popover';
 import * as coreComponents from '../../components/core-components';
-
+import { AuthUtil } from '../../utils/auth/auth';
 
 const Dashboard: React.FC = () => {
 
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+  console.log('getUesrDetaul ', AuthUtil.getUserDetail());
 
   return <Layout>
     <h2>Dashboard Page</h2>
@@ -25,7 +26,7 @@ const Dashboard: React.FC = () => {
       type="primary"
       clickHandler={openModal}
     />  
-    <Modal isOpen={isModalOpen} onClose={closeModal} title="Create User Story" size='lg'>
+    <Modal isOpen={isModalOpen} onClose={closeModal} title="Create User Story" size='lg' footer={true}>
       <CreateStory />
     </Modal>
   </Layout>;

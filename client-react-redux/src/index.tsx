@@ -6,6 +6,7 @@ import App from './App';
 import Layout from './components/layout/Layout';
 import Login from './pages/login/Login';
 import reportWebVitals from './reportWebVitals';
+import { storageEncryption } from './utils/storage/storage';
 import './assets/css/tailwind.css';
 import './index.css';
 
@@ -13,6 +14,7 @@ import AppRoutes from './routes/routes';
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
+storageEncryption();
 
 root.render(
   <React.StrictMode>
