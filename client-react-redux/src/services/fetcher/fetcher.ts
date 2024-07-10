@@ -9,9 +9,9 @@ const constructUrl = (endpoint: string, params?: Record<string, string | number>
   if (params && Object.keys(params).length > 0) {
     const queryString = new URLSearchParams(params as Record<string, string>).toString();
     url += `?${queryString}`;
-  }
-
-  return url;
+   }
+  
+    return url;
 };
 
 const getToken = (): string | null => {
