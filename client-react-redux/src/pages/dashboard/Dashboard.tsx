@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import CreateStory from '../../components/appComponents/createStory/CreateStory';
 import Modal from '../../components/modal/Modal';
@@ -7,29 +7,39 @@ import * as coreComponents from '../../components/core-components';
 import { AuthUtil } from '../../utils/auth/auth';
 
 const Dashboard: React.FC = () => {
-
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   console.log('getUesrDetaul ', AuthUtil.getUserDetail());
 
-  return <Layout>
-    <h2>Dashboard Page</h2>
-    <div className='mb-4 mt-4'>
-      <Popover title="Popover Header" content={<p>This is the popover content.</p>}>
-        Click
-      </Popover>
-    </div>
-    
-    <coreComponents.Button 
-      label="Create Story"
-      type="primary"
-      clickHandler={openModal}
-    />  
-    <Modal isOpen={isModalOpen} onClose={closeModal} title="Create User Story" size='lg' footer={true}>
-      <CreateStory />
-    </Modal>
-  </Layout>;
+  return (
+    <Layout>
+      <h2>Dashboard Page</h2>
+      <div className="mb-4 mt-4">
+        <Popover
+          title="Popover Header"
+          content={<p>This is the popover content.</p>}
+        >
+          Click
+        </Popover>
+      </div>
+
+      <coreComponents.Button
+        label="Create Story"
+        type="primary"
+        clickHandler={openModal}
+      />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Create User Story"
+        size="lg"
+        footer={true}
+      >
+        <CreateStory />
+      </Modal>
+    </Layout>
+  );
 };
 
 export default Dashboard;

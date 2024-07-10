@@ -13,7 +13,9 @@ describe('fetcher functions', () => {
     const result = await getFetcher('/user', { id: 1 });
 
     expect(result).toEqual(mockData);
-    expect(fetchMock.called('http://localhost:3000/api/user?id=1')).toBeTruthy();
+    expect(
+      fetchMock.called('http://localhost:3000/api/user?id=1')
+    ).toBeTruthy();
   });
 
   it('should fetch data with POST request', async () => {
@@ -37,39 +39,44 @@ describe('fetcher functions', () => {
   });
 
   // Define fallback responses for GET, POST, and PUT after specific mocks
-  
 });
 
-
 describe('fetcher function fallback scenario', () => {
-    afterEach(() => {
-        fetchMock.restore();
+  afterEach(() => {
+    fetchMock.restore();
+  });
+  beforeEach(() => {
+    fetchMock.get('*', { message: 'Fallback GET response' });
+    fetchMock.get('/user', {
+      message:
+        'Error getting data to https://localhost:3000/api/user?id=1: 404 Not Found - Not Found',
     });
-    beforeEach(() => {
-        fetchMock.get('*', { message: 'Fallback GET response' });
-        fetchMock.get('/user', { message: 'Error getting data to https://localhost:3000/api/user?id=1: 404 Not Found - Not Found' });
-        fetchMock.post('*', { message: 'Fallback POST response' });
-        fetchMock.put('*', { message: 'Fallback PUT response' });
-      });
-    
-      it('should handle fallback for unrecognized GET request', async () => {
-        const result = await getFetcher('/unrecognizedEndpoint', { id: 1 });
-    
-        expect(result).toEqual({ message: 'Fallback GET response' });
-        expect(fetchMock.called()).toBeTruthy();
-      });
-    
-      it('should handle fallback for unrecognized POST request', async () => {
-        const result = await postFetcher('/unrecognizedEndpoint', { title: 'New Post' });
-    
-        expect(result).toEqual({ message: 'Fallback POST response' });
-        expect(fetchMock.called()).toBeTruthy();
-      });
-    
-      it('should handle fallback for unrecognized PUT request', async () => {
-        const result = await putFetcher('/unrecognizedEndpoint', { title: 'Updated Post' });
-    
-        expect(result).toEqual({ message: 'Fallback PUT response' });
-        expect(fetchMock.called()).toBeTruthy();
-      });
-})
+    fetchMock.post('*', { message: 'Fallback POST response' });
+    fetchMock.put('*', { message: 'Fallback PUT response' });
+  });
+
+  it('should handle fallback for unrecognized GET request', async () => {
+    const result = await getFetcher('/unrecognizedEndpoint', { id: 1 });
+
+    expect(result).toEqual({ message: 'Fallback GET response' });
+    expect(fetchMock.called()).toBeTruthy();
+  });
+
+  it('should handle fallback for unrecognized POST request', async () => {
+    const result = await postFetcher('/unrecognizedEndpoint', {
+      title: 'New Post',
+    });
+
+    expect(result).toEqual({ message: 'Fallback POST response' });
+    expect(fetchMock.called()).toBeTruthy();
+  });
+
+  it('should handle fallback for unrecognized PUT request', async () => {
+    const result = await putFetcher('/unrecognizedEndpoint', {
+      title: 'Updated Post',
+    });
+
+    expect(result).toEqual({ message: 'Fallback PUT response' });
+    expect(fetchMock.called()).toBeTruthy();
+  });
+});

@@ -2,14 +2,14 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import { login, logoutAsyncApi } from './loginAPI';
 import { AuthUtil } from '../../utils/auth/auth';
-import {setSessionStorage} from '../../utils/storage/storage';
+import { setSessionStorage } from '../../utils/storage/storage';
 
 export interface loginState {
   tokens: {
-    accessToken: string,
-    refreshToken: string,
-    expiresIn: number,
-    expireTime: number,
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+    expireTime: number;
   } | null;
   status: 'idle' | 'loading' | 'failed';
 }
@@ -26,21 +26,18 @@ const initialState: loginState = {
 // typically used to make async requests.
 export const loginAsync = createAsyncThunk(
   'auth/login',
-  async (reqPayload: { username: string; password: string; }) => {
+  async (reqPayload: { username: string; password: string }) => {
     const response = await AuthUtil.login(reqPayload);
     // The value we return becomes the `fulfilled` action payload
     return JSON.parse(response);
   }
 );
 
-export const logoutAsync = createAsyncThunk(
-    'auth/logout',
-    async () => {
-      await logoutAsyncApi();
-      // The value we return becomes the `fulfilled` action payload
-      return;
-    }
-);
+export const logoutAsync = createAsyncThunk('auth/logout', async () => {
+  await logoutAsyncApi();
+  // The value we return becomes the `fulfilled` action payload
+  return;
+});
 
 export const loginSlice = createSlice({
   name: 'counter',
@@ -72,9 +69,13 @@ export const loginSlice = createSlice({
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.tokens = action.payload;
-        if(action.payload.accessToken && action.payload.refreshToken && action.payload.expiresIn) {
+        if (
+          action.payload.accessToken &&
+          action.payload.refreshToken &&
+          action.payload.expiresIn
+        ) {
           setSessionStorage('login', JSON.stringify(state));
-            //sessionStorage.setItem('login', JSON.stringify(state));
+          //sessionStorage.setItem('login', JSON.stringify(state));
         }
       })
       .addCase(loginAsync.rejected, (state) => {
@@ -90,8 +91,7 @@ export const loginSlice = createSlice({
       })
       .addCase(logoutAsync.rejected, (state) => {
         state.status = 'failed';
-      })
-      
+      });
   },
 });
 

@@ -6,7 +6,10 @@ interface ProtectedRouteProps {
   redirectPath?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ isAuthenticated, redirectPath = '/' }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  isAuthenticated,
+  redirectPath = '/',
+}) => {
   return isAuthenticated ? <Outlet /> : <Navigate to={redirectPath} />;
 };
 

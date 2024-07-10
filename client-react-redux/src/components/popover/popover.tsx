@@ -3,18 +3,26 @@ import React, { FC, useState, useRef, useEffect } from 'react';
 interface PopoverProps {
   content: React.ReactNode;
   children: React.ReactNode;
-  type?: 'warning' | 'error' | 'primary' | 'default',
-  title?: string,
+  type?: 'warning' | 'error' | 'primary' | 'default';
+  title?: string;
 }
 
-const Popover: FC<PopoverProps> = ({ content, children, type = 'default', title }) => {
+const Popover: FC<PopoverProps> = ({
+  content,
+  children,
+  type = 'default',
+  title,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const togglePopover = () => setIsOpen(!isOpen);
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+    if (
+      popoverRef.current &&
+      !popoverRef.current.contains(event.target as Node)
+    ) {
       setIsOpen(false);
     }
   };
@@ -28,7 +36,10 @@ const Popover: FC<PopoverProps> = ({ content, children, type = 'default', title 
 
   return (
     <div className="relative inline-block" ref={popoverRef}>
-      <button onClick={togglePopover} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+      <button
+        onClick={togglePopover}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+      >
         {children}
       </button>
       {isOpen && (
