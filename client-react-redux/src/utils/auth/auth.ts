@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { getSessionStorage } from '../../utils/storage/storage';
+import { getSessionStorage } from '../storage';
 
 interface TokenPayload {
   accessToken: string;
@@ -15,12 +15,11 @@ class Auth {
   postRequestOption(data: string) {
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
-    const requestOptions = {
+    return {
       method: 'POST',
       headers: myHeaders,
       body: data,
     };
-    return requestOptions;
   }
 
   login(reqPayload: { username: string; password: string }) {
@@ -34,11 +33,16 @@ class Auth {
   refreshToken() {}
 
   getLoginDetail() {
-    return JSON.parse(getSessionStorage('login'));
+    return getSessionStorage('login');
+  }
+
+  getParsedLoginDetail(loginDetailText: string | null) {
+    return loginDetailText ? JSON.parse(loginDetailText) : null;
   }
 
   isLoggedIn() {
-    const loginDetail = this.getLoginDetail();
+    const loginDetailText = this.getLoginDetail();
+    const loginDetail = this.getParsedLoginDetail(loginDetailText);
     if (
       loginDetail?.tokens?.expiresIn &&
       new Date().getTime() < loginDetail?.tokens?.expireTime
@@ -49,7 +53,8 @@ class Auth {
   }
 
   getUserDetail() {
-    const loginDetail = this.getLoginDetail();
+    const loginDetailText = this.getLoginDetail();
+    const loginDetail = this.getParsedLoginDetail(loginDetailText);
     let decoded;
     if (loginDetail) {
       decoded = jwtDecode<TokenPayload>(loginDetail.tokens.accessToken);
