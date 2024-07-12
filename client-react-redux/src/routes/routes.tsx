@@ -7,6 +7,9 @@ import SprintBoard from '../pages/sprintBoard/SprintBoard';
 import Epics from '../pages/epics/Epics';
 import Backlogs from '../pages/backlogs/Backlogs';
 import Profile from '../pages/profile/Profile';
+import Product from '../pages/product/Product';
+import Team from '../pages/team/Team';
+import Users from '../pages/users/Users';
 import ProtectedRoute from '../components/appComponents/protectedRoute/ProtectedRoute';
 import { useSelector } from 'react-redux';
 import { RootState } from '../appStore/store';
@@ -32,7 +35,11 @@ const AppRoutes: React.FC = () => {
         <Route path="/" element={<Login />} />
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
           <Route path="/profile" element={<Profile />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="product" element={<Product />} />
+            <Route path="team" element={<Team />} />
+            <Route path="users" element={<Users />} />
+          </Route>
           <Route path="/:productId/sprint" element={<SprintBoard />} />
           <Route path="epics" element={<Epics />} />
           <Route path="backlogs" element={<Backlogs />} />
