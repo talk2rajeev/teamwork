@@ -1,3 +1,4 @@
+import { getSessionStorage } from '../../utils/storage/storage';
 type Params = Record<string, any>;
 
 const HOST = 'http://localhost:3000';
@@ -20,7 +21,7 @@ const constructUrl = (
 };
 
 const getToken = (): string | null => {
-  return sessionStorage.getItem('authToken');
+  return getSessionStorage('token');
 };
 
 async function fetchRequest<T>(
@@ -57,7 +58,7 @@ async function fetchRequest<T>(
   return data;
 }
 
-export async function getFetcher<T>(
+export async function get<T>(
   endpoint: string,
   params: Params = {},
   headers: HeadersInit = {}
@@ -65,7 +66,7 @@ export async function getFetcher<T>(
   return fetchRequest<T>(endpoint, 'GET', params, headers);
 }
 
-export async function postFetcher<T>(
+export async function post<T>(
   endpoint: string,
   params: Params = {},
   headers: HeadersInit = {}
@@ -73,36 +74,10 @@ export async function postFetcher<T>(
   return fetchRequest<T>(endpoint, 'POST', params, headers);
 }
 
-export async function putFetcher<T>(
+export async function put<T>(
   endpoint: string,
   params: Params = {},
   headers: HeadersInit = {}
 ): Promise<T> {
   return fetchRequest<T>(endpoint, 'PUT', params, headers);
 }
-
-/*
-OLD LOGIN CODE
-
-const BASE_PATH = 'http://localhost:3000';
-const BASE_ROUTE = 'api';
-
-const API: {[key: string]: string} = {
-    LOGIN: 'auth/login',
-}
-
-export function login(reqPayload: {username: string, password: string}) {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify(reqPayload);
-
-    const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-    };
-    const URL = `${BASE_PATH}/${BASE_ROUTE}/${API.LOGIN}`;
-    return fetch(URL, requestOptions).then(resp => resp.text());
-}
-*/

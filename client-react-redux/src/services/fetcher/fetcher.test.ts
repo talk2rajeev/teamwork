@@ -1,5 +1,5 @@
 import fetchMock from 'fetch-mock';
-import { getFetcher, postFetcher, putFetcher } from './fetcher';
+import { get, post, put } from './fetcher';
 
 describe('fetcher functions', () => {
   afterEach(() => {
@@ -10,7 +10,7 @@ describe('fetcher functions', () => {
     const mockData = { id: 1, name: 'Test User' };
     fetchMock.getOnce('http://localhost:3000/api/user?id=1', mockData);
 
-    const result = await getFetcher('/user', { id: 1 });
+    const result = await get('/user', { id: 1 });
 
     expect(result).toEqual(mockData);
     expect(
@@ -22,7 +22,7 @@ describe('fetcher functions', () => {
     const mockData = { id: 1, title: 'New Post' };
     fetchMock.postOnce('http://localhost:3000/api/posts', mockData);
 
-    const result = await postFetcher('/posts', { title: 'New Post' });
+    const result = await post('/posts', { title: 'New Post' });
 
     expect(result).toEqual(mockData);
     expect(fetchMock.called('http://localhost:3000/api/posts')).toBeTruthy();
@@ -32,7 +32,7 @@ describe('fetcher functions', () => {
     const mockData = { id: 1, title: 'Updated Post' };
     fetchMock.putOnce('http://localhost:3000/api/posts', mockData);
 
-    const result = await putFetcher('/posts', { title: 'Updated Post' });
+    const result = await put('/posts', { title: 'Updated Post' });
 
     expect(result).toEqual(mockData);
     expect(fetchMock.called('http://localhost:3000/api/posts')).toBeTruthy();
@@ -56,14 +56,14 @@ describe('fetcher function fallback scenario', () => {
   });
 
   it('should handle fallback for unrecognized GET request', async () => {
-    const result = await getFetcher('/unrecognizedEndpoint', { id: 1 });
+    const result = await get('/unrecognizedEndpoint', { id: 1 });
 
     expect(result).toEqual({ message: 'Fallback GET response' });
     expect(fetchMock.called()).toBeTruthy();
   });
 
   it('should handle fallback for unrecognized POST request', async () => {
-    const result = await postFetcher('/unrecognizedEndpoint', {
+    const result = await post('/unrecognizedEndpoint', {
       title: 'New Post',
     });
 
@@ -72,7 +72,7 @@ describe('fetcher function fallback scenario', () => {
   });
 
   it('should handle fallback for unrecognized PUT request', async () => {
-    const result = await putFetcher('/unrecognizedEndpoint', {
+    const result = await put('/unrecognizedEndpoint', {
       title: 'Updated Post',
     });
 
