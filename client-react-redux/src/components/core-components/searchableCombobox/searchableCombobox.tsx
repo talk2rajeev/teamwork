@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FaSearch } from 'react-icons/fa';
 
 interface SearchableComboBoxProps {
   items: string[];
   onSelect: (item: string) => void;
   label?: string;
   required?: boolean;
+  placeholder?: string;
 }
 
 const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
@@ -12,6 +14,7 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
   onSelect,
   label,
   required,
+  placeholder,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,6 +22,8 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
   const [filteredItems, setFilteredItems] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+
+  const placehilderLabel = placeholder ? placeholder : 'Search...';
 
   useEffect(() => {
     setFilteredItems(
@@ -90,9 +95,10 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
         onKeyDown={handleKeyDown}
         onFocus={handleInputFocus}
         ref={inputRef}
-        className="text-slate-700 border w-full text-xs w-full p-3 bg-white border-1 border-slate-300 outline-slate-400"
-        placeholder="Search..."
+        className="text-slate-700 border w-full text-xs w-full p-2 bg-white border-1 border-slate-300 outline-slate-400"
+        placeholder={placehilderLabel}
       />
+      <FaSearch className="absolute top-8 right-3" fill="#888" />
       {isOpen && (
         <ul
           ref={listRef}
