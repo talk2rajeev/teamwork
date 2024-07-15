@@ -38,6 +38,10 @@ const CreateStory: React.FC<createStoryProps> = ({ type }) => {
     bugReqPayloadType | userStoryReqPayloadType
   >();
 
+  // TODO: use this to identify if user changed in the form
+  const [hasChangedSomething, setHasChangedSomething] =
+    useState<boolean>(false);
+
   const onInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     data?: any
@@ -96,13 +100,19 @@ const CreateStory: React.FC<createStoryProps> = ({ type }) => {
       <div className="mb-2">
         <div className="grid grid-cols-2 gap-4">
           <div className="p-2">
-            <coreComponents.Input
+            <coreComponents.SearchableCombobox
+              items={[
+                'Sprint.1a',
+                'Sprint.1b',
+                'Sprint.2a',
+                'Sprint.2b',
+                'Sprint.3a',
+                'Sprint.3b',
+              ]}
+              onSelect={(item: string) => {
+                console.log(item);
+              }}
               label="Sprint"
-              type="text"
-              name="sprint"
-              placeholder="Sprint"
-              onchange={onInputChange}
-              classes="text-base bg-white border-1 border-slate-300 outline-slate-400"
             />
           </div>
           <div className="p-2">
@@ -120,18 +130,11 @@ const CreateStory: React.FC<createStoryProps> = ({ type }) => {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-2">
             <coreComponents.SearchableCombobox
-              items={[
-                'Sprint.1a',
-                'Sprint.1b',
-                'Sprint.2a',
-                'Sprint.2b',
-                'Sprint.3a',
-                'Sprint.3b',
-              ]}
+              items={['Pankaj', 'Avinash', 'Rajeev sharma', 'Amit']}
               onSelect={(item: string) => {
                 console.log(item);
               }}
-              label="Product Name"
+              label="Product Owner"
             />
           </div>
           <div className="p-2">
@@ -195,14 +198,6 @@ const CreateStory: React.FC<createStoryProps> = ({ type }) => {
         </div>
 
         <div className="flex justify-end gap-4 pt-4 pb-4 pr-2">
-          <div>
-            <coreComponents.Button
-              label="Reset"
-              type="default"
-              clickHandler={handleSubmit}
-              disabled={true}
-            />
-          </div>
           <div>
             <coreComponents.Button
               label="Submit"
