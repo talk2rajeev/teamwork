@@ -124,6 +124,10 @@
   border-width: 1px;
 }
 
+.border-t-1 {
+  border-top-width: 1px;
+}
+
 .max-h-152 {
   max-height: 38rem;
 }
