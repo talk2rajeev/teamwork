@@ -11,7 +11,7 @@ interface TokenPayload {
   username: string;
   roleName: string;
   roleId: number;
-
+  profileId: number;
   // Add any other fields that your JWT payload contains
 }
 
