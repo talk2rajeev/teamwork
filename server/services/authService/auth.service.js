@@ -22,7 +22,7 @@ async function getUserTeamDetail(loginId) {
 }
 
 async function getUserDetail(loginId) {
-  const query = `SELECT up.fname, up.lname, ul.username, r.roleName, r.roleId
+  const query = `SELECT up.profileId, up.fname, up.lname, ul.username, r.roleName, r.roleId
         FROM user_profile up
         JOIN  user_login ul ON up.loginId = ul.loginId 
         JOIN role r ON r.roleId = up.role_id
