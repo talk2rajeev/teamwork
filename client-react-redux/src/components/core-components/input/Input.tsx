@@ -31,7 +31,7 @@ const Input = ({
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     onchange(event, data);
   };
-  const inputclasses = `text-slate-700 text-xs w-full p-3 bg-gray-100 ${classes}`;
+  const inputclasses = `text-slate-700 text-xs w-full p-2 bg-gray-100 ${classes}`;
   return (
     <>
       {label ? (
