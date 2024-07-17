@@ -7,6 +7,14 @@
   text-decoration-line: underline;
 }
 
+/* Global css */
+p,
+div,
+span,
+li {
+  font-size: 12px;
+}
+
 /*Google fonts*/
 * {
   font-family: 'Poppins', sans-serif;
