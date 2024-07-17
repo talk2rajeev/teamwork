@@ -20,8 +20,19 @@ const constructUrl = (
   return url;
 };
 
+const getTokenDetails = (): string | null => {
+  return getSessionStorage('login');
+};
+
 const getToken = (): string | null => {
-  return getSessionStorage('token');
+  const tokenDetails = getTokenDetails();
+  let tokenJson,
+    token = null;
+  if (tokenDetails) {
+    tokenJson = JSON.parse(tokenDetails);
+    token = tokenJson.tokens.accessToken;
+  }
+  return token;
 };
 
 async function fetchRequest<T>(
