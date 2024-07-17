@@ -6,6 +6,12 @@ interface TokenPayload {
   refreshToken: string;
   expireTime: number;
   expiresIn: number;
+  fname: string;
+  lname: string;
+  username: string;
+  roleName: string;
+  roleId: number;
+
   // Add any other fields that your JWT payload contains
 }
 
