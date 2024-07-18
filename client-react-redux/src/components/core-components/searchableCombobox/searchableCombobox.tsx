@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { IoMdClose, IoIosSearch } from 'react-icons/io';
 
 interface SearchableComboBoxProps {
   items: string[];
@@ -71,6 +71,12 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
     }
   };
 
+  const handleClear = () => {
+    setSearchTerm('');
+    setIsOpen(true);
+    inputRef.current?.focus();
+  };
+
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -88,17 +94,28 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
       ) : (
         ''
       )}
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        onFocus={handleInputFocus}
-        ref={inputRef}
-        className="text-slate-700 border w-full text-xs w-full p-2 bg-white border-1 border-slate-300 outline-slate-400"
-        placeholder={placehilderLabel}
-      />
-      <FaSearch className="absolute top-8 right-3" fill="#888" />
+      <div className="relative">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onFocus={handleInputFocus}
+          ref={inputRef}
+          className="text-slate-700 border w-full text-xs p-2 bg-white border-1 border-slate-300 outline-slate-400"
+          placeholder={placehilderLabel}
+        />
+        <span className="absolute top-2 right-3">
+          {searchTerm ? (
+            <IoMdClose
+              className="cursor-pointer text-gray-500 hover:text-gray-700"
+              onClick={handleClear}
+            />
+          ) : (
+            <IoIosSearch size="15" className="text-gray-500 " />
+          )}
+        </span>
+      </div>
       {isOpen && (
         <ul
           ref={listRef}
