@@ -9,7 +9,6 @@ import { RootState } from '../../../appStore/store';
 const Navigation: React.FC = () => {
   // const count = useAppSelector(selectCount);
   const count = useSelector((state: RootState) => state.counter);
-  console.log('count', count.value);
   const isActive = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'text-blue-500 font-medium' : 'text-gray-500';
   return (
