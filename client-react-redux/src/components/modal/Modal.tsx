@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { FaWindowClose } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 
 interface ModalProps {
@@ -40,12 +39,12 @@ const Modal: FC<ModalProps> = ({
           <h2 className="text-center text-xl text-gray-700 font-semibold center">
             {title}
           </h2>
-          <div className="absolute top-5 right-2">
+          <div className="absolute top-5 right-4">
             <button
               onClick={onClose}
               className="text-gray-600 hover:text-gray-900"
             >
-              <IoMdClose />
+              <IoMdClose size="24" />
             </button>
           </div>
         </div>
