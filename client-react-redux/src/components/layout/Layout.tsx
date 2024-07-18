@@ -15,14 +15,7 @@ function Layout({ children }: layoutProps) {
       </header>
 
       {/* MAIN CONTENT */}
-      <main className="p-4 h-screen bg-gray-100">
-        {children}
-        {/* 
-                Add more content to make the page scrollable 
-                <div className="p-4 h-screen bg-gray-100">More content</div>
-                <div className="p-4 h-screen bg-gray-200">Even more content</div>
-                */}
-      </main>
+      <main className="p-4 h-screen bg-gray-100">{children}</main>
     </div>
   );
 }
