@@ -14,9 +14,13 @@ const Navigation: React.FC = () => {
   return (
     <ul className="flex space-x-4">
       {NavItems.map((item) => {
+        const isSprintBoardPath = item.path.includes('sprint');
+        const path = !isSprintBoardPath
+          ? item.path
+          : item.path.replace('productId', '12345');
         return (
           <li className="text-sm" key={item.label}>
-            <NavLink to={item.path} className={isActive}>
+            <NavLink to={path} className={isActive}>
               {item.label}
             </NavLink>
           </li>
