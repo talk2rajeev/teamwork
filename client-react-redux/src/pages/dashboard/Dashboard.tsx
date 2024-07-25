@@ -24,7 +24,12 @@ const Dashboard: React.FC = () => {
   return (
     <Layout>
       {isDashboardRootPage ? (
-        <div>Dashboard Root Page</div>
+        <div>
+          Dashboard Root Page
+          <NavLink to="product" className={isActive}>
+            Product
+          </NavLink>
+        </div>
       ) : (
         <div>
           <div className="grid grid-flow-col auto-cols-max gap-8">
