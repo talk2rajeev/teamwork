@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import { getSessionStorage } from '../storage';
 
-interface TokenPayload {
+export interface TokenPayload {
   accessToken: string;
   refreshToken: string;
   expireTime: number;

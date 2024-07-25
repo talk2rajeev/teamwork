@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import Navigation from '../navigation/Navigation';
 import { Logo } from '../logo/Logo';
 import { AuthUtil } from '../../../utils/auth/auth';
+import { logout } from '../../../slices/login/loginSlice';
+import { useAppDispatch } from '../../../appStore/hooks';
 import Popover from '../../popover/popover';
 import { FaUserCircle } from 'react-icons/fa';
+import { redirect } from 'react-router-dom';
 
 function PageHeader() {
+  const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -19,12 +23,18 @@ function PageHeader() {
   ) => {
     const targetElement = e.currentTarget as HTMLParagraphElement;
     console.log('data ', targetElement.dataset);
+    if (targetElement.dataset.item === 'logout') {
+      // Logout
+      dispatch(logout());
+      redirect('/');
+    } else if (targetElement.dataset.item === 'profile') {
+    }
   };
 
   const Settings = (
     <div>
-      <p data-item="settings" onClick={settingOnclick}>
-        Settings
+      <p data-item="profile" onClick={settingOnclick}>
+        Profile
       </p>
       <p data-item="logout" onClick={settingOnclick}>
         Logout

@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FaBug } from 'react-icons/fa';
 import * as coreComponents from '../../components/core-components';
-import { loginAsync, logout, loginDetails } from './loginSlice';
+import {
+  loginAsync,
+  logout,
+  loginDetails,
+} from '../../slices/login/loginSlice';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import { Logo } from '../../components/appComponents/logo/Logo';
 import { redirect, useNavigate } from 'react-router-dom';

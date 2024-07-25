@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
-import { login, logoutAsyncApi } from './loginAPI';
+import { login, logoutAsyncApi } from '../../utils/api/login/loginAPI';
 import { AuthUtil } from '../../utils/auth/auth';
 import { setSessionStorage } from '../../utils/storage/storage';
 
@@ -50,6 +50,7 @@ export const loginSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       state.tokens = null;
+      sessionStorage.removeItem('login');
     },
     // decrement: (state) => {
     //   state.value -= 1;
