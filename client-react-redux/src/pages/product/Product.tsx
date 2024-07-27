@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AuthUtil } from '../../utils/auth/auth';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
@@ -6,8 +6,10 @@ import {
   productListObject,
 } from '../../slices/product/productSlice';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
+import Modal from '../../components/modal/Modal';
 
 const Product: React.FC = () => {
+  const [productDetail, setProductDetail] = useState<boolean>(false);
   const productListObj = useAppSelector(productListObject);
   const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
@@ -17,6 +19,18 @@ const Product: React.FC = () => {
     console.log('fetch product list > product.tsx');
     dispatch(getAllProductsAsync());
   }, []);
+
+  const showProductDetail = (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
+    setProductDetail(true);
+    const targetElement = event.currentTarget as HTMLSpanElement;
+    console.log(targetElement.dataset);
+  };
+
+  const hideProductDetail = () => {
+    setProductDetail(false);
+  };
 
   console.log('product >>>>>>> ', productListObj);
 
@@ -41,20 +55,28 @@ const Product: React.FC = () => {
                 </div>
                 <div className="pt-2 pb-2  ">
                   <div className="flex gap-3">
-                    <span>
+                    <span
+                      onClick={showProductDetail}
+                      data-action="view"
+                      data-prodid={p.productId}
+                    >
                       <IoMdEye
                         size="16"
                         className="cursor-pointer text-gray-500 hover:text-gray-700"
                       />
                     </span>
-                    <span>
-                      {userDetail?.profileId === p.product_owner_id ? (
+                    {userDetail?.profileId === p.product_owner_id ? (
+                      <span
+                        onClick={showProductDetail}
+                        data-action="edit"
+                        data-prodid={p.productId}
+                      >
                         <IoMdCreate
                           size="16"
                           className="cursor-pointer text-gray-500 hover:text-gray-700"
                         />
-                      ) : null}
-                    </span>
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -62,6 +84,15 @@ const Product: React.FC = () => {
           </div>
         </div>
       )}
+      <Modal
+        isOpen={productDetail}
+        onClose={hideProductDetail}
+        title="Product Detail"
+        size="lg"
+        footer={false}
+      >
+        <div>Product display</div>
+      </Modal>
     </div>
   );
 };
