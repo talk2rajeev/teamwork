@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
   getAllProductsAsync,
   productListObject,
+  setSelectedProductId,
 } from '../../slices/product/productSlice';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import Modal from '../../components/modal/Modal';
@@ -25,7 +26,9 @@ const Product: React.FC = () => {
   ) => {
     setProductDetail(true);
     const targetElement = event.currentTarget as HTMLSpanElement;
-    console.log(targetElement.dataset);
+    const dataset = targetElement.dataset;
+    // console.log(targetElement.dataset);
+    dispatch(setSelectedProductId(Number(dataset.prodid)));
   };
 
   const hideProductDetail = () => {
