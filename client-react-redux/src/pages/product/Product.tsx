@@ -8,6 +8,7 @@ import {
 } from '../../slices/product/productSlice';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import Modal from '../../components/modal/Modal';
+import * as coreComponents from '../../components/core-components';
 
 const Product: React.FC = () => {
   const [productDetail, setProductDetail] = useState<boolean>(false);
@@ -33,6 +34,17 @@ const Product: React.FC = () => {
 
   const hideProductDetail = () => {
     setProductDetail(false);
+  };
+
+  const onInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    data?: any
+  ) => {
+    console.log(event.target.name, event.target.value);
+  };
+
+  const updateProductDetail = () => {
+    console.log('sdfasd');
   };
 
   console.log('product >>>>>>> ', productListObj);
@@ -91,10 +103,60 @@ const Product: React.FC = () => {
         isOpen={productDetail}
         onClose={hideProductDetail}
         title="Product Detail"
-        size="lg"
+        size="md"
         footer={false}
       >
-        <div>Product display</div>
+        <div>
+          <div className="p-2">
+            <coreComponents.Input
+              label="Product Name"
+              type="text"
+              name="productName"
+              placeholder="Product Name"
+              onchange={onInputChange}
+              classes="text-base bg-white border-1 border-slate-300 outline-slate-400"
+            />
+          </div>
+          <div className="p-2">
+            <coreComponents.SearchableCombobox
+              items={[
+                'Sprint.1a',
+                'Sprint.1b',
+                'Sprint.2a',
+                'Sprint.2b',
+                'Sprint.3a',
+                'Sprint.3b',
+              ]}
+              onSelect={(item: string) => {
+                console.log(item);
+              }}
+              label="Select Team"
+            />
+          </div>
+          <div className="p-2">
+            <coreComponents.SearchableCombobox
+              items={[
+                'Sprint.1a',
+                'Sprint.1b',
+                'Sprint.2a',
+                'Sprint.2b',
+                'Sprint.3a',
+                'Sprint.3b',
+              ]}
+              onSelect={(item: string) => {
+                console.log(item);
+              }}
+              label="Product Owner"
+            />
+          </div>
+          <div className="p-2 mb-3">
+            <coreComponents.Button
+              label="Submit"
+              type="primary"
+              clickHandler={updateProductDetail}
+            />
+          </div>
+        </div>
       </Modal>
     </div>
   );
