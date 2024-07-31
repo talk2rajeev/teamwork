@@ -6,9 +6,10 @@ import { logout } from '../../../slices/login/loginSlice';
 import { useAppDispatch } from '../../../appStore/hooks';
 import Popover from '../../popover/popover';
 import { FaUserCircle } from 'react-icons/fa';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function PageHeader() {
+  let navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
   const handleMenuItemClick = (
@@ -26,17 +27,28 @@ function PageHeader() {
     if (targetElement.dataset.item === 'logout') {
       // Logout
       dispatch(logout());
-      redirect('/');
+      navigate('/');
     } else if (targetElement.dataset.item === 'profile') {
+      navigate('/profile');
     }
   };
 
+  const settingDropownClass = 'p-2 hover:bg-gray-300 hover:cursor-pointer';
+
   const Settings = (
-    <div>
-      <p data-item="profile" onClick={settingOnclick}>
+    <div className="">
+      <p
+        className={`${settingDropownClass} rounded-t`}
+        data-item="profile"
+        onClick={settingOnclick}
+      >
         Profile
       </p>
-      <p data-item="logout" onClick={settingOnclick}>
+      <p
+        className={`${settingDropownClass} rounded-b`}
+        data-item="logout"
+        onClick={settingOnclick}
+      >
         Logout
       </p>
     </div>
@@ -48,10 +60,10 @@ function PageHeader() {
       <div className="col-span-2 justify-self-end">
         <div className="grid grid-flow-col auto-cols-max gap-6 pt-2">
           <Navigation />
-          <Popover content={Settings} position="right-2">
-            <div className="flex gap-2 align-middle ml-6">
+          <Popover content={Settings} position="right-0">
+            <div className="flex gap-2 align-middle ml-6 hover:cursor-pointer">
               <FaUserCircle size="18" />
-              <span>
+              <span className="hover:text-gray-900">
                 {userDetail?.fname} {userDetail?.lname}
               </span>
             </div>
