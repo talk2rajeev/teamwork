@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
+import { ProductwithTeam, SelectedProduct } from '../../utils/types/types';
 // import { login, logoutAsyncApi } from './loginAPI';
 
 type product = {
@@ -11,9 +12,9 @@ type product = {
   product_owner_lname: string;
 };
 
-type productWithTeam = product & {
-  team: { teamId: number; teamName: string };
-};
+// type productWithTeam = product & {
+//   team: { teamId: number; teamName: string };
+// };
 
 type productCreated = {
   message?: string;
@@ -28,7 +29,7 @@ export interface productState {
     status: 'idle' | 'loading' | 'failed';
   };
   productCreated?: productCreated;
-  selectedProduct?: productWithTeam;
+  selectedProduct: SelectedProduct;
   selectedProductId: number;
 }
 
@@ -38,7 +39,10 @@ const initialState: productState = {
     status: 'idle',
   },
   productCreated: undefined,
-  selectedProduct: undefined,
+  selectedProduct: {
+    status: 'idle',
+    product: [],
+  },
   selectedProductId: -1,
 };
 
@@ -91,6 +95,18 @@ export const getAllProductsAsync = createAsyncThunk(
   }
 );
 
+export const getProductWithTeamAsync = createAsyncThunk(
+  '/product/getProductWithTeam',
+  async (productId: number) => {
+    console.log('getProductWithTeam called...');
+    const response = await fetcher.get<Array<ProductwithTeam>>(
+      `/product/getProductById/${productId}`
+    );
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
 export const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -104,7 +120,14 @@ export const productSlice = createSlice({
       state.list.productList = [];
     },
     setSelectedProductId: (state, action: PayloadAction<number>) => {
+      console.log('setSelectedProductId ');
       state.selectedProductId = action.payload;
+    },
+    clearSelectedProduct: (state) => {
+      state.selectedProduct = {
+        status: 'loading',
+        product: [],
+      };
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -153,17 +176,33 @@ export const productSlice = createSlice({
       .addCase(getAllProductsAsync.rejected, (state) => {
         state.list.status = 'failed';
         state.list.productList = [];
+      })
+
+      .addCase(getProductWithTeamAsync.pending, (state) => {
+        state.selectedProduct.status = 'loading';
+      })
+      .addCase(getProductWithTeamAsync.fulfilled, (state, action) => {
+        state.selectedProduct.status = 'idle';
+        state.selectedProduct.product = action.payload;
+      })
+      .addCase(getProductWithTeamAsync.rejected, (state) => {
+        state.selectedProduct.status = 'idle';
+        state.selectedProduct.product = [];
       });
   },
 });
 
-export const { logout, setSelectedProductId } = productSlice.actions;
+export const { logout, setSelectedProductId, clearSelectedProduct } =
+  productSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const productListObject = (state: RootState) => state.product.list;
-
+export const selectedProductId = (state: RootState) =>
+  state.product.selectedProductId;
+export const selectedProduct = (state: RootState) =>
+  state.product.selectedProduct;
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 // export const logoutAsync =
