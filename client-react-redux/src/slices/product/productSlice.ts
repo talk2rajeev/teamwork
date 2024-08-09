@@ -1,16 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
-import { ProductwithTeam, SelectedProduct } from '../../utils/types/types';
+import {
+  ProductwithTeam,
+  SelectedProduct,
+  Product,
+} from '../../utils/types/types';
 // import { login, logoutAsyncApi } from './loginAPI';
-
-type product = {
-  productId: number;
-  productName: string;
-  product_owner_id: number;
-  product_owner_fname: string;
-  product_owner_lname: string;
-};
 
 // type productWithTeam = product & {
 //   team: { teamId: number; teamName: string };
@@ -25,7 +21,7 @@ type productCreated = {
 
 export interface productState {
   list: {
-    productList: Array<product>;
+    productList: Array<Product>;
     status: 'idle' | 'loading' | 'failed';
   };
   productCreated?: productCreated;
@@ -89,7 +85,6 @@ export const getAllProductsAsync = createAsyncThunk(
     const response = await fetcher.get<Array<responseType>>(
       '/product/getAllProducts'
     );
-    console.log('getAllProductsAsync , response', response);
     // The value we return becomes the `fulfilled` action payload
     return response;
   }
@@ -98,7 +93,6 @@ export const getAllProductsAsync = createAsyncThunk(
 export const getProductWithTeamAsync = createAsyncThunk(
   '/product/getProductWithTeam',
   async (productId: number) => {
-    console.log('getProductWithTeam called...');
     const response = await fetcher.get<Array<ProductwithTeam>>(
       `/product/getProductById/${productId}`
     );
@@ -120,7 +114,6 @@ export const productSlice = createSlice({
       state.list.productList = [];
     },
     setSelectedProductId: (state, action: PayloadAction<number>) => {
-      console.log('setSelectedProductId ');
       state.selectedProductId = action.payload;
     },
     clearSelectedProduct: (state) => {
