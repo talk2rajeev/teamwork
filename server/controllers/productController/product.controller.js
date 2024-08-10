@@ -23,11 +23,9 @@ async function createProductController(req, res) {
       );
       res.status(201).json(data);
     } else {
-      res
-        .status(500)
-        .json({
-          error: "productName, creator profile id and teamId is mandatory",
-        });
+      res.status(500).json({
+        error: "productName, creator profile id and teamId is mandatory",
+      });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -76,6 +74,7 @@ async function getProductByIdController(req, res) {
   const productId = req.params.id;
   try {
     const products = await productService.getProductById(productId);
+    console.log(products);
     const teamId = products[0]?.teamId;
     if (products) {
       const teamWithUsers = await teamService.getTeamWithUsersById(teamId);
