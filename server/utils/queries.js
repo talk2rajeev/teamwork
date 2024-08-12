@@ -35,10 +35,14 @@ export const SQL_QUERIES = {
       "insert into users (username, password, createdAt) values(?,?,?)",
     createUserProfile:
       "insert into user_profile (fname, lname, roleId, userId, createdAt) values(?,?,?,?,?)",
-    getAllUsers: `SELECT user_login.loginId, user_login.username, user_profile.fname, user_profile.lname, role.roleId, role.roleName
+    getAllUsersWithLoginDetail: `SELECT user_login.loginId, user_login.username, user_profile.fname, user_profile.lname, user_profile.profileId, role.roleId, role.roleName
                 FROM user_login 
                 JOIN user_profile ON user_login.loginId=user_profile.loginId
                 JOIN role ON user_profile.role_id=role.roleId;`,
+    getAllUsers: `SELECT role.roleName, role.roleId, user_profile.profileId, user_profile.fname, user_profile.lname
+      from role 
+      INNER JOIN user_profile 
+      ON role.roleId = user_profile.role_id`,
   },
   team: {
     insertQuery: `insert into team (teamName, createdById) values(?, ?)`,
