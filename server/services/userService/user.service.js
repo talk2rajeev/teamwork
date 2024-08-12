@@ -68,4 +68,25 @@ async function getUserById(id) {
     throw new Error(`Failed to get User by id: ${err.message}`);
   }
 }
-export { getUsers, getUserById, createUserLogin, updateUserProfile };
+
+async function getAdminUsers() {
+  try {
+    const [data, ...meta] = await pool.query(
+      `SELECT role.roleName, role.roleId, user_profile.profileId, user_profile.fname, user_profile.lname
+      from role 
+      INNER JOIN user_profile 
+      ON role.roleId = user_profile.role_id 
+      WHERE role.roleId = 1;`
+    );
+    return data;
+  } catch (err) {
+    throw new Error(`Failed to get User by id: ${err.message}`);
+  }
+}
+export {
+  getUsers,
+  getUserById,
+  createUserLogin,
+  updateUserProfile,
+  getAdminUsers,
+};
