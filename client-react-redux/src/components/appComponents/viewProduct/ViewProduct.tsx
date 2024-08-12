@@ -1,14 +1,25 @@
 import react, { useState } from 'react';
-import { ActionType, SelectedProduct } from '../../../utils/types/types';
+import {
+  ActionType,
+  Product,
+  SelectedProduct,
+} from '../../../utils/types/types';
 import { ImSpinner5 } from 'react-icons/im';
+import { getProductWithTeam } from '../../../utils/helperFunctions/product/productHelper';
 
 type ViewProductProps = {
   selectedProduct?: SelectedProduct;
+  product?: Product;
 };
 
-const ViewProduct: React.FC<ViewProductProps> = ({ selectedProduct }) => {
+const ViewProduct: React.FC<ViewProductProps> = ({
+  selectedProduct,
+  product,
+}) => {
   // assign team
   // assign prod owner
+
+  const productWithTeam = getProductWithTeam(selectedProduct, product);
 
   if (selectedProduct?.status === 'loading') {
     return (
@@ -21,14 +32,9 @@ const ViewProduct: React.FC<ViewProductProps> = ({ selectedProduct }) => {
   return (
     <div className="user-story-container bg-white p-2">
       <div>
-        <div>Product Name: {selectedProduct?.product[0]?.productName}</div>
-        <div>
-          Product Owner:{' '}
-          {selectedProduct?.product[0]?.productOwner.owner_fname +
-            ' ' +
-            selectedProduct?.product[0]?.productOwner.owner_lname}
-        </div>
-        <div>Product Team: {selectedProduct?.product[0]?.team.teamName}</div>
+        <div>Product Name: {productWithTeam?.productName}</div>
+        <div>Product Owner: {productWithTeam?.productOwnerName}</div>
+        <div>Product Team: {productWithTeam?.productTeam}</div>
       </div>
     </div>
   );
