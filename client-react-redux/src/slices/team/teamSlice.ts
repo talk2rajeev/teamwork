@@ -18,7 +18,7 @@ type TeamCreated = {
 export interface TeamState {
   TeamWithUser: {
     status: Types.StatusType;
-    teamMap: Types.TeamWithUserInterface[];
+    TeamWithUsers: Types.TeamWithUserInterface[];
   };
   teamCreated?: TeamCreated;
 }
@@ -26,7 +26,7 @@ export interface TeamState {
 const initialState: TeamState = {
   TeamWithUser: {
     status: 'idle',
-    teamMap: [],
+    TeamWithUsers: [],
   },
   teamCreated: undefined,
 };
@@ -109,15 +109,15 @@ export const teamSlice = createSlice({
 
       .addCase(getTeamsWithUsersAsync.pending, (state) => {
         state.TeamWithUser.status = 'loading';
-        state.TeamWithUser.teamMap = [];
+        state.TeamWithUser.TeamWithUsers = [];
       })
       .addCase(getTeamsWithUsersAsync.fulfilled, (state, action) => {
         state.TeamWithUser.status = 'idle';
-        state.TeamWithUser.teamMap = action.payload;
+        state.TeamWithUser.TeamWithUsers = action.payload;
       })
       .addCase(getTeamsWithUsersAsync.rejected, (state) => {
         state.TeamWithUser.status = 'failed';
-        state.TeamWithUser.teamMap = [];
+        state.TeamWithUser.TeamWithUsers = [];
       });
   },
 });
@@ -127,7 +127,8 @@ export const teamSlice = createSlice({
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const teamMap = (state: RootState) => state.team.TeamWithUser.teamMap;
+export const teamWithUsers = (state: RootState) =>
+  state.team.TeamWithUser.TeamWithUsers;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
