@@ -51,11 +51,15 @@ export interface SelectedProduct {
 /**
  * Team
  */
-interface Team {
+export interface TeamUser {
+  user_profile_id: number;
   first_name: string;
   last_name: string;
   role_name: string;
+  role_id: 2;
 }
 export interface TeamWithUserInterface {
-  [key: string]: Team[];
+  team_id: number;
+  team_name: string;
+  users: Array<TeamUser>;
 }
