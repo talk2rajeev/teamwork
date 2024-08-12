@@ -1,9 +1,11 @@
 import React, { FC } from 'react';
 import { IoMdClose } from 'react-icons/io';
+import * as coreComponents from '../../components/core-components';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onPrimaryBtnClick?: () => void;
   title?: string;
   size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
@@ -22,6 +24,7 @@ const SIZE_MAP = {
 const Modal: FC<ModalProps> = ({
   isOpen,
   onClose,
+  onPrimaryBtnClick,
   title,
   size = 'md',
   children,
@@ -52,19 +55,23 @@ const Modal: FC<ModalProps> = ({
           {children}
         </div>
         {footer && (
-          <div className="flex justify-end p-2 border-t">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-blue-700"
-            >
-              Close
-            </button>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-            >
-              Close
-            </button>
+          <div className="flex justify-end gap-4 p-4 border-t">
+            <div className="max-w-16">
+              <coreComponents.Button
+                label="Close"
+                type="default"
+                clickHandler={onClose}
+              />
+            </div>
+            <div className="max-w-16">
+              {onPrimaryBtnClick && (
+                <coreComponents.Button
+                  label="Submit"
+                  type="primary"
+                  clickHandler={onPrimaryBtnClick}
+                />
+              )}
+            </div>
           </div>
         )}
       </div>
