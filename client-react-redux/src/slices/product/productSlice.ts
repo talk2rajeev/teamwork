@@ -1,11 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
-import {
-  ProductwithTeam,
-  SelectedProduct,
-  Product,
-} from '../../utils/types/types';
+import * as Types from '../../utils/types/types';
 // import { login, logoutAsyncApi } from './loginAPI';
 
 // type productWithTeam = product & {
@@ -21,11 +17,11 @@ type productCreated = {
 
 export interface productState {
   list: {
-    productList: Array<Product>;
+    productList: Array<Types.Product>;
     status: 'idle' | 'loading' | 'failed';
   };
   productCreated?: productCreated;
-  selectedProduct: SelectedProduct;
+  selectedProduct: Types.SelectedProduct;
   selectedProductId: number;
 }
 
@@ -54,16 +50,7 @@ export const createProductAsync = createAsyncThunk(
     createdById: number;
     product_owner_id: number;
   }) => {
-    type responseType = {
-      fieldCount: number;
-      affectedRows: number;
-      insertId: number;
-      info: string;
-      serverStatus: number;
-      warningStatus: number;
-      changedRows: number;
-    };
-    const response = await fetcher.post<responseType>(
+    const response = await fetcher.post<Types.CreateResponseType>(
       '/product/createProduct',
       reqPayload
     );
@@ -93,7 +80,7 @@ export const getAllProductsAsync = createAsyncThunk(
 export const getProductWithTeamAsync = createAsyncThunk(
   '/product/getProductWithTeam',
   async (productId: number) => {
-    const response = await fetcher.get<Array<ProductwithTeam>>(
+    const response = await fetcher.get<Array<Types.ProductwithTeam>>(
       `/product/getProductById/${productId}`
     );
     // The value we return becomes the `fulfilled` action payload
