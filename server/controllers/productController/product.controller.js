@@ -53,13 +53,10 @@ async function getAllProductsWithTeamController(req, res) {
 
 async function updateProductController(req, res) {
   const productId = req.params.id;
-  const { productName, teamId } = req.body;
+  const payload = req.body;
+  console.log("updateProduct Controller");
   try {
-    const success = await productService.updateProduct(
-      productName,
-      productId,
-      teamId
-    );
+    const success = await productService.updateProduct(payload, productId);
     if (success) {
       res.status(200).json({ message: "Product updated successfully" });
     } else {
