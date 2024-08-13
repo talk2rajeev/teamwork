@@ -2,19 +2,22 @@ import react, { useState } from 'react';
 import { ImSpinner5 } from 'react-icons/im';
 import * as coreComponents from '../../core-components';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
-import {
-  ActionType,
-  SelectedProduct,
-  Product,
-} from '../../../utils/types/types';
+import * as Types from '../../../utils/types/types';
 import { getProductWithTeam } from '../../../utils/helperFunctions/product/productHelper';
-import { teamMap } from '../../../slices/team/teamSlice';
+import { teamWithUsers } from '../../../slices/team/teamSlice';
+import { allUsers } from '../../../slices/users/userSlice';
 
 type UpdateProductProps = {
   inputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type: ActionType;
-  selectedProduct?: SelectedProduct;
-  product?: Product;
+  type: Types.ActionType;
+  selectedProduct?: Types.SelectedProduct;
+  product?: Types.Product;
+};
+
+type FormDataType = {
+  productName?: string;
+  product_owner_id?: number;
+  teamId?: number;
 };
 
 const UpdateProduct: React.FC<UpdateProductProps> = ({
@@ -26,16 +29,37 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   // Featch team list & create a listOption out of it for team combobox
   // Fetch UserProfileList & create a listOption out of it for productOwner combobox
 
-  const productListObj = useAppSelector(teamMap);
+  const teams = useAppSelector(teamWithUsers);
+  const users = useAppSelector(allUsers);
   const productWithTeam = getProductWithTeam(selectedProduct, product);
+  const userList = users.users.map((u) => `${u.fname} ${u.lname}`);
+
+  const [formData, setFormData] = useState<FormDataType>();
+
+  const debouncedInputChange = () => {};
 
   const onInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     data?: any
   ) => {
     console.log(event.target.name, event.target.value);
+    setFormData({ ...formData, productName: '' });
     inputChange(event);
   };
+
+  const onTeamSelect = (item: string) => {
+    console.log(item);
+    const team_id = teams.find((t) => t.team_name === item)?.team_id;
+    if (team_id) setFormData({ ...formData, teamId: team_id });
+  };
+
+  const onProdOwnerSelect = (item: string) => {
+    console.log(item);
+    const user = users.users.find((u) => `${u.fname} ${u.lname}` === item);
+    if (user) setFormData({ ...formData, product_owner_id: user.profileId });
+  };
+
+  const teamOption = teams.map((t) => t.team_name);
 
   if (selectedProduct?.status === 'loading') {
     return (
@@ -61,34 +85,18 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
         </div>
         <div className="p-2">
           <coreComponents.SearchableCombobox
-            items={[
-              'Sprint.1a',
-              'Sprint.1b',
-              'Sprint.2a',
-              'Sprint.2b',
-              'Sprint.3a',
-              'Sprint.3b',
-            ]}
-            onSelect={(item: string) => {
-              console.log(item);
-            }}
-            label="Select Team"
+            items={teamOption}
+            onSelect={onTeamSelect}
+            label="Team"
+            value={productWithTeam.productTeam}
           />
         </div>
         <div className="p-2">
           <coreComponents.SearchableCombobox
-            items={[
-              'Sprint.1a',
-              'Sprint.1b',
-              'Sprint.2a',
-              'Sprint.2b',
-              'Sprint.3a',
-              'Sprint.3b',
-            ]}
-            onSelect={(item: string) => {
-              console.log(item);
-            }}
+            items={userList}
+            onSelect={onProdOwnerSelect}
             label="Product Owner"
+            value={productWithTeam.productOwnerName}
           />
         </div>
       </div>
