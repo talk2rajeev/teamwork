@@ -7,6 +7,7 @@ interface SearchableComboBoxProps {
   label?: string;
   required?: boolean;
   placeholder?: string;
+  value?: string;
 }
 
 const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
@@ -15,9 +16,10 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
   label,
   required,
   placeholder,
+  value = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [filteredItems, setFilteredItems] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
