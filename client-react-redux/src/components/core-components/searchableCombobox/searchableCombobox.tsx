@@ -8,6 +8,7 @@ interface SearchableComboBoxProps {
   required?: boolean;
   placeholder?: string;
   value?: string;
+  disabled?: boolean;
 }
 
 const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
@@ -17,6 +18,7 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
   required,
   placeholder,
   value = '',
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(value);
@@ -104,17 +106,18 @@ const SearchableCombobox: React.FC<SearchableComboBoxProps> = ({
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}
           ref={inputRef}
-          className="text-slate-700 border w-full text-xs p-2 bg-white border-1 border-slate-300 outline-slate-400"
+          className={`text-slate-700 border w-full text-xs p-2 bg-white border-1 border-slate-300 outline-slate-400 ${disabled ? 'opacity-50' : ''}`}
           placeholder={placehilderLabel}
+          disabled={disabled}
         />
         <span className="absolute top-2 right-3">
-          {searchTerm ? (
+          {searchTerm && !disabled ? (
             <IoMdClose
               className="cursor-pointer text-gray-500 hover:text-gray-700"
               onClick={handleClear}
             />
           ) : (
-            <IoIosSearch size="15" className="text-gray-500 " />
+            !disabled && <IoIosSearch size="15" className="text-gray-500 " />
           )}
         </span>
       </div>
