@@ -63,3 +63,12 @@ export interface TeamWithUserInterface {
   team_name: string;
   users: Array<TeamUser>;
 }
+
+/**
+ * Product
+ */
+export interface ProductFormDataInterface {
+  productName?: string;
+  product_owner_id?: number;
+  teamId?: number;
+}
