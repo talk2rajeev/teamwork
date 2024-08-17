@@ -58,12 +58,14 @@ async function updateProductController(req, res) {
   try {
     const success = await productService.updateProduct(payload, productId);
     if (success) {
-      res.status(200).json({ message: "Product updated successfully" });
+      res
+        .status(200)
+        .json({ message: "Product updated successfully", status: "success" });
     } else {
-      res.status(404).json({ error: "Product not found" });
+      res.status(404).json({ message: "Product not found", status: "fail" });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message, status: "fail" });
   }
 }
 
