@@ -15,6 +15,8 @@ type productCreated = {
   status: 'idle' | 'loading' | 'failed';
 };
 
+type ApiResponseStatusType = 'success' | 'failed';
+
 export interface productState {
   list: {
     productList: Array<Types.Product>;
@@ -24,9 +26,10 @@ export interface productState {
   selectedProduct: Types.SelectedProduct;
   selectedProductId: number;
   productFormData: {
-    formData?: Types.ProductFormDataInterface;
+    formData: Types.ProductFormDataInterface;
     status: Types.StatusType;
     message: string;
+    apiResponseStatus?: ApiResponseStatusType;
   };
 }
 
@@ -42,7 +45,9 @@ const initialState: productState = {
   },
   selectedProductId: -1,
   productFormData: {
-    formData: {},
+    formData: {
+      productId: -1,
+    },
     status: 'idle',
     message: '',
   },
@@ -98,6 +103,21 @@ export const getProductWithTeamAsync = createAsyncThunk(
   }
 );
 
+export const updateProductAsync = createAsyncThunk(
+  'product/updateProduct',
+  async (_, { getState }) => {
+    const state = getState() as RootState;
+    const { productId, ...rest } = state.product.productFormData.formData;
+    console.log('updateProductAsync > formData ', rest);
+    const response = await fetcher.put<{
+      message: string;
+      status: ApiResponseStatusType;
+    }>(`/product/updateProduct/${productId}`, rest);
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
 export const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -119,6 +139,12 @@ export const productSlice = createSlice({
         product: [],
       };
     },
+    setProductId: (state, action: PayloadAction<number>) => {
+      state.productFormData.formData = {
+        ...state.productFormData.formData,
+        productId: action.payload,
+      };
+    },
     setProductName: (state, action: PayloadAction<string>) => {
       state.productFormData.formData = {
         ...state.productFormData.formData,
@@ -136,6 +162,12 @@ export const productSlice = createSlice({
         ...state.productFormData.formData,
         product_owner_id: action.payload,
       };
+    },
+    clearProductForm: (state) => {
+      state.productFormData.formData = { productId: -1 };
+      state.productFormData.message = '';
+      state.productFormData.status = 'idle';
+      state.productFormData.apiResponseStatus = undefined;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -196,6 +228,21 @@ export const productSlice = createSlice({
       .addCase(getProductWithTeamAsync.rejected, (state) => {
         state.selectedProduct.status = 'idle';
         state.selectedProduct.product = [];
+      })
+
+      .addCase(updateProductAsync.pending, (state) => {
+        state.productFormData.status = 'loading';
+      })
+      .addCase(updateProductAsync.fulfilled, (state, action) => {
+        state.productFormData.status = 'idle';
+        state.productFormData.message = action.payload.message;
+        state.productFormData.apiResponseStatus = action.payload.status;
+      })
+      .addCase(updateProductAsync.rejected, (state, action) => {
+        state.selectedProduct.status = 'idle';
+        state.productFormData.message =
+          action.error.message || 'Failed to update product!';
+        state.productFormData.apiResponseStatus = 'failed';
       });
   },
 });
@@ -204,9 +251,11 @@ export const {
   logout,
   setSelectedProductId,
   clearSelectedProduct,
+  setProductId,
   setProductName,
   setProductTeamId,
   setProductOwnerId,
+  clearProductForm,
 } = productSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
@@ -217,6 +266,8 @@ export const selectedProductId = (state: RootState) =>
   state.product.selectedProductId;
 export const selectedProduct = (state: RootState) =>
   state.product.selectedProduct;
+export const updateProductFormData = (state: RootState) =>
+  state.product.productFormData;
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 // export const logoutAsync =
