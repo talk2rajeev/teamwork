@@ -68,7 +68,18 @@ export interface TeamWithUserInterface {
  * Product
  */
 export interface ProductFormDataInterface {
+  productId: number;
   productName?: string;
   product_owner_id?: number;
   teamId?: number;
+}
+
+/**
+ * Toast
+ */
+export interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'info';
+  title: string;
+  message: string;
 }
