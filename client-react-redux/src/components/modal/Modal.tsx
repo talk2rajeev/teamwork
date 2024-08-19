@@ -51,7 +51,7 @@ const Modal: FC<ModalProps> = ({
             </button>
           </div>
         </div>
-        <div className="pl-4 pr-4 min-h-28 max-h-152 overflow-y-auto">
+        <div className="pl-4 pr-4 min-h-96 max-h-152 overflow-y-scroll">
           {children}
         </div>
         {footer && (
