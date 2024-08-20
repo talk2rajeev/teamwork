@@ -105,8 +105,8 @@ export const getProductWithTeamAsync = createAsyncThunk(
 
 export const updateProductAsync = createAsyncThunk(
   'product/updateProduct',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState() as RootState;
     const { productId, ...rest } = state.product.productFormData.formData;
     console.log('updateProductAsync > formData ', rest);
     const response = await fetcher.put<{
@@ -114,6 +114,8 @@ export const updateProductAsync = createAsyncThunk(
       status: ApiResponseStatusType;
     }>(`/product/updateProduct/${productId}`, rest);
     // The value we return becomes the `fulfilled` action payload
+    thunkAPI.dispatch(getAllProductsAsync());
+    // thunkAPI.dispatch(clearProductForm());
     return response;
   }
 );
@@ -138,6 +140,7 @@ export const productSlice = createSlice({
         status: 'loading',
         product: [],
       };
+      state.selectedProductId = -1;
     },
     setProductId: (state, action: PayloadAction<number>) => {
       state.productFormData.formData = {
