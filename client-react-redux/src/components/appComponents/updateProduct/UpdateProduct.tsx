@@ -59,7 +59,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   }, [debouncedProductName]);
 
   useEffect(() => {
-    if (productId) {
+    if (productId && productId !== -1) {
       dispatch(setProductId(productId));
     }
   }, [productId]);
@@ -90,30 +90,28 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
 
   const productName = prodName || productWithTeam.productName;
 
-  //   const updateSucceded =
-  //     formData.apiResponseStatus !== '' &&
-  //     formData.apiResponseStatus === 'success';
-  //   const updateFailed =
-  //     formData.apiResponseStatus !== '' &&
-  //     formData.apiResponseStatus === 'failed';
+  const updateSucceded =
+    formData.apiResponseStatus && formData.apiResponseStatus === 'success';
+  const updateFailed =
+    formData.apiResponseStatus && formData.apiResponseStatus === 'failed';
 
-  //   if (updateSucceded) {
-  //     return (
-  //       <div>
-  //         <GiConfirmed fill="#5cb85c" size="24" />
-  //         <span>{formData.message}</span>
-  //       </div>
-  //     );
-  //   }
+  if (updateSucceded) {
+    return (
+      <div className="mt-16 flex justify-center">
+        <GiConfirmed fill="#5cb85c" size="24" />
+        <span className="text-base">{formData.message}</span>
+      </div>
+    );
+  }
 
-  //   if (updateFailed) {
-  //     return (
-  //       <div>
-  //         <MdError fill="#5cb85c" size="16" />
-  //         <span>{formData.message}</span>
-  //       </div>
-  //     );
-  //   }
+  if (updateFailed) {
+    return (
+      <div className="mt-16 flex justify-center">
+        <MdError fill="#5cb85c" size="16" />
+        <span className="text-base">{formData.message}</span>
+      </div>
+    );
+  }
   return (
     <div className="user-story-container bg-white p-2 min-h-96 grid grid-cols-1 content-between">
       <div>
