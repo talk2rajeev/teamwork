@@ -63,6 +63,14 @@ export interface TeamWithUserInterface {
   team_name: string;
   users: Array<TeamUser>;
 }
+export interface Team {
+  team_id: number;
+  team_name: string;
+  created_by_profile_id: number;
+  created_by_fname: string;
+  created_by_lname: string;
+  users?: Array<TeamUser>;
+}
 
 /**
  * Product
