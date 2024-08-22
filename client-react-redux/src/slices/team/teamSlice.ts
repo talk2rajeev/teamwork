@@ -22,14 +22,7 @@ export interface TeamState {
   };
   allTeams: {
     status: Types.StatusType;
-    teams: Array<{
-      team_id: number;
-      team_name: string;
-      created_by_profile_id: number;
-      created_by_fname: string;
-      created_by_lname: string;
-      users?: Array<Types.TeamUser>;
-    }>;
+    teams: Array<Types.Team>;
   };
   teamCreated?: TeamCreated;
 }
