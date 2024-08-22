@@ -93,7 +93,9 @@ async function getAllTeamsWithUsers() {
         JOIN user_team_role utr ON up.profileId = utr.profileId
         JOIN team t ON utr.teamId = t.teamId
         JOIN role r ON utr.roleId = r.roleId;`;
-    const [data, ...meta] = await pool.query(query);
+    const [data, ...meta] = await pool.query(
+      SQL_QUERIES.team.getAllTeamsWithUsersQuery
+    );
     return data;
   } catch (err) {
     throw new Error(`Failed to get Teams with users: ${err.message}`);
