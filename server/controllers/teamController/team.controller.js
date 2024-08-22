@@ -53,13 +53,21 @@ async function getTeamByIdController(req, res) {
 
 async function getTeamWithUsersByIdController(req, res) {
   const id = req.params.id;
+  //   try {
+  //     const user = await teamService.getTeamWithUsersById(id);
+  //     if (user) {
+  //       res.status(200).json(user);
+  //     } else {
+  //       res.status(404).json({ error: "Team not found" });
+  //     }
+  //   } catch (error) {
+  //     res.status(500).json({ error: error.message });
+  //   }
+
   try {
-    const user = await teamService.getTeamWithUsersById(id);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).json({ error: "Team not found" });
-    }
+    const teamWithUsers = await teamService.getTeamWithUsersById(id);
+    var formattedTeamsWithUsers = getFormattedTeamsWithUsers(teamWithUsers);
+    res.status(200).json(formattedTeamsWithUsers);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
