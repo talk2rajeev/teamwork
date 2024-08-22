@@ -20,6 +20,17 @@ export interface TeamState {
     status: Types.StatusType;
     TeamWithUsers: Types.TeamWithUserInterface[];
   };
+  allTeams: {
+    status: Types.StatusType;
+    teams: Array<{
+      team_id: number;
+      team_name: string;
+      created_by_profile_id: number;
+      created_by_fname: string;
+      created_by_lname: string;
+      users?: Array<Types.TeamUser>;
+    }>;
+  };
   teamCreated?: TeamCreated;
 }
 
@@ -27,6 +38,10 @@ const initialState: TeamState = {
   TeamWithUser: {
     status: 'idle',
     TeamWithUsers: [],
+  },
+  allTeams: {
+    status: 'idle',
+    teams: [],
   },
   teamCreated: undefined,
 };
@@ -39,15 +54,6 @@ const initialState: TeamState = {
 export const createTeamAsync = createAsyncThunk(
   'team/createTeam',
   async (reqPayload: { teamName: string; createdById: number }) => {
-    type responseType = {
-      fieldCount: number;
-      affectedRows: number;
-      insertId: number;
-      info: string;
-      serverStatus: number;
-      warningStatus: number;
-      changedRows: number;
-    };
     const response = await fetcher.post<Types.CreateResponseType>(
       '/team/createTeam',
       reqPayload
@@ -57,10 +63,33 @@ export const createTeamAsync = createAsyncThunk(
   }
 );
 
+export const getAllTeams = createAsyncThunk('/team/getAllTeams', async () => {
+  type TeamType = {
+    createdByProfileId: number;
+    createdByFname: string;
+    createdByLname: string;
+    teamId: number;
+    teamName: string;
+  };
+  const response = await fetcher.get<Array<TeamType>>('/team/getAllTeams');
+  // The value we return becomes the `fulfilled` action payload
+  return response;
+});
+
+export const getTeamsWithUserByTeamId = createAsyncThunk(
+  '/team/getTeamWithUsersById',
+  async () => {
+    const response = await fetcher.get<Array<Types.TeamWithUserInterface>>(
+      '/team/getTeamWithUsersById'
+    );
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
 export const getTeamsWithUsersAsync = createAsyncThunk(
   '/team/getTeamsWithUsers',
   async () => {
-    // type responseType = Array<TeamWithUserInterface>;
     const response = await fetcher.get<Array<Types.TeamWithUserInterface>>(
       '/team/getAllTeamsWithUsers'
     );
@@ -118,6 +147,40 @@ export const teamSlice = createSlice({
       .addCase(getTeamsWithUsersAsync.rejected, (state) => {
         state.TeamWithUser.status = 'failed';
         state.TeamWithUser.TeamWithUsers = [];
+      })
+
+      .addCase(getAllTeams.pending, (state) => {
+        state.TeamWithUser.status = 'loading';
+        state.TeamWithUser.TeamWithUsers = [];
+      })
+      .addCase(getAllTeams.fulfilled, (state, action) => {
+        state.TeamWithUser.status = 'idle';
+        state.allTeams.teams = action.payload.map((t) => ({
+          team_id: t.teamId,
+          team_name: t.teamName,
+          created_by_profile_id: t.createdByProfileId,
+          created_by_fname: t.createdByFname,
+          created_by_lname: t.createdByLname,
+          users: [],
+        }));
+      })
+      .addCase(getAllTeams.rejected, (state) => {
+        state.TeamWithUser.status = 'failed';
+        state.allTeams.teams = [];
+      })
+
+      .addCase(getTeamsWithUserByTeamId.pending, (state) => {
+        state.allTeams.status = 'loading';
+      })
+      .addCase(getTeamsWithUserByTeamId.fulfilled, (state, action) => {
+        state.allTeams.status = 'idle';
+        const teamId = action.payload[0].team_id;
+        state.allTeams.teams = state.allTeams.teams.map((t) =>
+          t.team_id === teamId ? { ...t, users: action.payload[0].users } : t
+        );
+      })
+      .addCase(getTeamsWithUserByTeamId.rejected, (state) => {
+        state.TeamWithUser.status = 'failed';
       });
   },
 });
@@ -129,6 +192,7 @@ export const teamSlice = createSlice({
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const teamWithUsers = (state: RootState) =>
   state.team.TeamWithUser.TeamWithUsers;
+export const allTeams = (state: RootState) => state.team.allTeams;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
