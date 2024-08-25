@@ -69,6 +69,7 @@ export interface Team {
   created_by_profile_id: number;
   created_by_fname: string;
   created_by_lname: string;
+  created_by: string;
   users?: Array<TeamUser>;
 }
 
