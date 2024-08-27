@@ -115,7 +115,6 @@ export const updateProductAsync = createAsyncThunk(
     }>(`/product/updateProduct/${productId}`, rest);
     // The value we return becomes the `fulfilled` action payload
     thunkAPI.dispatch(getAllProductsAsync());
-    // thunkAPI.dispatch(clearProductForm());
     return response;
   }
 );
