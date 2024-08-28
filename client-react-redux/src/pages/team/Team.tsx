@@ -1,16 +1,75 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Space, Table, Modal, Input } from 'antd';
+import type { TableProps } from 'antd';
 import { AuthUtil } from '../../utils/auth/auth';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
   getAllTeams,
   getTeamsWithUserByTeamId,
   allTeams,
+  selectedTeamId,
 } from '../../slices/team/teamSlice';
+import * as coreComponents from '../../components/core-components';
+import * as Types from '../../utils/types/types';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
+
+const getColumns = (
+  viewTeamDetail: (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => void,
+  updateTeam: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
+): TableProps<Types.Team>['columns'] => [
+  {
+    title: 'Team Name',
+    dataIndex: 'team_name',
+    key: 'team_name',
+    render: (text) => <span>{text}</span>,
+  },
+  {
+    title: 'Team Owner',
+    dataIndex: 'created_by',
+    key: 'created_by',
+    render: (text) => <span>{text}</span>,
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, team) => (
+      <Space size="middle">
+        <span
+          data-action="view"
+          data-teamid={team.team_id}
+          onClick={viewTeamDetail}
+        >
+          <IoMdEye
+            size="16"
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
+          />
+        </span>
+        <span
+          data-action="edit"
+          data-teamid={team.team_id}
+          onClick={updateTeam}
+        >
+          <IoMdCreate
+            size="16"
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
+          />
+        </span>
+      </Space>
+    ),
+  },
+];
 
 const Team: React.FC = () => {
   const dispatch = useAppDispatch();
   const teams = useAppSelector(allTeams);
+  const selectedTeamIndex = useAppSelector(selectedTeamId);
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [actionType, setActionType] = useState<'view' | 'update'>();
+
+  // const [teamFormData, setTeamFormData] = useState<>();
 
   const userDetail = AuthUtil.getUserDetail();
   const isAdmin = userDetail?.roleId && userDetail?.roleId === 1;
@@ -19,70 +78,102 @@ const Team: React.FC = () => {
     dispatch(getAllTeams());
   }, []);
 
-  console.log('teams ', teams);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const viewTeamDetail = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {};
+  ) => {
+    const targetElement = event.currentTarget as HTMLSpanElement;
+    const dataset = targetElement.dataset;
+    console.log(dataset);
+    if (dataset.teamid) {
+      setActionType('view');
+      dispatch(getTeamsWithUserByTeamId(dataset.teamid));
+      showModal();
+    }
+  };
 
-  const updateTeam = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {};
+  const updateTeam = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    const targetElement = event.currentTarget as HTMLSpanElement;
+    const dataset = targetElement.dataset;
+    console.log(dataset);
+    if (dataset.teamid) {
+      setActionType('update');
+      dispatch(getTeamsWithUserByTeamId(dataset.teamid));
+      showModal();
+    }
+  };
+
+  const onTeamChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // setTeamName(event.target.value);
+  };
+
+  const disabled = actionType === 'view';
 
   return (
     <div>
       {isAdmin && <div>Create Team</div>}
-      {teams.status === 'loading' ? (
+      {teams.status === 'loading' && teams.teams.length === 0 ? (
         <h1>Loading</h1>
       ) : (
-        <div>
-          <div className="container bg-white p-4">
-            <div className="grid grid-cols-3 gap-4 border-gray-200 border-b-1">
-              <div className="pt-2 pb-2 font-semibold">Team Name</div>
-              <div className="pt-2 pb-2 font-semibold">Team owner</div>
-              <div className="pt-2 pb-2 font-semibold">Action</div>
-            </div>
-            {teams.teams.map((t) => (
-              <div
-                key={t.team_id}
-                className="grid grid-cols-3 gap-4 border-gray-200 border-b-1"
-              >
-                <div className="pt-2 pb-2">{t.team_name}</div>
-                <div className="pt-2 pb-2">
-                  {t.created_by_fname} {t.created_by_lname}
+        <Table
+          columns={getColumns(viewTeamDetail, updateTeam)}
+          dataSource={teams.teams}
+        />
+      )}
+      <Modal
+        title="Team"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={700}
+      >
+        {teams.teams
+          .filter((t) => t.team_id === selectedTeamIndex)
+          .map((t) => {
+            return (
+              <div>
+                <div className="p-2">
+                  <label>Team Name</label>
+                  <Input
+                    placeholder="Team name"
+                    defaultValue={t.team_name}
+                    onChange={onTeamChange}
+                    disabled={disabled}
+                    size="middle"
+                  />
                 </div>
-                <div className="pt-2 pb-2  ">
-                  <div className="flex gap-3">
-                    <span
-                      onClick={viewTeamDetail}
-                      data-action="view"
-                      data-prodid={t.team_id}
-                    >
-                      <IoMdEye
-                        size="16"
-                        className="cursor-pointer text-gray-500 hover:text-gray-700"
-                      />
-                    </span>
-                    {userDetail?.profileId === t.created_by_profile_id ||
-                    isAdmin ? (
-                      <span
-                        onClick={updateTeam}
-                        data-action="edit"
-                        data-prodid={t.team_id}
-                      >
-                        <IoMdCreate
-                          size="16"
-                          className="cursor-pointer text-gray-500 hover:text-gray-700"
-                        />
-                      </span>
-                    ) : null}
+                <div className="p-2">
+                  <label>Created By</label>
+                  <div>
+                    {t.created_by_fname} {t.created_by_lname}
                   </div>
                 </div>
+
+                <div className="p-2">
+                  {t.users?.map((u) => (
+                    <div className="pb-2 grid grid-cols-2 gap-4">
+                      <span>
+                        {u.first_name} {u.last_name}
+                      </span>
+                      <span>{u.role_name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            );
+          })}
+      </Modal>
     </div>
   );
 };
