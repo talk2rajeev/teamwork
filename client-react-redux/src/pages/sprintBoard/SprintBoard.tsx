@@ -20,6 +20,7 @@ const SprintBoard: React.FC = () => {
   return (
     <Layout>
       <div className="mb-4 mt-4">
+        Project /&nbsp;
         <Popover
           title="Change Product"
           content={
