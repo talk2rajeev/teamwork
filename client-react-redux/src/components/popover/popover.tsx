@@ -59,13 +59,13 @@ const Popover: FC<PopoverProps> = ({
       {isOpen && (
         <div className={`absolute z-10 mt-2 w-48 ${position}`}>
           <div className="relative bg-white border border-gray-200 rounded shadow-lg">
-            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+            {/* <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
               <div className="w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-white"></div>
-            </div>
-            <div className="p-4">
-              <div className="border-b pb-2 mb-2">
+            </div> */}
+            <div>
+              {/* <div className="border-b pb-2 mb-2">
                 <h3 className="text-lg font-semibold">{title}</h3>
-              </div>
+              </div> */}
               <div>{content}</div>
             </div>
           </div>
