@@ -8,11 +8,12 @@ import * as Types from '../../utils/types/types';
 //   team: { teamId: number; teamName: string };
 // };
 
+type status = 'idle' | 'loading' | 'failed';
 type TeamCreated = {
   message?: string;
   error?: boolean;
   errorMessage?: string;
-  status: 'idle' | 'loading' | 'failed';
+  status: status;
 };
 
 export interface TeamState {
@@ -26,6 +27,10 @@ export interface TeamState {
   };
   selectedTeamId: number;
   teamCreated?: TeamCreated;
+  updateTeam: {
+    status: 'idle' | 'loading' | 'failed' | 'success';
+    message?: string;
+  };
 }
 
 const initialState: TeamState = {
@@ -39,6 +44,10 @@ const initialState: TeamState = {
   },
   selectedTeamId: -1,
   teamCreated: undefined,
+  updateTeam: {
+    status: 'idle',
+    message: undefined,
+  },
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -94,6 +103,20 @@ export const getTeamsWithUsersAsync = createAsyncThunk(
   }
 );
 
+export const updateTeamNameAsync = createAsyncThunk(
+  '/team/updateTeamName',
+  async (teamObj: { teamId: number; teamName: string }, thunkAPI) => {
+    const reqPayload = { teamName: teamObj.teamName };
+    const response = await fetcher.put<{ message: string }>(
+      `/team/updateTeam/${teamObj.teamId}`,
+      reqPayload
+    );
+    thunkAPI.dispatch(setTeamName(teamObj));
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
 export const teamSlice = createSlice({
   name: 'team',
   initialState,
@@ -113,6 +136,19 @@ export const teamSlice = createSlice({
         return t;
       });
       state.selectedTeamId = action.payload.team_id;
+    },
+    setTeamName: (
+      state,
+      action: PayloadAction<{ teamId: number; teamName: string }>
+    ) => {
+      state.allTeams.teams = state.allTeams.teams.map((t) => {
+        if (t.team_id === action.payload.teamId)
+          return { ...t, team_name: action.payload.teamName };
+        return t;
+      });
+    },
+    idleTeamNameUpdateStatus: (state) => {
+      state.updateTeam.status = 'idle';
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -194,11 +230,24 @@ export const teamSlice = createSlice({
       })
       .addCase(getTeamsWithUserByTeamId.rejected, (state) => {
         state.allTeams.status = 'failed';
+      })
+
+      .addCase(updateTeamNameAsync.pending, (state) => {
+        state.updateTeam.status = 'loading';
+      })
+      .addCase(updateTeamNameAsync.fulfilled, (state, action) => {
+        state.updateTeam.status = 'success';
+        state.updateTeam.message = action.payload.message;
+      })
+      .addCase(updateTeamNameAsync.rejected, (state) => {
+        state.allTeams.status = 'failed';
+        state.updateTeam.message = 'Failed to update Team Name!';
       });
   },
 });
 
-export const { setUserToTeam } = teamSlice.actions;
+export const { setUserToTeam, setTeamName, idleTeamNameUpdateStatus } =
+  teamSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -207,6 +256,7 @@ export const teamWithUsers = (state: RootState) =>
   state.team.TeamWithUser.TeamWithUsers;
 export const allTeams = (state: RootState) => state.team.allTeams;
 export const selectedTeamId = (state: RootState) => state.team.selectedTeamId;
+export const updateTeamState = (state: RootState) => state.team.updateTeam;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
