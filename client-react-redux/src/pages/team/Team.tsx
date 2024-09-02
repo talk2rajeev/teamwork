@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Space, Table, Modal, Input, TableProps, notification } from 'antd';
 import { AuthUtil } from '../../utils/auth/auth';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
+import UpdateTeam from '../../components/appComponents/updateTeam/UpdateTeam';
 import {
   getAllTeams,
   getTeamsWithUserByTeamId,
@@ -87,6 +88,7 @@ const Team: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    setTeamNameEditMode(false);
     if (updateTeamStateObject.status === 'success') {
       api.success({
         message: 'Success',
@@ -109,7 +111,6 @@ const Team: React.FC = () => {
         },
       });
     }
-    setTeamNameEditMode(false);
   }, [updateTeamStateObject.status]);
 
   const showModal = () => {
@@ -126,7 +127,6 @@ const Team: React.FC = () => {
 
   const closeEditModal = () => {
     setIsModalOpen(false);
-    setTeamNameEditMode(true);
   };
 
   const toggleTeamNameEditMode = () => {
@@ -146,10 +146,12 @@ const Team: React.FC = () => {
     }
   };
 
-  const updateTeam = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const initiateUpdateTeam = (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
-    console.log(dataset);
+    setTeamNameEditMode(false);
     if (dataset.teamid) {
       setActionType('update');
       dispatch(getTeamsWithUserByTeamId(dataset.teamid));
@@ -162,7 +164,6 @@ const Team: React.FC = () => {
   };
 
   const updateTeamName = () => {
-    console.log(selectedTeamIndex, teamName);
     dispatch(
       updateTeamNameAsync({ teamId: selectedTeamIndex, teamName: teamName })
     );
@@ -178,11 +179,12 @@ const Team: React.FC = () => {
         <h1>Loading</h1>
       ) : (
         <Table
-          columns={getColumns(viewTeamDetail, updateTeam)}
+          columns={getColumns(viewTeamDetail, initiateUpdateTeam)}
           dataSource={teams.teams}
         />
       )}
-      <Modal
+      <UpdateTeam showModal={isModalOpen} handleCancel={handleCancel} />
+      {/* <Modal
         title="Team"
         open={isModalOpen}
         onOk={handleOk}
@@ -229,11 +231,11 @@ const Team: React.FC = () => {
                   </div>
                 )}
 
-                <div className="p-2">
-                  <label>Created By</label>
-                  <div>
+                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-5">
+                  <span>Created By: </span>
+                  <span>
                     {t.created_by_fname} {t.created_by_lname}
-                  </div>
+                  </span>
                 </div>
 
                 <div className="p-2">
@@ -252,7 +254,7 @@ const Team: React.FC = () => {
               </div>
             );
           })}
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
