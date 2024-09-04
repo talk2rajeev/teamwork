@@ -20,7 +20,6 @@ import Modal from '../../components/modal/Modal';
 import UpdateProduct from '../../components/appComponents/updateProduct/UpdateProduct';
 import { ActionType } from '../../utils/types/types';
 import ViewProduct from '../../components/appComponents/viewProduct/ViewProduct';
-import DataTable from '../../components/core-components/dataTable/DataTable';
 import * as Types from '../../utils/types/types';
 import { notification } from 'antd';
 
@@ -40,44 +39,44 @@ const Product: React.FC = () => {
 
   type NotifType = 'success' | 'error';
 
-  const openNotification = (
-    type: NotifType,
-    title: string,
-    message: string
-  ) => {
-    console.log('openNotification called');
-    if (type === 'success') {
-      return api.success({
-        message: title,
-        description: message,
-        showProgress: true,
-        duration: 0,
-        onClose: () => {
-          dispatch(clearProductForm());
-        },
-      });
-    } else if (type === 'error') {
-      return api.error({
-        message: title,
-        description: message,
-        showProgress: true,
-        duration: 0,
-        onClose: () => {
-          dispatch(clearProductForm());
-        },
-      });
-    } else {
-      return api.info({
-        message: title,
-        description: message,
-        showProgress: true,
-        duration: 0,
-        onClose: () => {
-          dispatch(clearProductForm());
-        },
-      });
-    }
-  };
+  // const openNotification = (
+  //   type: NotifType,
+  //   title: string,
+  //   message: string
+  // ) => {
+  //   console.log('openNotification called');
+  //   if (type === 'success') {
+  //     return api.success({
+  //       message: title,
+  //       description: message,
+  //       showProgress: true,
+  //       duration: 0,
+  //       onClose: () => {
+  //         dispatch(clearProductForm());
+  //       },
+  //     });
+  //   } else if (type === 'error') {
+  //     return api.error({
+  //       message: title,
+  //       description: message,
+  //       showProgress: true,
+  //       duration: 0,
+  //       onClose: () => {
+  //         dispatch(clearProductForm());
+  //       },
+  //     });
+  //   } else {
+  //     return api.info({
+  //       message: title,
+  //       description: message,
+  //       showProgress: true,
+  //       duration: 0,
+  //       onClose: () => {
+  //         dispatch(clearProductForm());
+  //       },
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     dispatch(getAllProductsAsync());
@@ -85,17 +84,17 @@ const Product: React.FC = () => {
     dispatch(getAllUsersAsync());
   }, []);
 
-  useEffect(() => {
-    console.log('useEffect > openNotification');
-    if (formData.apiResponseStatus === 'success') {
-      console.log('useEffect > success');
-      openNotification('success', 'Success!', formData.message);
-    }
-    if (formData.apiResponseStatus === 'failed') {
-      console.log('useEffect > fail');
-      openNotification('error', 'Failed!', formData.message);
-    }
-  }, [formData]);
+  // useEffect(() => {
+  //   console.log('useEffect > openNotification');
+  //   if (formData.apiResponseStatus === 'success') {
+  //     console.log('useEffect > success');
+  //     openNotification('success', 'Success!', formData.message);
+  //   }
+  //   if (formData.apiResponseStatus === 'failed') {
+  //     console.log('useEffect > fail');
+  //     openNotification('error', 'Failed!', formData.message);
+  //   }
+  // }, [formData]);
 
   const updateProduct = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -122,11 +121,11 @@ const Product: React.FC = () => {
   const hideProductDetail = () => {
     setShowProductDetail(false);
     dispatch(clearSelectedProduct());
+    dispatch(clearProductForm());
   };
 
   const updateProductDetail = () => {
     dispatch(updateProductAsync());
-    setShowProductDetail(false);
   };
 
   const product = productListObj.productList.find(
@@ -134,7 +133,7 @@ const Product: React.FC = () => {
   );
 
   const editProps =
-    actionType !== 'view'
+    actionType !== 'view' && !formData.apiResponseStatus
       ? {
           onPrimaryBtnClick: updateProductDetail,
         }
@@ -145,34 +144,10 @@ const Product: React.FC = () => {
       {contextHolder}
       <div className="mt-4">
         {isAdmin && <div>Create Product</div>}
-        <button
-          onClick={() =>
-            openNotification('success', 'Success!', 'formData.message')
-          }
-        >
-          notif
-        </button>
         {productListObj.status === 'loading' ? (
           <h1>Loading</h1>
         ) : (
           <div>
-            <DataTable
-              columns={[
-                { columnLabel: 'Product Name' },
-                { columnLabel: 'version', width: '50px' },
-                { columnLabel: 'Product owner' },
-                { columnLabel: 'Action', width: '150px' },
-              ]}
-              values={[
-                { value: 'OPDS' },
-                { value: '1.21.03' },
-                { value: 'Rajeev' },
-                {
-                  type: 'action',
-                  actions: [{ actionName: 'edit' }, { actionName: 'view' }],
-                },
-              ]}
-            />
             <div className="container bg-white p-4">
               <div className="grid grid-cols-3 gap-4 border-gray-200 border-b-1">
                 <div className="pt-2 pb-2 font-semibold">Product Name</div>
@@ -200,7 +175,8 @@ const Product: React.FC = () => {
                           className="cursor-pointer text-gray-500 hover:text-gray-700"
                         />
                       </span>
-                      {userDetail?.profileId === p.product_owner_id ? (
+                      {userDetail?.profileId === p.product_owner_id ||
+                      isAdmin ? (
                         <span
                           onClick={updateProduct}
                           data-action="edit"
