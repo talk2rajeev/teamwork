@@ -56,7 +56,7 @@ export interface TeamUser {
   first_name: string;
   last_name: string;
   role_name: string;
-  role_id: 2;
+  role_id: number;
 }
 export interface TeamWithUserInterface {
   team_id: number;
