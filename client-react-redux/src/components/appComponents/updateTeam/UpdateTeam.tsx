@@ -1,7 +1,7 @@
 import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Modal, Input, TableProps, notification } from 'antd';
+import { Button, Modal, Input, Tooltip, notification } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
-
+import TeamUsersUpdate from '../teamUsersUpdate/TeamUsersUpdate';
 import {
   getAllTeams,
   getTeamsWithUserByTeamId,
@@ -12,6 +12,7 @@ import {
   idleTeamNameUpdateStatus,
 } from '../../../slices/team/teamSlice';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
+import { PlusOutlined } from '@ant-design/icons';
 
 type UpdateTeamProps = {
   showModal: boolean;
@@ -73,8 +74,8 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     />
                   </div>
                 ) : (
-                  <div className="p-2 grid grid-cols-5 auto-cols-max justify-between gap-1">
-                    <div className="col-span-4">
+                  <div className="p-2 grid grid-cols-12 auto-cols-max justify-between gap-1">
+                    <div className="col-span-9">
                       <label>Team Name</label>
                       <Input
                         placeholder="Team name"
@@ -107,25 +108,25 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                   </div>
                 )}
 
-                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-5">
+                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-4 mb-4">
                   <span>Created By: </span>
                   <span>
                     {t.created_by_fname} {t.created_by_lname}
                   </span>
                 </div>
 
-                <div className="p-2">
-                  {t.users?.map((u) => (
-                    <div
-                      className="pb-2 grid grid-cols-2 gap-4"
-                      key={u.user_profile_id}
-                    >
-                      <span>
-                        {u.first_name} {u.last_name}
-                      </span>
-                      <span>{u.role_name}</span>
-                    </div>
-                  ))}
+                <div>
+                  <div className="mt-4 mb-2">
+                    <Tooltip title="Add user to team" placement="right">
+                      <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<PlusOutlined />}
+                        size="middle"
+                      />
+                    </Tooltip>
+                  </div>
+                  <TeamUsersUpdate />
                 </div>
               </div>
             );
