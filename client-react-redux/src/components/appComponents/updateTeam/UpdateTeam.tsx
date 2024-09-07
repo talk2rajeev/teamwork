@@ -1,5 +1,6 @@
 import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Modal, Input, Tooltip, notification } from 'antd';
+import { Button, Modal, Input, Tooltip, AutoComplete } from 'antd';
+import type { AutoCompleteProps } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
 import TeamUsersUpdate from '../teamUsersUpdate/TeamUsersUpdate';
 import {
@@ -11,7 +12,7 @@ import {
   updateTeamNameAsync,
   idleTeamNameUpdateStatus,
 } from '../../../slices/team/teamSlice';
-import { IoMdEye, IoMdCreate } from 'react-icons/io';
+import { IoMdCreate } from 'react-icons/io';
 import { PlusOutlined } from '@ant-design/icons';
 
 type UpdateTeamProps = {
@@ -33,6 +34,11 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     teamname: '',
     users: [],
   });
+  const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
+  const [options, setOptions] = useState<Array<{ id: number; value: string }>>([
+    { id: 1, value: 'rajeev' },
+    { id: 2, value: 'binomtvr' },
+  ]);
 
   const toggleTeamNameEditMode = () => {
     setTeamNameEditMode(!teamNameEditMode);
@@ -40,6 +46,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
 
   const onCancel = () => {
     toggleTeamNameEditMode();
+    setShowAddUserInput(false);
     handleCancel();
   };
 
@@ -56,9 +63,36 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     setTeamData({ ...teamData, teamname: event.target.value });
   };
 
+  const showAddUserInputFiled = () => {
+    setShowAddUserInput(true);
+  };
+
+  const onSelect = (data: any) => {
+    console.log('onSelect', data);
+  };
+
+  const mockVal = (str: string, repeat = 1) => ({
+    value: str.repeat(repeat),
+  });
+
+  const getPanelValue = (searchText: string) =>
+    !searchText
+      ? []
+      : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+
+  const setAutoOption = (a: any) => {
+    console.log(a);
+  };
+
   return (
     <div className="user-story-container bg-white p-2 min-h-96 grid grid-cols-1 content-between">
-      <Modal title="Team" open={showModal} onCancel={onCancel} width={700}>
+      <Modal
+        title="Team"
+        open={showModal}
+        onCancel={onCancel}
+        width={800}
+        footer={null}
+      >
         {teams.teams
           .filter((t) => t.team_id === selectedTeamIndex)
           .map((t) => {
@@ -75,7 +109,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                   </div>
                 ) : (
                   <div className="p-2 grid grid-cols-12 auto-cols-max justify-between gap-1">
-                    <div className="col-span-9">
+                    <div className="col-span-8">
                       <label>Team Name</label>
                       <Input
                         placeholder="Team name"
@@ -84,31 +118,27 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                         size="middle"
                       />
                     </div>
-                    <div className="flex items-end">
-                      <Button
+                    <div className="flex items-end col-span-4">
+                      {/* <Button
                         type="primary"
                         loading={updateTeamStateObject.status === 'loading'}
                         iconPosition="start"
                         onClick={updateTeamName}
                       >
                         Update
-                      </Button>
+                      </Button> */}
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined color="#0099ff" />}
+                        size="middle"
+                      />
                       &nbsp;
                       <Button onClick={toggleTeamNameEditMode}>Cancel</Button>
-                      {/* {updateTeamStateObject.status === 'loading' ? (
-                        <Spinner />
-                      ) : (
-                        <TiTick
-                          size="28"
-                          className="cursor-pointer text-gray-500 hover:text-gray-700"
-                          onClick={updateTeamName}
-                        />
-                      )} */}
                     </div>
                   </div>
                 )}
 
-                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-4 mb-4">
+                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-1 mb-4">
                   <span>Created By: </span>
                   <span>
                     {t.created_by_fname} {t.created_by_lname}
@@ -116,15 +146,28 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                 </div>
 
                 <div>
-                  <div className="mt-4 mb-2">
-                    <Tooltip title="Add user to team" placement="right">
-                      <Button
-                        type="primary"
-                        shape="circle"
-                        icon={<PlusOutlined />}
-                        size="middle"
-                      />
-                    </Tooltip>
+                  <div className="pt-3 mb-2">
+                    {showAddUserInput ? (
+                      <div>
+                        <AutoComplete
+                          options={options}
+                          style={{ width: 200 }}
+                          onSelect={onSelect}
+                          onSearch={setAutoOption}
+                          placeholder="Search User"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <Tooltip title="Add user to team" placement="right">
+                          <PlusOutlined
+                            size={38}
+                            className="cursor-pointer text-gray-500 hover:text-gray-700 rounded-full border-2 border-slate-500 ant-icon-size"
+                            onClick={showAddUserInputFiled}
+                          />
+                        </Tooltip>
+                      </div>
+                    )}
                   </div>
                   <TeamUsersUpdate />
                 </div>
