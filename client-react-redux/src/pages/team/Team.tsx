@@ -171,6 +171,8 @@ const Team: React.FC = () => {
 
   const disabled = actionType === 'view';
 
+  const data = teams.teams.map((t) => ({ ...t, key: t.team_id }));
+
   return (
     <div>
       {contextHolder}
@@ -180,7 +182,7 @@ const Team: React.FC = () => {
       ) : (
         <Table
           columns={getColumns(viewTeamDetail, initiateUpdateTeam)}
-          dataSource={teams.teams}
+          dataSource={data}
         />
       )}
       <UpdateTeam showModal={isModalOpen} handleCancel={handleCancel} />
