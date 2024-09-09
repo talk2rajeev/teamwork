@@ -1,5 +1,5 @@
 import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Modal, Input, Tooltip, AutoComplete } from 'antd';
+import { Button, Modal, Input, Tooltip, Select } from 'antd';
 import type { AutoCompleteProps } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
 import TeamUsersUpdate from '../teamUsersUpdate/TeamUsersUpdate';
@@ -35,10 +35,6 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     users: [],
   });
   const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
-  const [options, setOptions] = useState<Array<{ id: number; value: string }>>([
-    { id: 1, value: 'rajeev' },
-    { id: 2, value: 'binomtvr' },
-  ]);
 
   const toggleTeamNameEditMode = () => {
     setTeamNameEditMode(!teamNameEditMode);
@@ -75,13 +71,35 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     value: str.repeat(repeat),
   });
 
-  const getPanelValue = (searchText: string) =>
-    !searchText
-      ? []
-      : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+  const options = [
+    {
+      value: '1',
+      label: 'Not Identified',
+    },
+    {
+      value: '2',
+      label: 'Closed',
+    },
+    {
+      value: '3',
+      label: 'Communicated',
+    },
+    {
+      value: '4',
+      label: 'Identified',
+    },
+    {
+      value: '5',
+      label: 'Resolved',
+    },
+    {
+      value: '6',
+      label: 'Cancelled',
+    },
+  ];
 
-  const setAutoOption = (a: any) => {
-    console.log(a);
+  const onChange = (value: string) => {
+    console.log(`selected ${value}`);
   };
 
   return (
@@ -149,12 +167,20 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                   <div className="pt-3 mb-2">
                     {showAddUserInput ? (
                       <div>
-                        <AutoComplete
-                          options={options}
+                        <Select
+                          onChange={onChange}
+                          showSearch
                           style={{ width: 200 }}
-                          onSelect={onSelect}
-                          onSearch={setAutoOption}
-                          placeholder="Search User"
+                          placeholder="Search to Select"
+                          optionFilterProp="label"
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '')
+                              .toLowerCase()
+                              .localeCompare(
+                                (optionB?.label ?? '').toLowerCase()
+                              )
+                          }
+                          options={options}
                         />
                       </div>
                     ) : (
