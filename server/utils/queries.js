@@ -43,6 +43,11 @@ export const SQL_QUERIES = {
       from role 
       INNER JOIN user_profile 
       ON role.roleId = user_profile.role_id`,
+    searchUser: `SELECT role.roleName, role.roleId, user_profile.profileId, user_profile.fname, user_profile.lname
+      from role 
+      INNER JOIN user_profile 
+      ON role.roleId = user_profile.role_id
+      WHERE (UPPER(user_profile.fname) LIKE UPPER(CONCAT('%', ? ,'%')) OR UPPER(user_profile.lname) LIKE UPPER(CONCAT('%', ? ,'%')))`,
   },
   team: {
     insertQuery: `insert into team (teamName, createdById) values(?, ?)`,

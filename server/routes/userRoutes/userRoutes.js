@@ -9,6 +9,7 @@ userRoutes.post(
   userControllers.updateUserProfileController
 );
 userRoutes.get("/getAllUsers", userControllers.getUsersController);
+userRoutes.get("/searchUser", userControllers.searchUsersController);
 userRoutes.get("/getUserById/:id", userControllers.getUserByIdController);
 userRoutes.get("/getAdminUsers", userControllers.getAdminUsersController);
 

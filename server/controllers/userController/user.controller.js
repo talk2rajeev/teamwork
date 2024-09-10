@@ -35,6 +35,16 @@ async function getUsersController(req, res) {
   }
 }
 
+async function searchUsersController(req, res) {
+  const searchValue = req.query.searchValue;
+  try {
+    const users = await userService.searchUsers(searchValue);
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 async function getUserByIdController(req, res) {
   const id = req.params.id;
   try {
@@ -70,4 +80,5 @@ export {
   getUsersController,
   getUserByIdController,
   getAdminUsersController,
+  searchUsersController,
 };

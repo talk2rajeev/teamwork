@@ -57,6 +57,18 @@ async function getUsers() {
   }
 }
 
+async function searchUsers(searchValue) {
+  try {
+    const [data, ...meta] = await pool.query(SQL_QUERIES.user.searchUser, [
+      searchValue,
+      searchValue,
+    ]);
+    return data;
+  } catch (err) {
+    throw new Error(`Failed to get User: ${err.message}`);
+  }
+}
+
 async function getUserById(id) {
   try {
     const [data, ...meta] = await pool.query(
@@ -85,6 +97,7 @@ async function getAdminUsers() {
 }
 export {
   getUsers,
+  searchUsers,
   getUserById,
   createUserLogin,
   updateUserProfile,
