@@ -3,18 +3,10 @@ import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
 import * as Types from '../../utils/types/types';
 
-type UserType = {
-  roleName: string;
-  roleId: number;
-  profileId: number;
-  fname: string;
-  lname: string;
-};
-
 export interface UserState {
   allUsers: {
     status: Types.StatusType;
-    users: Array<UserType>;
+    users: Array<Types.UserType>;
   };
 }
 
@@ -33,7 +25,19 @@ const initialState: UserState = {
 export const getAllUsersAsync = createAsyncThunk(
   'user/getAllUsers',
   async () => {
-    const response = await fetcher.get<Array<UserType>>('/user/getAllUsers');
+    const response =
+      await fetcher.get<Array<Types.UserType>>('/user/getAllUsers');
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
+export const searchUsersAsync = createAsyncThunk(
+  'user/searchUsers',
+  async (searchValue: string, thunkAPI) => {
+    const response = await fetcher.get<Array<Types.UserType>>(
+      `/user/searchUser?searchValue=${searchValue}`
+    );
     // The value we return becomes the `fulfilled` action payload
     return response;
   }
@@ -61,6 +65,25 @@ export const userSlice = createSlice({
         };
       })
       .addCase(getAllUsersAsync.rejected, (state) => {
+        state.allUsers = {
+          status: 'failed',
+          users: [],
+        };
+      })
+
+      .addCase(searchUsersAsync.pending, (state) => {
+        state.allUsers = {
+          status: 'loading',
+          users: [],
+        };
+      })
+      .addCase(searchUsersAsync.fulfilled, (state, action) => {
+        state.allUsers = {
+          status: 'idle',
+          users: action.payload,
+        };
+      })
+      .addCase(searchUsersAsync.rejected, (state) => {
         state.allUsers = {
           status: 'failed',
           users: [],
