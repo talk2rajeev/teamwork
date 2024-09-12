@@ -49,6 +49,17 @@ export interface SelectedProduct {
 }
 
 /**
+ * User
+ */
+export interface UserType {
+  roleName: string;
+  roleId: number;
+  profileId: number;
+  fname: string;
+  lname: string;
+}
+
+/**
  * Team
  */
 export interface TeamUser {
