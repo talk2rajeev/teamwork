@@ -2,7 +2,7 @@ import react, { useState, useEffect, useReducer } from 'react';
 import { Button, Modal, Input, Tooltip, Select } from 'antd';
 import type { AutoCompleteProps } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
-import TeamUsersUpdate from '../teamUsersUpdate/TeamUsersUpdate';
+import TeamUserManagement from '../teamUsersManagement/TeamUserManagement';
 import {
   getAllTeams,
   getTeamsWithUserByTeamId,
@@ -13,7 +13,7 @@ import {
   idleTeamNameUpdateStatus,
 } from '../../../slices/team/teamSlice';
 import { IoMdCreate } from 'react-icons/io';
-import { PlusOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 type UpdateTeamProps = {
   showModal: boolean;
@@ -34,15 +34,17 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     teamname: '',
     users: [],
   });
-  const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
 
-  const toggleTeamNameEditMode = () => {
-    setTeamNameEditMode(!teamNameEditMode);
+  const enableTeamNameEdit = () => {
+    setTeamNameEditMode(true);
+  };
+
+  const disableTeamEdit = () => {
+    setTeamNameEditMode(false);
   };
 
   const onCancel = () => {
-    toggleTeamNameEditMode();
-    setShowAddUserInput(false);
+    enableTeamNameEdit();
     handleCancel();
   };
 
@@ -57,49 +59,6 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
 
   const onTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTeamData({ ...teamData, teamname: event.target.value });
-  };
-
-  const showAddUserInputFiled = () => {
-    setShowAddUserInput(true);
-  };
-
-  const onSelect = (data: any) => {
-    console.log('onSelect', data);
-  };
-
-  const mockVal = (str: string, repeat = 1) => ({
-    value: str.repeat(repeat),
-  });
-
-  const options = [
-    {
-      value: '1',
-      label: 'Not Identified',
-    },
-    {
-      value: '2',
-      label: 'Closed',
-    },
-    {
-      value: '3',
-      label: 'Communicated',
-    },
-    {
-      value: '4',
-      label: 'Identified',
-    },
-    {
-      value: '5',
-      label: 'Resolved',
-    },
-    {
-      value: '6',
-      label: 'Cancelled',
-    },
-  ];
-
-  const onChange = (value: string) => {
-    console.log(`selected ${value}`);
   };
 
   return (
@@ -122,7 +81,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     <IoMdCreate
                       size="16"
                       className="cursor-pointer text-gray-500 hover:text-gray-700"
-                      onClick={toggleTeamNameEditMode}
+                      onClick={enableTeamNameEdit}
                     />
                   </div>
                 ) : (
@@ -145,13 +104,21 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                       >
                         Update
                       </Button> */}
-                      <Button
-                        type="primary"
-                        icon={<PlusOutlined color="#0099ff" />}
-                        size="middle"
-                      />
+                      <Tooltip title="Update Team name" placement="top">
+                        <Button
+                          type="primary"
+                          icon={<CheckOutlined style={{ color: '#FFF' }} />}
+                          size="middle"
+                          onClick={updateTeamName}
+                        />
+                      </Tooltip>
                       &nbsp;
-                      <Button onClick={toggleTeamNameEditMode}>Cancel</Button>
+                      <Tooltip title="Cancel" placement="top">
+                        <Button
+                          icon={<CloseOutlined color="#0099ff" />}
+                          onClick={disableTeamEdit}
+                        />
+                      </Tooltip>
                     </div>
                   </div>
                 )}
@@ -163,40 +130,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                   </span>
                 </div>
 
-                <div>
-                  <div className="pt-3 mb-2">
-                    {showAddUserInput ? (
-                      <div>
-                        <Select
-                          onChange={onChange}
-                          showSearch
-                          style={{ width: 200 }}
-                          placeholder="Search to Select"
-                          optionFilterProp="label"
-                          filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '')
-                              .toLowerCase()
-                              .localeCompare(
-                                (optionB?.label ?? '').toLowerCase()
-                              )
-                          }
-                          options={options}
-                        />
-                      </div>
-                    ) : (
-                      <div>
-                        <Tooltip title="Add user to team" placement="right">
-                          <PlusOutlined
-                            size={38}
-                            className="cursor-pointer text-gray-500 hover:text-gray-700 rounded-full border-2 border-slate-500 ant-icon-size"
-                            onClick={showAddUserInputFiled}
-                          />
-                        </Tooltip>
-                      </div>
-                    )}
-                  </div>
-                  <TeamUsersUpdate />
-                </div>
+                <TeamUserManagement />
               </div>
             );
           })}
