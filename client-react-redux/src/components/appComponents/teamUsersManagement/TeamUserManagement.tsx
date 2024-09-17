@@ -1,5 +1,14 @@
 import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Table, Space, Tag, TableProps, Tooltip, Select } from 'antd';
+import {
+  Button,
+  Table,
+  Space,
+  Tag,
+  TableProps,
+  Tooltip,
+  Select,
+  Popconfirm,
+} from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
 import { selectedTeamId, allTeams } from '../../../slices/team/teamSlice';
 import { searchUsersAsync, allUsers } from '../../../slices/users/userSlice';
@@ -12,8 +21,19 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 
+const style: React.CSSProperties = {
+  width: '300vw',
+  height: '300vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 const getColumns = (
-  deleteUserFromTeam: (id: number) => void
+  deleteUserFromTeam: (id: number) => void,
+  handleOk: () => void,
+  handleCancel: () => void,
+  open: boolean
 ): TableProps<Types.TeamUser>['columns'] => [
   {
     title: 'First Name',
@@ -39,10 +59,17 @@ const getColumns = (
       <Space size="middle">
         <span onClick={() => deleteUserFromTeam(record.user_profile_id)}>
           <Tooltip title="Remove user from team." placement="top">
-            <DeleteOutlined
-              size={30}
-              className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
-            />
+            <Popconfirm
+              title="Confirm Delete."
+              open={open}
+              onConfirm={handleOk}
+              onCancel={handleCancel}
+            >
+              <DeleteOutlined
+                size={30}
+                className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
+              />
+            </Popconfirm>
           </Tooltip>
         </span>
       </Space>
@@ -57,6 +84,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<Types.UserType | null>();
   const [userSearchPattern, setUserSearchPattern] = useState<string>('');
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const selectedTeamIndex = useAppSelector(selectedTeamId);
   const teams = useAppSelector(allTeams);
   const users = useAppSelector(allUsers);
@@ -101,9 +129,19 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     .find((t) => t.team_id === selectedTeamIndex)
     ?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
 
-  const deleteUserFromTeam = (id: number) => {};
+  const deleteUserFromTeam = (id: number) => {
+    console.log('delete user from team with id: ', id);
+    setOpenConfirm(true);
+  };
 
   console.log('selectedUsr ', selectedUser);
+
+  const handleOk = () => {
+    console.log('delete');
+  };
+  const handleCancel = () => {
+    setOpenConfirm(false);
+  };
 
   if (!teamUsers) {
     return <div>No User Assigned to team yet.</div>;
@@ -158,7 +196,15 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
           </div>
         )}
       </div>
-      <Table columns={getColumns(deleteUserFromTeam)} dataSource={teamUsers} />
+      <Table
+        columns={getColumns(
+          deleteUserFromTeam,
+          handleOk,
+          handleCancel,
+          openConfirm
+        )}
+        dataSource={teamUsers}
+      />
     </div>
   );
 };
