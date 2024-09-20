@@ -1,4 +1,4 @@
-import react, { useState, useEffect, useReducer } from 'react';
+import react, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Table,
@@ -55,25 +55,6 @@ const getColumns = (
     render: (_, record) => (
       <DeleteButton deleteUser={deleteUserFromTeam} record={record} />
     ),
-    // (
-    //   <Space size="middle">
-    //     <span onClick={() => deleteUserFromTeam(record.user_profile_id)}>
-    //       <Tooltip title="Remove user from team." placement="top">
-    //         <Popconfirm
-    //           title="Confirm Delete."
-    //           open={open}
-    //           onConfirm={handleOk}
-    //           onCancel={handleCancel}
-    //         >
-    //           <DeleteOutlined
-    //             size={30}
-    //             className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
-    //           />
-    //         </Popconfirm>
-    //       </Tooltip>
-    //     </span>
-    //   </Space>
-    // ),
   },
 ];
 
@@ -207,6 +188,21 @@ const DeleteButton = ({
   deleteUser: (id: number) => void;
 }) => {
   const [open, setOpen] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (listRef.current && !listRef.current.contains(event.target as Node)) {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleOk = () => {
     setOpen((c) => false);
   };
@@ -220,27 +216,24 @@ const DeleteButton = ({
 
   return (
     <Space size="middle">
-      <Tooltip title="Remove user from team." placement="top">
-        <Popconfirm
-          title="Confirm Delete."
-          open={open}
-          onConfirm={handleOk}
-          onCancel={handleCancel}
+      <Popconfirm
+        title="Confirm Delete."
+        open={open}
+        onConfirm={handleOk}
+        onCancel={handleCancel}
+      >
+        <span
+          data-id={record.user_profile_id}
+          onClick={() => deleteUserEvent(record.user_profile_id)}
+          ref={listRef}
         >
-          <span
-            data-test="AAAAAA"
+          <DeleteOutlined
+            size={30}
+            className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
             data-id={record.user_profile_id}
-            onClick={() => deleteUserEvent(record.user_profile_id)}
-          >
-            <DeleteOutlined
-              size={30}
-              className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
-              data-test="AAAAAA"
-              data-id={record.user_profile_id}
-            />
-          </span>
-        </Popconfirm>
-      </Tooltip>
+          />
+        </span>
+      </Popconfirm>
     </Space>
   );
 };
