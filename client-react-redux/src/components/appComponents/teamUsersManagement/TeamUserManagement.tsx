@@ -69,8 +69,6 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const teams = useAppSelector(allTeams);
   const users = useAppSelector(allUsers);
 
-  console.log('users ', users);
-
   const debouncedUserSearchString = useDebounce(userSearchPattern, 500);
 
   useEffect(() => {
@@ -89,7 +87,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   };
 
   const onChange = (value: number) => {
-    console.log(`selected ${value}`);
+    console.log(`onChange ${value}`);
     console.log(typeof value);
     const selecteduser = users.users.find((u) => u.profileId === value);
     setSelectedUser(selecteduser);
@@ -100,6 +98,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   };
 
   const onUserSearch = (value: string) => {
+    console.log('onUserSearch ', value);
     if (value && value.length >= 2) {
       setUserSearchPattern(value);
     }
@@ -117,8 +116,6 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const deleteUserFromTeam = (id: number) => {
     console.log('delete user ', id);
   };
-
-  console.log('selectedUsr ', selectedUser);
 
   if (!teamUsers) {
     return <div>No User Assigned to team yet.</div>;
@@ -145,21 +142,11 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
               options={userOptions}
             />
             &nbsp;
-            {selectedUser?.profileId ?? (
-              <>
-                <Tooltip title="Addd user" placement="top">
-                  <Button
-                    type="primary"
-                    icon={<CheckOutlined style={{ color: '#FFF' }} />}
-                    size="middle"
-                  />
-                </Tooltip>
-                &nbsp;
-                <Tooltip title="Cancel" placement="top">
-                  <Button onClick={unSelectUser} icon={<CloseOutlined />} />
-                </Tooltip>
-              </>
-            )}
+            <Tooltip title="Add user to Team" placement="top">
+              <Button type="primary" size="middle">
+                Add User
+              </Button>
+            </Tooltip>
           </div>
         ) : (
           <div>
@@ -204,9 +191,11 @@ const DeleteButton = ({
   }, []);
 
   const handleOk = () => {
+    console.log('handleOk');
     setOpen((c) => false);
   };
   const handleCancel = () => {
+    console.log('handleOk');
     setOpen((c) => false);
   };
   const deleteUserEvent = (id: number) => {
