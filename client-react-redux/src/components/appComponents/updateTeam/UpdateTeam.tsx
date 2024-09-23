@@ -44,7 +44,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
   };
 
   const onCancel = () => {
-    enableTeamNameEdit();
+    disableTeamEdit();
     handleCancel();
   };
 
@@ -77,7 +77,10 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
               <div key={t.team_id}>
                 {!teamNameEditMode ? (
                   <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max justify-between">
-                    <span>{t.team_name}</span>
+                    <div className="grid grid-flow-col auto-cols-max gap-4">
+                      <span>Team Name:</span>
+                      <span>{t.team_name}</span>
+                    </div>
                     <IoMdCreate
                       size="16"
                       className="cursor-pointer text-gray-500 hover:text-gray-700"
@@ -89,21 +92,13 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     <div className="col-span-8">
                       <label>Team Name</label>
                       <Input
-                        placeholder="Team name"
+                        pxlaceholder="Team name"
                         defaultValue={t.team_name}
                         onChange={onTeamNameChange}
                         size="middle"
                       />
                     </div>
                     <div className="flex items-end col-span-4">
-                      {/* <Button
-                        type="primary"
-                        loading={updateTeamStateObject.status === 'loading'}
-                        iconPosition="start"
-                        onClick={updateTeamName}
-                      >
-                        Update
-                      </Button> */}
                       <Tooltip title="Update Team name" placement="top">
                         <Button
                           type="primary"
@@ -129,7 +124,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     {t.created_by_fname} {t.created_by_lname}
                   </span>
                 </div>
-
+                <h3 className="text-base font-bold">Manage team Users</h3>
                 <TeamUserManagement />
               </div>
             );
