@@ -1,4 +1,4 @@
-import react, { useState, useEffect } from 'react';
+import react from 'react';
 import { Space, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as Types from '../../../../utils/types/types';

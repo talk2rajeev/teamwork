@@ -1,16 +1,7 @@
-import react, { useState, useEffect } from 'react';
-import {
-  Button,
-  Table,
-  Space,
-  Tag,
-  TableProps,
-  Tooltip,
-  Select,
-  Popconfirm,
-} from 'antd';
+import react from 'react';
+import { Table, Tag, TableProps } from 'antd';
 import { selectedTeamId, allTeams } from '../../../../slices/team/teamSlice';
-import { useAppSelector, useAppDispatch } from '../../../../appStore/hooks';
+import { useAppSelector } from '../../../../appStore/hooks';
 import * as Types from '../../../../utils/types/types';
 import DeleteButton from '../teamDeleteButton/TeamDeleteButton';
 
@@ -45,15 +36,16 @@ const getColumns = (
 
 interface TeamUsersProps {
   deleteUser: (user: Types.TeamUser) => void;
+  teamUsers?: Array<Types.TeamUser>;
 }
 
-const TeamUsers: React.FC<TeamUsersProps> = ({ deleteUser }) => {
+const TeamUsers: React.FC<TeamUsersProps> = ({ deleteUser, teamUsers }) => {
   const selectedTeamIndex = useAppSelector(selectedTeamId);
   const teams = useAppSelector(allTeams);
 
-  const teamUsers = teams.teams
-    .find((t) => t.team_id === selectedTeamIndex)
-    ?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
+  //   const teamUsers = teams.teams
+  //     .find((t) => t.team_id === selectedTeamIndex)
+  //     ?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
 
   if (!teamUsers) {
     return <div>No User Assigned to team yet.</div>;
