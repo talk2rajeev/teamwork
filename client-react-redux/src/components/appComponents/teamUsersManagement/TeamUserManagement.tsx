@@ -1,62 +1,16 @@
-import react, { useState, useEffect, useRef } from 'react';
-import {
-  Button,
-  Table,
-  Space,
-  Tag,
-  TableProps,
-  Tooltip,
-  Select,
-  Popconfirm,
-} from 'antd';
+import react, { useState, useEffect } from 'react';
+import { Button, Tooltip, Select, Radio, RadioChangeEvent } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
+import {
+  searchUsersAsync,
+  allUsers,
+  getAllUsersAsync,
+} from '../../../slices/users/userSlice';
 import { selectedTeamId, allTeams } from '../../../slices/team/teamSlice';
-import { searchUsersAsync, allUsers } from '../../../slices/users/userSlice';
 import * as Types from '../../../utils/types/types';
 import { useDebounce } from '../../../hooks/debounce/debounce';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from '@ant-design/icons';
-
-const style: React.CSSProperties = {
-  width: '300vw',
-  height: '300vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const getColumns = (
-  deleteUserFromTeam: (id: number) => void
-): TableProps<Types.TeamUser>['columns'] => [
-  {
-    title: 'First Name',
-    dataIndex: 'first_name',
-    key: 'first_name',
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: 'Last Name',
-    dataIndex: 'last_name',
-    key: 'last_name',
-  },
-  {
-    title: 'Role',
-    key: 'role_name',
-    dataIndex: 'role_name',
-    render: (text) => <Tag color="geekblue">{text}</Tag>,
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <DeleteButton deleteUser={deleteUserFromTeam} record={record} />
-    ),
-  },
-];
+import TeamUsers from './teamUsers/TeamUsers';
+import { PlusOutlined } from '@ant-design/icons';
 
 type TeamUserManagementProps = {};
 
@@ -65,11 +19,21 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<Types.UserType | null>();
   const [userSearchPattern, setUserSearchPattern] = useState<string>('');
-  const selectedTeamIndex = useAppSelector(selectedTeamId);
-  const teams = useAppSelector(allTeams);
+  const [roleValue, setRoleValue] = useState<number>(2);
   const users = useAppSelector(allUsers);
 
+  const selectedTeamIndex = useAppSelector(selectedTeamId);
+  const teams = useAppSelector(allTeams);
+
+  const team = teams.teams.find((t) => t.team_id === selectedTeamIndex);
+  const teamUsers = team?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
+  const teamUsersIds = team?.users?.map((u) => u.user_profile_id) || [];
+
   const debouncedUserSearchString = useDebounce(userSearchPattern, 500);
+
+  useEffect(() => {
+    dispatch(getAllUsersAsync());
+  }, []);
 
   useEffect(() => {
     if (debouncedUserSearchString) {
@@ -77,24 +41,19 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     }
   }, [debouncedUserSearchString]);
 
-  useEffect(() => {
-    document.documentElement.scrollTop = document.documentElement.clientHeight;
-    document.documentElement.scrollLeft = document.documentElement.clientWidth;
-  }, []);
-
   const showAddUserInputFiled = () => {
     setShowAddUserInput(true);
   };
 
-  const onChange = (value: number) => {
-    console.log(`onChange ${value}`);
-    console.log(typeof value);
-    const selecteduser = users.users.find((u) => u.profileId === value);
-    setSelectedUser(selecteduser);
+  const cancelAddUser = () => {
+    setShowAddUserInput(false);
+    setSelectedUser(null);
   };
 
-  const unSelectUser = () => {
-    setSelectedUser(null);
+  const onChange = (value: number) => {
+    const user = users.users.find((u) => u.profileId === value);
+    setSelectedUser(user);
+    console.log(`onChange ${value} `, 'selectedUser', user);
   };
 
   const onUserSearch = (value: string) => {
@@ -104,28 +63,27 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     }
   };
 
-  const userOptions = users.users.map((u) => ({
-    value: u.profileId,
-    label: `${u.fname} ${u.lname}`,
-  }));
-
-  const teamUsers = teams.teams
-    .find((t) => t.team_id === selectedTeamIndex)
-    ?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
-
-  const deleteUserFromTeam = (id: number) => {
-    console.log('delete user ', id);
+  const onUserRoleSelection = (e: RadioChangeEvent) => {
+    console.log('radio checked', e.target.value);
+    setRoleValue(e.target.value);
   };
 
-  if (!teamUsers) {
-    return <div>No User Assigned to team yet.</div>;
-  }
+  const userOptions = users.users
+    .map((u) => ({
+      value: u.profileId,
+      label: `${u.fname} ${u.lname}`,
+    }))
+    .filter((u) => !teamUsersIds?.includes(u.value));
+
+  const deleteUserFromTeam = (user: Types.TeamUser) => {
+    console.log('delete user ', user);
+  };
 
   return (
     <div>
       <div className="pt-3 mb-2">
         {showAddUserInput ? (
-          <div>
+          <div className="grid grid-flow-col auto-cols-max gap-x-4 py-4 px-2 bg-orange-50">
             <Select
               onChange={onChange}
               onSearch={onUserSearch}
@@ -141,12 +99,18 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
               }
               options={userOptions}
             />
-            &nbsp;
+            <Radio.Group onChange={onUserRoleSelection} value={roleValue}>
+              <Radio value={1}>Admin</Radio>
+              <Radio value={2}>Developer</Radio>
+            </Radio.Group>
             <Tooltip title="Add user to Team" placement="top">
-              <Button type="primary" size="middle">
+              <Button type="primary" size="middle" disabled={!selectedUser}>
                 Add User
               </Button>
             </Tooltip>
+            <Button type="default" size="middle" onClick={cancelAddUser}>
+              Cancel
+            </Button>
           </div>
         ) : (
           <div>
@@ -160,69 +124,9 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
           </div>
         )}
       </div>
-      <Table columns={getColumns(deleteUserFromTeam)} dataSource={teamUsers} />
+      <TeamUsers deleteUser={deleteUserFromTeam} teamUsers={teamUsers} />
     </div>
   );
 };
 
 export default TeamUserManagement;
-
-const DeleteButton = ({
-  record,
-  deleteUser,
-}: {
-  record: Types.TeamUser;
-  deleteUser: (id: number) => void;
-}) => {
-  const [open, setOpen] = useState(false);
-  const listRef = useRef<HTMLUListElement>(null);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (listRef.current && !listRef.current.contains(event.target as Node)) {
-      setOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleOk = () => {
-    console.log('handleOk');
-    setOpen((c) => false);
-  };
-  const handleCancel = () => {
-    console.log('handleOk');
-    setOpen((c) => false);
-  };
-  const deleteUserEvent = (id: number) => {
-    setOpen((c) => true);
-    deleteUser(id);
-  };
-
-  return (
-    <Space size="middle">
-      <Popconfirm
-        title="Confirm Delete."
-        open={open}
-        onConfirm={handleOk}
-        onCancel={handleCancel}
-      >
-        <span
-          data-id={record.user_profile_id}
-          onClick={() => deleteUserEvent(record.user_profile_id)}
-          ref={listRef}
-        >
-          <DeleteOutlined
-            size={30}
-            className="cursor-pointer text-gray-500 hover:text-gray-700 ant-icon-size"
-            data-id={record.user_profile_id}
-          />
-        </span>
-      </Popconfirm>
-    </Space>
-  );
-};
