@@ -64,7 +64,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
   return (
     <div className="user-story-container bg-white p-2 min-h-96 grid grid-cols-1 content-between">
       <Modal
-        title="Team"
+        title="Team Management"
         open={showModal}
         onCancel={onCancel}
         width={800}
@@ -92,7 +92,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     <div className="col-span-8">
                       <label>Team Name</label>
                       <Input
-                        pxlaceholder="Team name"
+                        placeholder="Team name"
                         defaultValue={t.team_name}
                         onChange={onTeamNameChange}
                         size="middle"
@@ -118,13 +118,9 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                   </div>
                 )}
 
-                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-1 mb-4">
-                  <span>Created By: </span>
-                  <span>
-                    {t.created_by_fname} {t.created_by_lname}
-                  </span>
-                </div>
-                <h3 className="text-base font-bold">Manage team Users</h3>
+                <h3 className="text-sm font-bold mt-2 pt-2">
+                  Manage team Users
+                </h3>
                 <TeamUserManagement />
               </div>
             );
