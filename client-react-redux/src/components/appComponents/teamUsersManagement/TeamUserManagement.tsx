@@ -99,18 +99,29 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
               }
               options={userOptions}
             />
-            <Radio.Group onChange={onUserRoleSelection} value={roleValue}>
+            <Radio.Group
+              className="v-center"
+              onChange={onUserRoleSelection}
+              value={roleValue}
+            >
               <Radio value={1}>Admin</Radio>
               <Radio value={2}>Developer</Radio>
             </Radio.Group>
-            <Tooltip title="Add user to Team" placement="top">
-              <Button type="primary" size="middle" disabled={!selectedUser}>
-                Add User
+            <div>
+              <Tooltip title="Add user to Team" placement="top">
+                <Button
+                  type="primary"
+                  size="middle"
+                  disabled={!selectedUser}
+                  className="mr-2"
+                >
+                  Add User
+                </Button>
+              </Tooltip>
+              <Button type="default" size="middle" onClick={cancelAddUser}>
+                Cancel
               </Button>
-            </Tooltip>
-            <Button type="default" size="middle" onClick={cancelAddUser}>
-              Cancel
-            </Button>
+            </div>
           </div>
         ) : (
           <div>
