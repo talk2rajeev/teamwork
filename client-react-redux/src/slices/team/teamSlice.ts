@@ -86,8 +86,10 @@ export const getTeamsWithUserByTeamId = createAsyncThunk(
     const response = await fetcher.get<Array<Types.TeamWithUserInterface>>(
       `/team/getTeamWithUsersById/${teamId}`
     );
-    thunkAPI.dispatch(setUserToTeam(response[0]));
+    if (response.length) thunkAPI.dispatch(setUserToTeam(response[0]));
     // The value we return becomes the `fulfilled` action payload
+    const state = thunkAPI.getState();
+    console.log(state);
     return response;
   }
 );
@@ -127,15 +129,15 @@ export const teamSlice = createSlice({
       action: PayloadAction<Types.TeamWithUserInterface>
     ) => {
       state.allTeams.teams = state.allTeams.teams.map((t) => {
-        if (t.team_id === action.payload.team_id) {
+        if (t.team_id === action.payload?.team_id) {
           return {
             ...t,
-            users: action.payload.users,
+            users: action.payload?.users,
           };
         }
         return t;
       });
-      state.selectedTeamId = action.payload.team_id;
+      state.selectedTeamId = action.payload.team_id || -1;
     },
     setTeamName: (
       state,
@@ -149,6 +151,9 @@ export const teamSlice = createSlice({
     },
     idleTeamNameUpdateStatus: (state) => {
       state.updateTeam.status = 'idle';
+    },
+    resetTeam: (state) => {
+      state.selectedTeamId = -1;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -223,12 +228,13 @@ export const teamSlice = createSlice({
       })
       .addCase(getTeamsWithUserByTeamId.fulfilled, (state, action) => {
         state.allTeams.status = 'idle';
-        const teamId = action.payload[0].team_id;
+        const teamId = action.payload[0]?.team_id;
         state.allTeams.teams = state.allTeams.teams.map((t) =>
           t.team_id === teamId ? { ...t, users: action.payload[0].users } : t
         );
       })
       .addCase(getTeamsWithUserByTeamId.rejected, (state) => {
+        console.log('getTeamsWithUserByTeamId rejected');
         state.allTeams.status = 'failed';
       })
 
@@ -246,8 +252,12 @@ export const teamSlice = createSlice({
   },
 });
 
-export const { setUserToTeam, setTeamName, idleTeamNameUpdateStatus } =
-  teamSlice.actions;
+export const {
+  setUserToTeam,
+  setTeamName,
+  idleTeamNameUpdateStatus,
+  resetTeam,
+} = teamSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
