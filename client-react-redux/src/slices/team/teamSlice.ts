@@ -82,14 +82,15 @@ export const getAllTeams = createAsyncThunk('/team/getAllTeams', async () => {
 
 export const getTeamsWithUserByTeamId = createAsyncThunk(
   '/team/getTeamWithUsersById',
-  async (teamId: string, thunkAPI) => {
+  async (teamId: string, { dispatch, getState }) => {
+    const state = getState() as RootState;
     const response = await fetcher.get<Array<Types.TeamWithUserInterface>>(
       `/team/getTeamWithUsersById/${teamId}`
     );
-    if (response.length) thunkAPI.dispatch(setUserToTeam(response[0]));
+    if (response.length) dispatch(setUserToTeam(response[0]));
     // The value we return becomes the `fulfilled` action payload
-    const state = thunkAPI.getState();
-    console.log(state);
+
+    console.log(state.team);
     return response;
   }
 );
