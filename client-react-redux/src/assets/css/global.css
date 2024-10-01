@@ -10,7 +10,6 @@
 /* Global css */
 p,
 div,
-span,
 li,
 a {
   font-size: 12px;
@@ -165,4 +164,13 @@ a {
   to {
     transform: rotate(360deg);
   }
+}
+
+.v-center {
+  align-self: center;
+}
+
+/*ANt overrides*/
+.ant-modal-title {
+  text-align: center;
 }
