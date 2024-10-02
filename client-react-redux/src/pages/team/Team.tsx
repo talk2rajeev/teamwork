@@ -11,6 +11,7 @@ import {
   updateTeamState,
   updateTeamNameAsync,
   idleTeamNameUpdateStatus,
+  resetTeam,
 } from '../../slices/team/teamSlice';
 import * as Types from '../../utils/types/types';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
@@ -126,6 +127,7 @@ const Team: React.FC = () => {
   };
 
   const closeEditModal = () => {
+    dispatch(resetTeam);
     setIsModalOpen(false);
   };
 
