@@ -87,11 +87,16 @@ export const getTeamsWithUserByTeamId = createAsyncThunk(
     const response = await fetcher.get<Array<Types.TeamWithUserInterface>>(
       `/team/getTeamWithUsersById/${teamId}`
     );
-    if (response.length) dispatch(setUserToTeam(response[0]));
-    // The value we return becomes the `fulfilled` action payload
-
-    console.log(state.team);
-    return response;
+    let users: Types.TeamUser[] = [];
+    if (response.length) {
+      users = response[0].users;
+    } else {
+      const selectedTeam = state.team.allTeams.teams.find(
+        (t) => t.team_id === Number(teamId)
+      );
+      if (selectedTeam) users = selectedTeam.users || [];
+    }
+    return { teamId: Number(teamId), users };
   }
 );
 
@@ -229,10 +234,12 @@ export const teamSlice = createSlice({
       })
       .addCase(getTeamsWithUserByTeamId.fulfilled, (state, action) => {
         state.allTeams.status = 'idle';
-        const teamId = action.payload[0]?.team_id;
         state.allTeams.teams = state.allTeams.teams.map((t) =>
-          t.team_id === teamId ? { ...t, users: action.payload[0].users } : t
+          t.team_id === action.payload.teamId
+            ? { ...t, users: action.payload.users }
+            : { ...t }
         );
+        state.selectedTeamId = action.payload.teamId;
       })
       .addCase(getTeamsWithUserByTeamId.rejected, (state) => {
         console.log('getTeamsWithUserByTeamId rejected');
