@@ -127,7 +127,7 @@ const Team: React.FC = () => {
   };
 
   const closeEditModal = () => {
-    dispatch(resetTeam);
+    dispatch(resetTeam());
     setIsModalOpen(false);
   };
 
@@ -188,77 +188,6 @@ const Team: React.FC = () => {
         />
       )}
       <UpdateTeam showModal={isModalOpen} handleCancel={handleCancel} />
-      {/* <Modal
-        title="Team"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={700}
-      >
-        {teams.teams
-          .filter((t) => t.team_id === selectedTeamIndex)
-          .map((t) => {
-            return (
-              <div key={t.team_id}>
-                {!teamNameEditMode ? (
-                  <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max justify-between">
-                    <span>{t.team_name}</span>
-                    <IoMdCreate
-                      size="16"
-                      className="cursor-pointer text-gray-500 hover:text-gray-700"
-                      onClick={toggleTeamNameEditMode}
-                    />
-                  </div>
-                ) : (
-                  <div className="p-2 grid grid-cols-5 auto-cols-max justify-between">
-                    <div className="col-span-4">
-                      <label>Team Name</label>
-                      <Input
-                        placeholder="Team name"
-                        defaultValue={t.team_name}
-                        onChange={onTeamChange}
-                        disabled={disabled}
-                        size="middle"
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      {updateTeamStateObject.status === 'loading' ? (
-                        <Spinner />
-                      ) : (
-                        <TiTick
-                          size="28"
-                          className="cursor-pointer text-gray-500 hover:text-gray-700"
-                          onClick={updateTeamName}
-                        />
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-2 border-b-2 grid grid-flow-col auto-cols-max gap-4 mt-5">
-                  <span>Created By: </span>
-                  <span>
-                    {t.created_by_fname} {t.created_by_lname}
-                  </span>
-                </div>
-
-                <div className="p-2">
-                  {t.users?.map((u) => (
-                    <div
-                      className="pb-2 grid grid-cols-2 gap-4"
-                      key={u.user_profile_id}
-                    >
-                      <span>
-                        {u.first_name} {u.last_name}
-                      </span>
-                      <span>{u.role_name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-      </Modal> */}
     </div>
   );
 };
