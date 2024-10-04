@@ -84,6 +84,12 @@ export interface Team {
   users?: Array<TeamUser>;
 }
 
+export interface AssignTeamUserReqPayload {
+  teamId: number;
+  profileId: number;
+  roleId: number;
+}
+
 /**
  * Product
  */
@@ -100,6 +106,16 @@ export interface ProductFormDataInterface {
 export interface Toast {
   id: string;
   type: 'success' | 'error' | 'info';
+  title: string;
+  message: string;
+}
+
+/**
+ * NotificationState
+ */
+export interface NotificationState {
+  showNotification: boolean;
+  type: '' | 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
 }

@@ -4,6 +4,7 @@ import loginReducer from '../slices/login/loginSlice';
 import productReducer from '../slices/product/productSlice';
 import teamReducer from '../slices/team/teamSlice';
 import userReducer from '../slices/users/userSlice';
+import NotificationReducer from '../slices/notificationSlice/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     product: productReducer,
     team: teamReducer,
     user: userReducer,
+    appNotification: NotificationReducer,
   },
 });
 
