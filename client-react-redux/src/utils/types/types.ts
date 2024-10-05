@@ -11,7 +11,7 @@ export type CreateResponseType = {
 /**
  * Product
  */
-export type ActionType = 'view' | 'update' | 'create';
+export type ActionType = 'View' | 'Update' | 'Create';
 export type Product = {
   productId: number;
   productName: string;
@@ -46,6 +46,12 @@ export interface ProductwithTeam {
 export interface SelectedProduct {
   status: 'idle' | 'loading' | 'failed';
   product: Array<ProductwithTeam>;
+}
+
+export interface ProductReqPayload {
+  productName: string;
+  createdById: number;
+  product_owner_id: number;
 }
 
 /**
@@ -115,7 +121,7 @@ export interface Toast {
  */
 export interface NotificationState {
   showNotification: boolean;
-  type: '' | 'info' | 'success' | 'warning' | 'error';
+  type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
 }
