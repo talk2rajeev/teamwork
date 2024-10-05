@@ -5,6 +5,7 @@ import { store } from './appStore/store';
 import App from './App';
 import Layout from './components/layout/Layout';
 import Login from './pages/login/Login';
+import AppNotifications from './components/widgets/appNotifications/AppNotification';
 import reportWebVitals from './reportWebVitals';
 import './assets/css/tailwind.css';
 import './index.css';
@@ -17,6 +18,7 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
+      <AppNotifications />
       <AppRoutes />
     </Provider>
   </React.StrictMode>
