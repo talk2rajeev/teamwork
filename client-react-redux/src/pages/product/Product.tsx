@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AuthUtil } from '../../utils/auth/auth';
+import { Tooltip } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
   getAllProductsAsync,
@@ -21,62 +23,20 @@ import UpdateProduct from '../../components/appComponents/updateProduct/UpdatePr
 import { ActionType } from '../../utils/types/types';
 import ViewProduct from '../../components/appComponents/viewProduct/ViewProduct';
 import * as Types from '../../utils/types/types';
-import { notification } from 'antd';
+import ProductList from '../../components/appComponents/productList/ProductList';
 
 const Product: React.FC = () => {
   const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
-  const [actionType, setActionType] = useState<ActionType>('view');
+  const [actionType, setActionType] = useState<ActionType>('View');
+  const [showCreateProductForm, setShowCreateProductForm] =
+    useState<boolean>(false);
   const productListObj = useAppSelector(productListObject);
   const selectedProdId = useAppSelector(selectedProductId);
   const selectedProductObj = useAppSelector(selectedProduct);
-  const formData = useAppSelector(updateProductFormData);
 
   const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
   const isAdmin = userDetail?.roleId && userDetail?.roleId === 1;
-
-  const [api, contextHolder] = notification.useNotification();
-
-  type NotifType = 'success' | 'error';
-
-  // const openNotification = (
-  //   type: NotifType,
-  //   title: string,
-  //   message: string
-  // ) => {
-  //   console.log('openNotification called');
-  //   if (type === 'success') {
-  //     return api.success({
-  //       message: title,
-  //       description: message,
-  //       showProgress: true,
-  //       duration: 0,
-  //       onClose: () => {
-  //         dispatch(clearProductForm());
-  //       },
-  //     });
-  //   } else if (type === 'error') {
-  //     return api.error({
-  //       message: title,
-  //       description: message,
-  //       showProgress: true,
-  //       duration: 0,
-  //       onClose: () => {
-  //         dispatch(clearProductForm());
-  //       },
-  //     });
-  //   } else {
-  //     return api.info({
-  //       message: title,
-  //       description: message,
-  //       showProgress: true,
-  //       duration: 0,
-  //       onClose: () => {
-  //         dispatch(clearProductForm());
-  //       },
-  //     });
-  //   }
-  // };
 
   useEffect(() => {
     dispatch(getAllProductsAsync());
@@ -84,22 +44,10 @@ const Product: React.FC = () => {
     dispatch(getAllUsersAsync());
   }, []);
 
-  // useEffect(() => {
-  //   console.log('useEffect > openNotification');
-  //   if (formData.apiResponseStatus === 'success') {
-  //     console.log('useEffect > success');
-  //     openNotification('success', 'Success!', formData.message);
-  //   }
-  //   if (formData.apiResponseStatus === 'failed') {
-  //     console.log('useEffect > fail');
-  //     openNotification('error', 'Failed!', formData.message);
-  //   }
-  // }, [formData]);
-
   const updateProduct = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
-    setActionType('update');
+    setActionType('Update');
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
     dispatch(setSelectedProductId(Number(dataset.prodid)));
@@ -111,7 +59,7 @@ const Product: React.FC = () => {
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
     setShowProductDetail(true);
-    setActionType('view');
+    setActionType('View');
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
     dispatch(setSelectedProductId(Number(dataset.prodid)));
@@ -126,6 +74,15 @@ const Product: React.FC = () => {
 
   const updateProductDetail = () => {
     dispatch(updateProductAsync());
+    hideProductDetail();
+  };
+
+  const createProductDetail = () => {
+    dispatch(updateProductAsync());
+  };
+
+  const createProduct = () => {
+    setShowCreateProductForm(true);
   };
 
   const product = productListObj.productList.find(
@@ -133,22 +90,35 @@ const Product: React.FC = () => {
   );
 
   const editProps =
-    actionType !== 'view' && !formData.apiResponseStatus
+    actionType === 'Create'
       ? {
-          onPrimaryBtnClick: updateProductDetail,
+          onPrimaryBtnClick: createProductDetail,
         }
-      : {};
+      : actionType === 'Update'
+        ? {
+            onPrimaryBtnClick: updateProductDetail,
+          }
+        : { onPrimaryBtnClick: () => {} };
 
   return (
     <>
-      {contextHolder}
       <div className="mt-4">
-        {isAdmin && <div>Create Product</div>}
+        {isAdmin && (
+          <div className="mt-3 mb-3">
+            <Tooltip title="Create new product" placement="right">
+              <PlusOutlined
+                size={38}
+                className="cursor-pointer text-gray-500 hover:text-gray-700 rounded-full border-2 border-slate-500 ant-icon-size"
+                onClick={createProduct}
+              />
+            </Tooltip>
+          </div>
+        )}
         {productListObj.status === 'loading' ? (
           <h1>Loading</h1>
         ) : (
           <div>
-            <div className="container bg-white p-4">
+            {/* <div className="container bg-white p-4">
               <div className="grid grid-cols-3 gap-4 border-gray-200 border-b-1">
                 <div className="pt-2 pb-2 font-semibold">Product Name</div>
                 <div className="pt-2 pb-2 font-semibold">Product owner</div>
@@ -192,21 +162,24 @@ const Product: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
+
+            <ProductList productList={productListObj.productList} />
           </div>
         )}
         <Modal
           isOpen={showProductDetail}
           onClose={hideProductDetail}
-          {...editProps}
           title="Product Detail"
           size="md"
-          footer={true}
+          footer={false}
         >
           <UpdateProduct
             type={actionType}
             selectedProduct={selectedProductObj}
             product={product}
+            {...editProps}
+            onClose={hideProductDetail}
           />
         </Modal>
       </div>
