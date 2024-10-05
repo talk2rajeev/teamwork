@@ -13,7 +13,6 @@ import {
   setProductTeamId,
   setProductOwnerId,
   selectedProductId,
-  updateProductFormData,
 } from '../../../slices/product/productSlice';
 import { GiConfirmed } from 'react-icons/gi';
 import { MdError } from 'react-icons/md';
@@ -22,12 +21,16 @@ type UpdateProductProps = {
   type: Types.ActionType;
   selectedProduct?: Types.SelectedProduct;
   product?: Types.Product;
+  onClose: () => void;
+  onPrimaryBtnClick: () => void;
 };
 
 const UpdateProduct: React.FC<UpdateProductProps> = ({
   type,
   selectedProduct,
   product,
+  onClose,
+  onPrimaryBtnClick,
 }) => {
   // on update success:: handle it better UX way
   // on update failure : handle error
@@ -36,12 +39,11 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   const teams = useAppSelector(teamWithUsers);
   const users = useAppSelector(allUsers);
   const productId = useAppSelector(selectedProductId);
-  const formData = useAppSelector(updateProductFormData);
   const productWithTeam = getProductWithTeam(selectedProduct, product);
   const userList = users.users.map((u) => `${u.fname} ${u.lname}`);
   const [prodName, setProdName] = useState<string>('');
 
-  const disabled = type === 'view';
+  const disabled = type === 'View';
 
   const onInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -90,28 +92,6 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
 
   const productName = prodName || productWithTeam.productName;
 
-  const updateSucceded =
-    formData.apiResponseStatus && formData.apiResponseStatus === 'success';
-  const updateFailed =
-    formData.apiResponseStatus && formData.apiResponseStatus === 'failed';
-
-  if (updateSucceded) {
-    return (
-      <div className="mt-16 flex justify-center">
-        <GiConfirmed fill="#5cb85c" size="24" />
-        <span className="text-base">{formData.message}</span>
-      </div>
-    );
-  }
-
-  if (updateFailed) {
-    return (
-      <div className="mt-16 flex justify-center">
-        <MdError fill="#5cb85c" size="16" />
-        <span className="text-base">{formData.message}</span>
-      </div>
-    );
-  }
   return (
     <div className="user-story-container bg-white p-2 min-h-96 grid grid-cols-1 content-between">
       <div>
@@ -149,17 +129,19 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
       <div className="grid grid-flow-col auto-cols-max justify-end">
         <div className="p-2">
           <coreComponents.Button
-            label="Login"
-            type="primary"
-            clickHandler={() => {}}
+            label="Cancel"
+            type="default"
+            clickHandler={onClose}
           />
         </div>
         <div className="p-2">
-          <coreComponents.Button
-            label="No Login"
-            type="default"
-            clickHandler={() => {}}
-          />
+          {type !== 'View' && (
+            <coreComponents.Button
+              label={type}
+              type="primary"
+              clickHandler={onPrimaryBtnClick}
+            />
+          )}
         </div>
       </div>
     </div>
