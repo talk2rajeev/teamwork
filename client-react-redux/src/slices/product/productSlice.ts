@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
 import * as Types from '../../utils/types/types';
+import { showNotification } from '../notificationSlice/notificationSlice';
 // import { login, logoutAsyncApi } from './loginAPI';
 
 // type productWithTeam = product & {
@@ -25,12 +26,7 @@ export interface productState {
   productCreated?: productCreated;
   selectedProduct: Types.SelectedProduct;
   selectedProductId: number;
-  productFormData: {
-    formData: Types.ProductFormDataInterface;
-    status: Types.StatusType;
-    message: string;
-    apiResponseStatus?: ApiResponseStatusType;
-  };
+  productFormData: Types.ProductFormDataInterface;
 }
 
 const initialState: productState = {
@@ -44,13 +40,7 @@ const initialState: productState = {
     product: [],
   },
   selectedProductId: -1,
-  productFormData: {
-    formData: {
-      productId: -1,
-    },
-    status: 'idle',
-    message: '',
-  },
+  productFormData: { productId: -1 },
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -59,16 +49,22 @@ const initialState: productState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const createProductAsync = createAsyncThunk(
-  'auth/login',
-  async (reqPayload: {
-    productName: string;
-    createdById: number;
-    product_owner_id: number;
-  }) => {
+  'auth/createProduct',
+  async (reqPayload: Types.ProductReqPayload, thunkAPI) => {
     const response = await fetcher.post<Types.CreateResponseType>(
       '/product/createProduct',
       reqPayload
     );
+    if (response.affectedRows === 1) {
+      thunkAPI.dispatch(
+        showNotification({
+          showNotification: true,
+          type: 'success',
+          title: 'Success.',
+          message: 'Product created successfully!',
+        })
+      );
+    }
     // The value we return becomes the `fulfilled` action payload
     return response;
   }
@@ -107,7 +103,7 @@ export const updateProductAsync = createAsyncThunk(
   'product/updateProduct',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState() as RootState;
-    const { productId, ...rest } = state.product.productFormData.formData;
+    const { productId, ...rest } = state.product.productFormData;
     console.log('updateProductAsync > formData ', rest);
     const response = await fetcher.put<{
       message: string;
@@ -115,6 +111,16 @@ export const updateProductAsync = createAsyncThunk(
     }>(`/product/updateProduct/${productId}`, rest);
     // The value we return becomes the `fulfilled` action payload
     thunkAPI.dispatch(getAllProductsAsync());
+    if (response.status === 'success') {
+      thunkAPI.dispatch(
+        showNotification({
+          showNotification: true,
+          type: 'success',
+          title: 'Success',
+          message: response.message,
+        })
+      );
+    }
     return response;
   }
 );
@@ -142,34 +148,31 @@ export const productSlice = createSlice({
       state.selectedProductId = -1;
     },
     setProductId: (state, action: PayloadAction<number>) => {
-      state.productFormData.formData = {
-        ...state.productFormData.formData,
+      state.productFormData = {
+        ...state.productFormData,
         productId: action.payload,
       };
     },
     setProductName: (state, action: PayloadAction<string>) => {
-      state.productFormData.formData = {
-        ...state.productFormData.formData,
+      state.productFormData = {
+        ...state.productFormData,
         productName: action.payload,
       };
     },
     setProductTeamId: (state, action: PayloadAction<number>) => {
-      state.productFormData.formData = {
-        ...state.productFormData.formData,
+      state.productFormData = {
+        ...state.productFormData,
         teamId: action.payload,
       };
     },
     setProductOwnerId: (state, action: PayloadAction<number>) => {
-      state.productFormData.formData = {
-        ...state.productFormData.formData,
+      state.productFormData = {
+        ...state.productFormData,
         product_owner_id: action.payload,
       };
     },
     clearProductForm: (state) => {
-      state.productFormData.formData = { productId: -1 };
-      state.productFormData.message = '';
-      state.productFormData.status = 'idle';
-      state.productFormData.apiResponseStatus = undefined;
+      state.productFormData = { productId: -1 };
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -230,21 +233,6 @@ export const productSlice = createSlice({
       .addCase(getProductWithTeamAsync.rejected, (state) => {
         state.selectedProduct.status = 'idle';
         state.selectedProduct.product = [];
-      })
-
-      .addCase(updateProductAsync.pending, (state) => {
-        state.productFormData.status = 'loading';
-      })
-      .addCase(updateProductAsync.fulfilled, (state, action) => {
-        state.productFormData.status = 'idle';
-        state.productFormData.message = action.payload.message;
-        state.productFormData.apiResponseStatus = action.payload.status;
-      })
-      .addCase(updateProductAsync.rejected, (state, action) => {
-        state.selectedProduct.status = 'idle';
-        state.productFormData.message =
-          action.error.message || 'Failed to update product!';
-        state.productFormData.apiResponseStatus = 'failed';
       });
   },
 });
