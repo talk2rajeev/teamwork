@@ -54,6 +54,13 @@ export interface ProductReqPayload {
   product_owner_id: number;
 }
 
+export interface CreateProductReqPayload {
+  productName: string;
+  createdById: number;
+  product_owner_id?: number;
+  teamId?: number;
+}
+
 /**
  * User
  */
