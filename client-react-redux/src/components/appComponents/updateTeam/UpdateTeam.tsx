@@ -117,10 +117,6 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                     </div>
                   </div>
                 )}
-
-                <h3 className="text-sm font-bold mt-2 pt-2">
-                  Manage team Users
-                </h3>
                 <TeamUserManagement />
               </div>
             );
