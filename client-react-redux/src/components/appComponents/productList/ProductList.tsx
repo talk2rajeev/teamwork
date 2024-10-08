@@ -3,14 +3,6 @@ import { Space, Table, TableProps } from 'antd';
 import * as Types from '../../../utils/types/types';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
 
-/*
-productId: number;
-  productName: string;
-  product_owner_id: number;
-  product_owner_fname: string;
-  product_owner_lname: string;
-*/
-
 const getColumns = (
   viewProductDetail: (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -67,22 +59,22 @@ const getColumns = (
 
 interface ProductListProps {
   productList: Array<Types.Product>;
+  viewProductDetail: (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => void;
+  updateProduct: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ productList }) => {
-  const viewProductDetail = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {};
-
-  const initiateUpdateProduct = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {};
-
+const ProductList: React.FC<ProductListProps> = ({
+  productList,
+  viewProductDetail,
+  updateProduct,
+}) => {
   const data = productList.map((p) => ({ ...p, key: p.productId }));
   return (
     <div>
       <Table
-        columns={getColumns(viewProductDetail, initiateUpdateProduct)}
+        columns={getColumns(viewProductDetail, updateProduct)}
         dataSource={data}
       />
     </div>
