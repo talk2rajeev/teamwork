@@ -125,6 +125,19 @@ export const updateTeamNameAsync = createAsyncThunk(
   }
 );
 
+export const assignUserRoleInTeamAsync = createAsyncThunk(
+  '/team/assignUserRoleInTeam',
+  async (reqPayload: Types.AssignTeamUserReqPayload, thunkAPI) => {
+    const response = await fetcher.post<{ message: string }>(
+      `/team/assignUserRoleInTeam}`,
+      reqPayload
+    );
+    thunkAPI.dispatch(getTeamsWithUserByTeamId(reqPayload.teamId.toString()));
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
+
 export const teamSlice = createSlice({
   name: 'team',
   initialState,
@@ -254,6 +267,18 @@ export const teamSlice = createSlice({
         state.updateTeam.message = action.payload.message;
       })
       .addCase(updateTeamNameAsync.rejected, (state) => {
+        state.allTeams.status = 'failed';
+        state.updateTeam.message = 'Failed to update Team Name!';
+      })
+
+      .addCase(assignUserRoleInTeamAsync.pending, (state) => {
+        state.updateTeam.status = 'loading';
+      })
+      .addCase(assignUserRoleInTeamAsync.fulfilled, (state, action) => {
+        state.updateTeam.status = 'success';
+        state.updateTeam.message = action.payload.message;
+      })
+      .addCase(assignUserRoleInTeamAsync.rejected, (state) => {
         state.allTeams.status = 'failed';
         state.updateTeam.message = 'Failed to update Team Name!';
       });
