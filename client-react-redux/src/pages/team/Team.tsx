@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Modal, Input, TableProps, notification } from 'antd';
+import { Space, Table, Tooltip, Button, TableProps, notification } from 'antd';
 import { AuthUtil } from '../../utils/auth/auth';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import UpdateTeam from '../../components/appComponents/updateTeam/UpdateTeam';
@@ -15,8 +15,7 @@ import {
 } from '../../slices/team/teamSlice';
 import * as Types from '../../utils/types/types';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
-import { TiTick } from 'react-icons/ti';
-import { Spinner } from '../../components/core-components/icons/Icons';
+import { PlusOutlined } from '@ant-design/icons';
 
 const getColumns = (
   viewTeamDetail: (
@@ -171,6 +170,8 @@ const Team: React.FC = () => {
     );
   };
 
+  const createTeam = () => {};
+
   const disabled = actionType === 'view';
 
   const data = teams.teams.map((t) => ({ ...t, key: t.team_id }));
@@ -178,7 +179,18 @@ const Team: React.FC = () => {
   return (
     <div>
       {contextHolder}
-      {isAdmin && <div>Create Team</div>}
+      {isAdmin && (
+        <div className="mt-3 mb-3">
+          <Tooltip title="Create new team" placement="right">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="middle"
+              onClick={createTeam}
+            />
+          </Tooltip>
+        </div>
+      )}
       {teams.status === 'loading' && teams.teams.length === 0 ? (
         <h1>Loading</h1>
       ) : (
