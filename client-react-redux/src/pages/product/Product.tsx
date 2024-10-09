@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AuthUtil } from '../../utils/auth/auth';
-import { Tooltip } from 'antd';
+import { Tooltip, Spin, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
@@ -17,11 +17,10 @@ import {
 } from '../../slices/product/productSlice';
 import { getTeamsWithUsersAsync } from '../../slices/team/teamSlice';
 import { getAllUsersAsync } from '../../slices/users/userSlice';
-import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import Modal from '../../components/modal/Modal';
 import UpdateProduct from '../../components/appComponents/updateProduct/UpdateProduct';
 import { ActionType } from '../../utils/types/types';
-import ViewProduct from '../../components/appComponents/viewProduct/ViewProduct';
+import CreateProduct from '../../components/appComponents/createProduct/CreateProduct';
 import * as Types from '../../utils/types/types';
 import ProductList from '../../components/appComponents/productList/ProductList';
 
@@ -50,8 +49,8 @@ const Product: React.FC = () => {
     setActionType('Update');
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
-    dispatch(setSelectedProductId(Number(dataset.prodid)));
-    dispatch(getProductWithTeamAsync(Number(dataset.prodid)));
+    dispatch(setSelectedProductId(Number(dataset.productid)));
+    dispatch(getProductWithTeamAsync(Number(dataset.productid)));
     setShowProductDetail(true);
   };
 
@@ -62,8 +61,8 @@ const Product: React.FC = () => {
     setActionType('View');
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
-    dispatch(setSelectedProductId(Number(dataset.prodid)));
-    dispatch(getProductWithTeamAsync(Number(dataset.prodid)));
+    dispatch(setSelectedProductId(Number(dataset.productid)));
+    dispatch(getProductWithTeamAsync(Number(dataset.productid)));
   };
 
   const hideProductDetail = () => {
@@ -82,7 +81,12 @@ const Product: React.FC = () => {
   };
 
   const createProduct = () => {
+    setActionType('Create');
     setShowCreateProductForm(true);
+  };
+
+  const closeCreateProductForm = () => {
+    setShowCreateProductForm(false);
   };
 
   const product = productListObj.productList.find(
@@ -106,66 +110,25 @@ const Product: React.FC = () => {
         {isAdmin && (
           <div className="mt-3 mb-3">
             <Tooltip title="Create new product" placement="right">
-              <PlusOutlined
-                size={38}
-                className="cursor-pointer text-gray-500 hover:text-gray-700 rounded-full border-2 border-slate-500 ant-icon-size"
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="middle"
                 onClick={createProduct}
               />
             </Tooltip>
           </div>
         )}
         {productListObj.status === 'loading' ? (
-          <h1>Loading</h1>
-        ) : (
-          <div>
-            {/* <div className="container bg-white p-4">
-              <div className="grid grid-cols-3 gap-4 border-gray-200 border-b-1">
-                <div className="pt-2 pb-2 font-semibold">Product Name</div>
-                <div className="pt-2 pb-2 font-semibold">Product owner</div>
-                <div className="pt-2 pb-2 font-semibold">Action</div>
-              </div>
-              {productListObj.productList.map((p) => (
-                <div
-                  key={p.productId}
-                  className="grid grid-cols-3 gap-4 border-gray-200 border-b-1"
-                >
-                  <div className="pt-2 pb-2">{p.productName}</div>
-                  <div className="pt-2 pb-2">
-                    {p.product_owner_fname} {p.product_owner_lname}
-                  </div>
-                  <div className="pt-2 pb-2  ">
-                    <div className="flex gap-3">
-                      <span
-                        onClick={viewProductDetail}
-                        data-action="view"
-                        data-prodid={p.productId}
-                      >
-                        <IoMdEye
-                          size="16"
-                          className="cursor-pointer text-gray-500 hover:text-gray-700"
-                        />
-                      </span>
-                      {userDetail?.profileId === p.product_owner_id ||
-                      isAdmin ? (
-                        <span
-                          onClick={updateProduct}
-                          data-action="edit"
-                          data-prodid={p.productId}
-                        >
-                          <IoMdCreate
-                            size="16"
-                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                          />
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div> */}
-
-            <ProductList productList={productListObj.productList} />
+          <div className="min-h-screen grid grid-cols-1 gap-4 content-center">
+            <Spin tip="Loading" size="large" />
           </div>
+        ) : (
+          <ProductList
+            productList={productListObj.productList}
+            viewProductDetail={viewProductDetail}
+            updateProduct={updateProduct}
+          />
         )}
         <Modal
           isOpen={showProductDetail}
@@ -181,6 +144,16 @@ const Product: React.FC = () => {
             {...editProps}
             onClose={hideProductDetail}
           />
+        </Modal>
+
+        <Modal
+          isOpen={showCreateProductForm}
+          onClose={closeCreateProductForm}
+          title="Create Product"
+          size="sm"
+          footer={false}
+        >
+          <CreateProduct />
         </Modal>
       </div>
     </>
