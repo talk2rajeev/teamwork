@@ -11,6 +11,7 @@ import * as Types from '../../../utils/types/types';
 import { useDebounce } from '../../../hooks/debounce/debounce';
 import TeamUsers from './teamUsers/TeamUsers';
 import { PlusOutlined } from '@ant-design/icons';
+import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropdown';
 
 type TeamUserManagementProps = {};
 
@@ -53,14 +54,18 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const onChange = (value: number) => {
     const user = users.users.find((u) => u.profileId === value);
     setSelectedUser(user);
-    console.log(`onChange ${value} `, 'selectedUser', user);
+    if (selectedTeamIndex && selectedUser?.profileId && selectedUser?.roleId) {
+      const reqPayload: Types.AssignTeamUserReqPayload = {
+        teamId: selectedTeamIndex,
+        profileId: selectedUser?.profileId,
+        roleId: selectedUser?.roleId,
+      };
+    }
   };
 
   const onUserSearch = (value: string) => {
     console.log('onUserSearch ', value);
-    if (value && value.length >= 2) {
-      setUserSearchPattern(value);
-    }
+    setUserSearchPattern(value);
   };
 
   const onUserRoleSelection = (e: RadioChangeEvent) => {
@@ -79,12 +84,22 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     console.log('delete user ', user);
   };
 
+  const onUserSelect = (user: Types.UserType) => {
+    console.log('onUserSelect ', user);
+  };
+
   return (
     <div>
+      <h3 className="text-sm font-bold mt-2 pt-2">Manage team Users</h3>
       <div className="pt-3 mb-2">
         {showAddUserInput ? (
           <div className="grid grid-flow-col auto-cols-max gap-x-4 py-4 px-2 bg-orange-50">
-            <Select
+            <UserSearchDropdown
+              onUserSelect={onUserSelect}
+              placeholder="Search user to add in the team"
+              excludedUsers={teamUsersIds}
+            />
+            {/* <Select
               onChange={onChange}
               onSearch={onUserSearch}
               showSearch
@@ -98,7 +113,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
                   .localeCompare((optionB?.label ?? '').toLowerCase())
               }
               options={userOptions}
-            />
+            /> */}
             <Radio.Group
               className="v-center"
               onChange={onUserRoleSelection}
