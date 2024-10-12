@@ -3,7 +3,7 @@ import { Table, Tag, TableProps } from 'antd';
 import { selectedTeamId, allTeams } from '../../../../slices/team/teamSlice';
 import { useAppSelector } from '../../../../appStore/hooks';
 import * as Types from '../../../../utils/types/types';
-import DeleteButton from '../teamDeleteButton/TeamDeleteButton';
+import TeamDeleteButton from '../teamDeleteButton/TeamDeleteButton';
 
 const getColumns = (
   deleteUser: (user: Types.TeamUser) => void
@@ -29,13 +29,13 @@ const getColumns = (
     title: 'Action',
     key: 'action',
     render: (_, record) => (
-      <DeleteButton deleteUser={deleteUser} record={record} />
+      <TeamDeleteButton deleteUser={deleteUser} record={record} />
     ),
   },
 ];
 
 interface TeamUsersProps {
-  deleteUser: (user: Types.TeamUser) => void;
+  deleteUser: (user: Types.TeamUser, selectedTeamIndex: number) => void;
   teamUsers?: Array<Types.TeamUser>;
 }
 
@@ -43,15 +43,15 @@ const TeamUsers: React.FC<TeamUsersProps> = ({ deleteUser, teamUsers }) => {
   const selectedTeamIndex = useAppSelector(selectedTeamId);
   const teams = useAppSelector(allTeams);
 
-  //   const teamUsers = teams.teams
-  //     .find((t) => t.team_id === selectedTeamIndex)
-  //     ?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
+  const removeUser = (user: Types.TeamUser) => {
+    deleteUser(user, selectedTeamIndex);
+  };
 
   if (!teamUsers) {
     return <div>No User Assigned to team yet.</div>;
   }
 
-  return <Table columns={getColumns(deleteUser)} dataSource={teamUsers} />;
+  return <Table columns={getColumns(removeUser)} dataSource={teamUsers} />;
 };
 
 export default TeamUsers;
