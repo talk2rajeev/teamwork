@@ -1,14 +1,9 @@
 import react, { useState, useEffect } from 'react';
-import { Button, Tooltip, Select, Radio, RadioChangeEvent } from 'antd';
+import { Button, Tooltip, Radio, RadioChangeEvent } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
-import {
-  searchUsersAsync,
-  allUsers,
-  getAllUsersAsync,
-} from '../../../slices/users/userSlice';
+import { getAllUsersAsync } from '../../../slices/users/userSlice';
 import { selectedTeamId, allTeams } from '../../../slices/team/teamSlice';
 import * as Types from '../../../utils/types/types';
-import { useDebounce } from '../../../hooks/debounce/debounce';
 import TeamUsers from './teamUsers/TeamUsers';
 import { PlusOutlined } from '@ant-design/icons';
 import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropdown';
@@ -19,9 +14,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const dispatch = useAppDispatch();
   const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<Types.UserType | null>();
-  const [userSearchPattern, setUserSearchPattern] = useState<string>('');
   const [roleValue, setRoleValue] = useState<number>(2);
-  const users = useAppSelector(allUsers);
 
   const selectedTeamIndex = useAppSelector(selectedTeamId);
   const teams = useAppSelector(allTeams);
@@ -30,17 +23,9 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const teamUsers = team?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
   const teamUsersIds = team?.users?.map((u) => u.user_profile_id) || [];
 
-  const debouncedUserSearchString = useDebounce(userSearchPattern, 500);
-
   useEffect(() => {
     dispatch(getAllUsersAsync());
   }, []);
-
-  useEffect(() => {
-    if (debouncedUserSearchString) {
-      dispatch(searchUsersAsync(debouncedUserSearchString));
-    }
-  }, [debouncedUserSearchString]);
 
   const showAddUserInputFiled = () => {
     setShowAddUserInput(true);
@@ -51,41 +36,35 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     setSelectedUser(null);
   };
 
-  const onChange = (value: number) => {
-    const user = users.users.find((u) => u.profileId === value);
-    setSelectedUser(user);
-    if (selectedTeamIndex && selectedUser?.profileId && selectedUser?.roleId) {
-      const reqPayload: Types.AssignTeamUserReqPayload = {
-        teamId: selectedTeamIndex,
-        profileId: selectedUser?.profileId,
-        roleId: selectedUser?.roleId,
-      };
-    }
-  };
-
-  const onUserSearch = (value: string) => {
-    console.log('onUserSearch ', value);
-    setUserSearchPattern(value);
-  };
-
   const onUserRoleSelection = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
+    // RoleId: 1 = Admin
+    // RoleId: 1 = Developer
     setRoleValue(e.target.value);
   };
 
-  const userOptions = users.users
-    .map((u) => ({
-      value: u.profileId,
-      label: `${u.fname} ${u.lname}`,
-    }))
-    .filter((u) => !teamUsersIds?.includes(u.value));
-
-  const deleteUserFromTeam = (user: Types.TeamUser) => {
-    console.log('delete user ', user);
+  const deleteUserFromTeam = (
+    user: Types.TeamUser,
+    selectedTeamIndex: number
+  ) => {
+    console.log(
+      'delete >  userId: ',
+      user.user_profile_id,
+      'treamId: ',
+      selectedTeamIndex
+    );
   };
 
   const onUserSelect = (user: Types.UserType) => {
-    console.log('onUserSelect ', user);
+    setSelectedUser(user);
+  };
+
+  const addUserToTeam = () => {
+    const reqPayload = {
+      teamId: selectedTeamIndex,
+      profileId: selectedUser?.profileId,
+      roleId: roleValue,
+    };
+    console.log(reqPayload);
   };
 
   return (
@@ -99,21 +78,6 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
               placeholder="Search user to add in the team"
               excludedUsers={teamUsersIds}
             />
-            {/* <Select
-              onChange={onChange}
-              onSearch={onUserSearch}
-              showSearch
-              loading={users.status === 'loading'}
-              style={{ width: 200 }}
-              placeholder="Search user to add in the team"
-              optionFilterProp="label"
-              filterSort={(optionA, optionB) =>
-                (optionA?.label ?? '')
-                  .toLowerCase()
-                  .localeCompare((optionB?.label ?? '').toLowerCase())
-              }
-              options={userOptions}
-            /> */}
             <Radio.Group
               className="v-center"
               onChange={onUserRoleSelection}
@@ -129,6 +93,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
                   size="middle"
                   disabled={!selectedUser}
                   className="mr-2"
+                  onClick={addUserToTeam}
                 >
                   Add User
                 </Button>
