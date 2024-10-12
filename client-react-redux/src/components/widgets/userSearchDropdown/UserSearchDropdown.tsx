@@ -13,7 +13,7 @@ interface UserSearchDropdownProps {
   label?: string;
   placeholder: string;
   excludedUsers?: Array<number>;
-  defaultProductOwnerId: number;
+  defaultProductOwnerId?: number;
   onUserSelect: (user: Types.UserType) => void;
 }
 
@@ -28,9 +28,6 @@ const UserSearchDropdown: FC<UserSearchDropdownProps> = ({
   const users = useAppSelector(allUsers);
 
   const [userSearchPattern, setUserSearchPattern] = useState<string>('');
-  //   const [selectedProduOwnerId, setSelectedProduOwnerId] = useState<number>(
-  //     defaultProductOwnerId
-  //   );
 
   const debouncedUserSearchString = useDebounce(userSearchPattern, 500);
 
@@ -50,12 +47,10 @@ const UserSearchDropdown: FC<UserSearchDropdownProps> = ({
     const user = users.users.find((u) => u.profileId === value);
     if (user) {
       onUserSelect(user);
-      // setSelectedProduOwnerId((v) => value);
     }
   };
 
   const onUserSearch = (value: string) => {
-    console.log('onUserSearch ', value);
     setUserSearchPattern(value);
   };
 
