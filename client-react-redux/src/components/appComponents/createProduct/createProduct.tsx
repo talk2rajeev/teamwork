@@ -9,8 +9,6 @@ import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropd
 type CreateProductProps = {};
 
 const CreateProduct: React.FC<CreateProductProps> = ({}) => {
-  // assign team
-  // assign prod owner
   const dispatch = useAppDispatch();
   const teams = useAppSelector(allTeams);
   const userDetail = AuthUtil.getUserDetail();
@@ -93,6 +91,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
             onUserSelect={onProductOwnerSelect}
             label="Product Owner"
             placeholder=""
+            defaultProductOwnerId={userDetail?.profileId || -1}
           />
         </div>
       </div>
