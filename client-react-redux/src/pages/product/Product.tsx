@@ -121,7 +121,7 @@ const Product: React.FC = () => {
         )}
         {productListObj.status === 'loading' ? (
           <div className="min-h-screen grid grid-cols-1 gap-4 content-center">
-            <Spin tip="Loading" size="large" />
+            <Spin size="large" />
           </div>
         ) : (
           <ProductList
