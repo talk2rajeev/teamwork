@@ -3,7 +3,7 @@ import { RootState } from '../../appStore/store';
 import * as Types from '../../utils/types/types';
 
 const initialState: Types.NotificationState = {
-  showNotification: false,
+  notification: false,
   type: 'info',
   title: '',
   message: '',
@@ -18,7 +18,7 @@ export const appNotificationSlice = createSlice({
       state,
       action: PayloadAction<Types.NotificationState>
     ) => {
-      state.showNotification = action.payload.showNotification;
+      state.notification = action.payload.notification;
       state.type = action.payload.type;
       state.title = action.payload.title;
       state.message = action.payload.message;
@@ -27,7 +27,7 @@ export const appNotificationSlice = createSlice({
       state,
       action: PayloadAction<Types.NotificationState>
     ) => {
-      state.showNotification = action.payload.showNotification;
+      state.notification = action.payload.notification;
       state.type = action.payload.type;
       state.title = action.payload.title;
       state.message = action.payload.message;

@@ -19,14 +19,14 @@ const AppNotifications: FC<AppNotificationProps> = () => {
       dismissNotification({
         message: '',
         title: '',
-        showNotification: false,
+        notification: false,
         type: 'info',
       })
     );
   };
 
   useEffect(() => {
-    if (appNotif.showNotification) {
+    if (appNotif.notification) {
       api[appNotif.type]({
         message: appNotif.title,
         description: appNotif.message,
@@ -35,7 +35,7 @@ const AppNotifications: FC<AppNotificationProps> = () => {
         onClose: closeNotification,
       });
     }
-  }, [appNotif.showNotification]);
+  }, [appNotif.notification]);
 
   return <>{contextHolder}</>;
 };
