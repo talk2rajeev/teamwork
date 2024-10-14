@@ -127,7 +127,7 @@ export interface Toast {
  * NotificationState
  */
 export interface NotificationState {
-  showNotification: boolean;
+  notification: boolean;
   type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
