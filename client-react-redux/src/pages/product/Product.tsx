@@ -21,8 +21,9 @@ import Modal from '../../components/modal/Modal';
 import UpdateProduct from '../../components/appComponents/updateProduct/UpdateProduct';
 import { ActionType } from '../../utils/types/types';
 import CreateProduct from '../../components/appComponents/createProduct/CreateProduct';
-import * as Types from '../../utils/types/types';
 import ProductList from '../../components/appComponents/productList/ProductList';
+import { useSelector } from 'react-redux';
+import { showNotification } from '../../slices/notificationSlice/notificationSlice';
 
 const Product: React.FC = () => {
   const [showProductDetail, setShowProductDetail] = useState<boolean>(false);
@@ -32,6 +33,7 @@ const Product: React.FC = () => {
   const productListObj = useAppSelector(productListObject);
   const selectedProdId = useAppSelector(selectedProductId);
   const selectedProductObj = useAppSelector(selectedProduct);
+  const prodFormData = useSelector(updateProductFormData);
 
   const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
@@ -72,8 +74,33 @@ const Product: React.FC = () => {
   };
 
   const updateProductDetail = () => {
-    dispatch(updateProductAsync());
+    if (
+      prodFormData.productName ||
+      prodFormData.product_owner_id ||
+      prodFormData.teamId
+    ) {
+      dispatch(updateProductAsync());
+    } else {
+      console.log('updateProductDetail > showNotification called');
+      dispatch(
+        showNotification({
+          notification: true,
+          type: 'error',
+          title: 'Failed.',
+          message: 'Bad request',
+        })
+      );
+    }
     hideProductDetail();
+  };
+
+  const show = () => {
+    showNotification({
+      notification: true,
+      type: 'error',
+      title: 'Failed.',
+      message: 'Bad request',
+    });
   };
 
   const createProductDetail = () => {
@@ -119,6 +146,7 @@ const Product: React.FC = () => {
             </Tooltip>
           </div>
         )}
+        <button onClick={show}>notif</button>
         {productListObj.status === 'loading' ? (
           <div className="min-h-screen grid grid-cols-1 gap-4 content-center">
             <Spin size="large" />
