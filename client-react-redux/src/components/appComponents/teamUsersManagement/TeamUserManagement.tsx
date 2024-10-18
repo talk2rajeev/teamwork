@@ -37,8 +37,6 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   };
 
   const onUserRoleSelection = (e: RadioChangeEvent) => {
-    // RoleId: 1 = Admin
-    // RoleId: 1 = Developer
     setRoleValue(e.target.value);
   };
 
@@ -115,7 +113,11 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
           </div>
         )}
       </div>
-      <TeamUsers deleteUser={deleteUserFromTeam} teamUsers={teamUsers} />
+      <TeamUsers
+        deleteUser={deleteUserFromTeam}
+        teamUsers={teamUsers}
+        selectedTeamIndex={selectedTeamIndex}
+      />
     </div>
   );
 };
