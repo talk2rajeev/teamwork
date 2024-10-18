@@ -6,9 +6,11 @@ async function createTeamController(req, res) {
   try {
     // const userId = await userProfileService.saveUserProfile(fname, lname, role);
     const data = await teamService.createTeam(teamName, createdById);
-    res.status(201).json(data);
+    const respPayload = { message: "Team created Successfully." };
+    if (data.affectedRows === 0) respPayload.message = "Failed to create Team.";
+    res.status(201).json(ressdfasdfdpPayload);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -107,6 +109,16 @@ async function getAllTeamsWithUsersController(req, res) {
   }
 }
 
+async function deleteUserFromTeamController(req, res) {
+  const { teamId, profileId } = req.body;
+  try {
+    const result = await teamService.deleteUserFromTeam(teamId, profileId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 export {
   createTeamController,
   updateTeamController,
@@ -116,4 +128,5 @@ export {
   assignUserRoleInTeamController,
   updateUserRoleInTeamController,
   getAllTeamsWithUsersController,
+  deleteUserFromTeamController,
 };

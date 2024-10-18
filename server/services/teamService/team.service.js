@@ -102,6 +102,16 @@ async function getAllTeamsWithUsers() {
   }
 }
 
+async function deleteUserFromTeam(teamId, profileId) {
+  try {
+    const query = `delete from user_team_role where teamId = ? and profileId = ?`;
+    const [data, ...meta] = await pool.query(query, [teamId, profileId]);
+    return data;
+  } catch (err) {
+    throw new Error(`Failed to get Teams with users: ${err.message}`);
+  }
+}
+
 export {
   createTeam,
   getTeams,
@@ -111,4 +121,5 @@ export {
   assignUserRoleInTeam,
   updateUserRoleInTeam,
   getAllTeamsWithUsers,
+  deleteUserFromTeam,
 };
