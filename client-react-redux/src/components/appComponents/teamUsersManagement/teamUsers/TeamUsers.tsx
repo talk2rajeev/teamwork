@@ -1,7 +1,5 @@
 import react from 'react';
 import { Table, Tag, TableProps } from 'antd';
-import { selectedTeamId, allTeams } from '../../../../slices/team/teamSlice';
-import { useAppSelector } from '../../../../appStore/hooks';
 import * as Types from '../../../../utils/types/types';
 import TeamDeleteButton from '../teamDeleteButton/TeamDeleteButton';
 
@@ -37,12 +35,14 @@ const getColumns = (
 interface TeamUsersProps {
   deleteUser: (user: Types.TeamUser, selectedTeamIndex: number) => void;
   teamUsers?: Array<Types.TeamUser>;
+  selectedTeamIndex: number;
 }
 
-const TeamUsers: React.FC<TeamUsersProps> = ({ deleteUser, teamUsers }) => {
-  const selectedTeamIndex = useAppSelector(selectedTeamId);
-  const teams = useAppSelector(allTeams);
-
+const TeamUsers: React.FC<TeamUsersProps> = ({
+  deleteUser,
+  teamUsers,
+  selectedTeamIndex,
+}) => {
   const removeUser = (user: Types.TeamUser) => {
     deleteUser(user, selectedTeamIndex);
   };
