@@ -92,3 +92,11 @@ export async function put<T>(
 ): Promise<T> {
   return fetchRequest<T>(endpoint, 'PUT', params, headers);
 }
+
+export async function remove<T>(
+  endpoint: string,
+  params: Params = {},
+  headers: HeadersInit = {}
+): Promise<T> {
+  return fetchRequest<T>(endpoint, 'DELETE', params, headers);
+}
