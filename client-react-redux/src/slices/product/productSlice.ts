@@ -58,7 +58,6 @@ export const createProductAsync = createAsyncThunk(
     if (response.affectedRows === 1) {
       thunkAPI.dispatch(
         showNotification({
-          notification: true,
           type: 'success',
           title: 'Success.',
           message: 'Product created successfully!',
@@ -114,7 +113,6 @@ export const updateProductAsync = createAsyncThunk(
     if (response.status === 'success') {
       thunkAPI.dispatch(
         showNotification({
-          notification: true,
           type: 'success',
           title: 'Success',
           message: response.message,
