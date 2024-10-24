@@ -19,7 +19,7 @@ This project is a full-stack project. It uses **Node** as server side programing
 
 ### Unit test of Node server
 
-#### For testing whole app
+Go to `/server` directory and run below command
 
     npm run test
 
@@ -29,10 +29,20 @@ If you are getting `zsh: command not found: jest` error, then you need to instal
 
     npm run test -- controllers/teamController/__test__/team.controller.test.js
 
-## React Client
-
 ### install & start app
 
     cd client-react-redux
     npm install
     npm start
+
+### unit test for client
+
+#### React client
+
+Go to `/client-react-redux` directory and run below command
+
+    npm run test
+
+for testing a single file
+
+    npm run test -- src/services/fetcher/fetcher.test.ts
