@@ -8,6 +8,14 @@ export type CreateResponseType = {
   warningStatus: number;
   changedRows: number;
 };
+
+export interface GenericResponseType<T> {
+  success: boolean;
+  message: string;
+  status: number;
+  data: T;
+}
+
 /**
  * Product
  */
@@ -75,6 +83,37 @@ export interface UserType {
 /**
  * Team
  */
+
+export interface TeamState {
+  TeamWithUser: {
+    status: StatusType;
+    TeamWithUsers: TeamWithUserInterface[];
+  };
+  allTeams: {
+    status: StatusType;
+    teams: Array<Team>;
+  };
+  selectedTeamId: number;
+  teamCreated?: TeamCreated;
+  updateTeam: {
+    status: 'idle' | 'loading' | 'failed' | 'success';
+    message?: string;
+  };
+  deleteTeamUser: {
+    status: 'idle' | 'loading' | 'failed' | 'success';
+    message?: string;
+  };
+  todo: string;
+}
+
+type status = 'idle' | 'loading' | 'failed';
+export type TeamCreated = {
+  status: StatusType;
+  type: 'error' | 'success' | 'info';
+  error?: boolean;
+  message?: string;
+};
+
 export interface TeamUser {
   user_profile_id: number;
   first_name: string;
@@ -103,6 +142,19 @@ export interface AssignTeamUserReqPayload {
   roleId: number;
 }
 
+export interface DeleteTeamUserReqPayload {
+  teamId: number;
+  profileId: number;
+}
+
+export interface TeamType {
+  createdByProfileId: number;
+  createdByFname: string;
+  createdByLname: string;
+  teamId: number;
+  teamName: string;
+}
+
 /**
  * Product
  */
@@ -128,7 +180,7 @@ export interface Toast {
  */
 export interface NotificationState {
   notification: boolean;
-  type: 'info' | 'success' | 'warning' | 'error';
-  title: string;
+  type?: 'info' | 'success' | 'warning' | 'error';
+  title?: string;
   message: string;
 }
