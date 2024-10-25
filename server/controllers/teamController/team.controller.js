@@ -1,121 +1,191 @@
 import * as teamService from "../../services/teamService/team.service.js";
 import { getFormattedTeamsWithUsers } from "../../utils/formatter.js";
+import { responseData } from "../../utils/constants.js";
+import CustomError from "../../utils/customError.js";
+import CustomResponse from "../../utils/customResponse.js";
+
+function getErrorResponse(error, response) {
+  response.success = false;
+  response.status = error.status || 500;
+  response.message = error.message;
+
+  return response;
+}
 
 async function createTeamController(req, res) {
   const { teamName, createdById } = req.body;
+  const response = new CustomResponse(true, "Team created Successfully.", 201);
   try {
     // const userId = await userProfileService.saveUserProfile(fname, lname, role);
     const data = await teamService.createTeam(teamName, createdById);
-    const respPayload = { message: "Team created Successfully." };
-    if (data.affectedRows === 0) respPayload.message = "Failed to create Team.";
-    res.status(201).json(ressdfasdfdpPayload);
+
+    if (data.affectedRows === 0) {
+      response.success = false;
+      response.message = "Failed to create Team.";
+      response.status = 500;
+    }
+
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function updateTeamController(req, res) {
   const { teamName } = req.body;
   const teamId = req.params.id;
+  const response = new CustomResponse(true, "Team updated Successfully.", 200);
   try {
     const success = await teamService.updateTeam(teamName, teamId);
-    if (success) {
-      res.status(200).json({ message: "Team updated successfully" });
-    } else {
-      res.status(404).json({ error: "Team not found" });
+
+    if (!success) {
+      response.success = false;
+      response.message = "Failed to update Team.";
+      response.status = 500;
     }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function getTeamsController(req, res) {
+  const response = new CustomResponse(true, "", 200, []);
   try {
-    const users = await teamService.getTeams();
-    res.status(200).json(users);
+    const teams = await teamService.getTeams();
+    response.data = teams;
+    if (!teams) {
+      response.success = false;
+      response.message = "Failed to get Teams.";
+      response.status = 500;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function getTeamByIdController(req, res) {
   const id = req.params.id;
+  const response = new CustomResponse(true, "", 200);
   try {
-    const user = await teamService.getTeamById(id);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      // If user is not found, return 404
-      res.status(404).json({ error: "Team not found" });
+    const team = await teamService.getTeamById(id);
+    response.data = team;
+    if (!team) {
+      response.success = false;
+      response.message = `Failed to get Team by id ${id}`;
+      response.status = 404;
     }
+
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function getTeamWithUsersByIdController(req, res) {
   const id = req.params.id;
-  //   try {
-  //     const user = await teamService.getTeamWithUsersById(id);
-  //     if (user) {
-  //       res.status(200).json(user);
-  //     } else {
-  //       res.status(404).json({ error: "Team not found" });
-  //     }
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
+  const response = new CustomResponse(true, "", 200);
 
   try {
     const teamWithUsers = await teamService.getTeamWithUsersById(id);
-    var formattedTeamsWithUsers = getFormattedTeamsWithUsers(teamWithUsers);
-    res.status(200).json(formattedTeamsWithUsers);
+
+    if (!teamWithUsers) {
+      response.success = false;
+      response.message = `Failed to get Team by id ${id}`;
+    } else {
+      const formattedTeamsWithUsers = getFormattedTeamsWithUsers(teamWithUsers);
+      response.data = formattedTeamsWithUsers;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function assignUserRoleInTeamController(req, res) {
   const { teamId, profileId, roleId } = req.body;
+  const response = new CustomResponse(true, "User assigned successfully.", 200);
   try {
     const data = await teamService.assignUserRoleInTeam(
       teamId,
       profileId,
       roleId
     );
-    res.status(201).json(data);
+
+    if (data.affectedRows === 0) {
+      response.success = false;
+      response.status = 400;
+      response.message = `Failed to assign user into the team`;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function updateUserRoleInTeamController(req, res) {
   const { roleId, userTeamRoleId } = req.body;
+  const response = new CustomResponse(true, "", 200);
   try {
     const data = await teamService.updateUserRoleInTeam(roleId, userTeamRoleId);
-    res.status(201).json(data);
+
+    if (data.affectedRows === 0) {
+      response.success = false;
+      response.status = 400;
+      response.message = `Failed to update user role into the team`;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function getAllTeamsWithUsersController(req, res) {
+  const response = new CustomResponse(true, "", 200);
   try {
     const teamWithUsers = await teamService.getAllTeamsWithUsers();
-    var formattedTeamsWithUsers = getFormattedTeamsWithUsers(teamWithUsers);
-    res.status(200).json(formattedTeamsWithUsers);
+
+    if (!teamWithUsers) {
+      response.success = false;
+      response.message = `Failed to get Team by id ${id}`;
+    } else {
+      const formattedTeamsWithUsers = getFormattedTeamsWithUsers(teamWithUsers);
+      response.data = formattedTeamsWithUsers;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
 async function deleteUserFromTeamController(req, res) {
   const { teamId, profileId } = req.body;
+  const response = new CustomResponse(
+    true,
+    "User deleted from team successfully.",
+    200
+  );
   try {
     const result = await teamService.deleteUserFromTeam(teamId, profileId);
-    res.status(200).json(result);
+
+    if (result.affectedRows === 0) {
+      response.success = false;
+      response.status = 404;
+      response.message = `Failed to delete user from team`;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
