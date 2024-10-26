@@ -117,24 +117,6 @@ export const assignUserRoleInTeamAsync = createAsyncThunk<
       `/team/assignUserRoleInTeam`,
       reqPayload
     );
-    // if (response.affectedRows === 1) {
-    //   thunkAPI.dispatch(
-    //     showNotification({
-    //       type: 'success',
-    //       title: 'Success.',
-    //       message: 'Product created successfully!',
-    //     })
-    //   );
-    // } else {
-    //   thunkAPI.dispatch(
-    //     showNotification({
-    //       type: 'success',
-    //       title: 'Failed!',
-    //       message: 'Failed to assign user to Team.',
-    //     })
-    //   );
-    // }
-
     if (response.success)
       thunkAPI.dispatch(getTeamsWithUserByTeamId(reqPayload.teamId.toString()));
 
