@@ -1,7 +1,5 @@
 import * as teamService from "../../services/teamService/team.service.js";
 import { getFormattedTeamsWithUsers } from "../../utils/formatter.js";
-import { responseData } from "../../utils/constants.js";
-import CustomError from "../../utils/customError.js";
 import CustomResponse from "../../utils/customResponse.js";
 
 function getErrorResponse(error, response) {
