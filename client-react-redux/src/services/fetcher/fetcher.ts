@@ -59,10 +59,8 @@ async function fetchRequest<T>(
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Error ${method.toLowerCase()}ing data to ${url}: ${response.status} ${response.statusText} - ${errorText}`
-    );
+    const errorText = await response.json();
+    throw new Error(`Error: ${errorText.message}`);
   }
 
   const data: T = await response.json();
