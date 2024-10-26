@@ -1,120 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tooltip, Button, TableProps, notification } from 'antd';
-import { AuthUtil } from '../../utils/auth/auth';
+import { Space, Table, Tooltip, Button, TableProps } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import UpdateTeam from '../../components/appComponents/updateTeam/UpdateTeam';
 import {
+  createTeamAsync,
   getAllTeams,
   getTeamsWithUserByTeamId,
-  allTeams,
-  selectedTeamId,
-  updateTeamState,
+  teamReducer,
   updateTeamNameAsync,
-  idleTeamNameUpdateStatus,
   resetTeam,
+  resetCreateTeamState,
 } from '../../slices/team/teamSlice';
 import * as Types from '../../utils/types/types';
 import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import { PlusOutlined } from '@ant-design/icons';
-
-const getColumns = (
-  viewTeamDetail: (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => void,
-  updateTeam: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
-): TableProps<Types.Team>['columns'] => [
-  {
-    title: 'Team Name',
-    dataIndex: 'team_name',
-    key: 'team_name',
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: 'Team Owner',
-    dataIndex: 'created_by',
-    key: 'created_by',
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, team) => (
-      <Space size="middle">
-        <span
-          data-action="view"
-          data-teamid={team.team_id}
-          onClick={viewTeamDetail}
-        >
-          <IoMdEye
-            size="16"
-            className="cursor-pointer text-gray-500 hover:text-gray-700"
-          />
-        </span>
-        <span
-          data-action="edit"
-          data-teamid={team.team_id}
-          onClick={updateTeam}
-        >
-          <IoMdCreate
-            size="16"
-            className="cursor-pointer text-gray-500 hover:text-gray-700"
-          />
-        </span>
-      </Space>
-    ),
-  },
-];
+import TeamNameForm from '../../components/widgets/teamNameForm/TeamNameForm';
+import { AuthUtil } from '../../utils/auth/auth';
+import { showNotification } from '../../slices/notificationSlice/notificationSlice';
+import { getTeamColumns } from '../../components/appComponents/teamColumn/TeamColumn';
 
 const Team: React.FC = () => {
   const dispatch = useAppDispatch();
-  const teams = useAppSelector(allTeams);
-  const selectedTeamIndex = useAppSelector(selectedTeamId);
-  const updateTeamStateObject = useAppSelector(updateTeamState);
+  const teamState = useAppSelector(teamReducer);
+  const teams = teamState.allTeams; //  useAppSelector(allTeams);
+  const selectedTeamIndex = teamState.selectedTeamId; // useAppSelector(selectedTeamId);
+  const updateTeamStateObject = teamState.updateTeam; // useAppSelector(updateTeamState);
+  const teamCreationResponse = teamState.teamCreated; // useAppSelector(teamCreated);
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [openTeamUpdateState, setOpenTeamUpdateState] =
+    useState<boolean>(false);
+  const [openCreateTeamState, setOpenCreateTeamState] =
+    useState<boolean>(false);
   const [actionType, setActionType] = useState<'view' | 'update'>();
-  const [teamNameEditMode, setTeamNameEditMode] = useState<boolean>(false);
 
   const [teamName, setTeamName] = useState<string>('');
 
   const userDetail = AuthUtil.getUserDetail();
   const isAdmin = userDetail?.roleId && userDetail?.roleId === 1;
 
-  const [api, contextHolder] = notification.useNotification();
-  type NotifType = 'success' | 'error';
+  useEffect(() => {
+    if (teamCreationResponse?.message) {
+      dispatch(
+        showNotification({
+          type: teamCreationResponse.type,
+          title: teamCreationResponse.type,
+          message: teamCreationResponse.message,
+        })
+      );
+    }
+    return () => {
+      if (teamCreationResponse) dispatch(resetCreateTeamState());
+    };
+  }, [teamCreationResponse]);
 
   useEffect(() => {
     dispatch(getAllTeams());
   }, []);
 
   useEffect(() => {
-    setTeamNameEditMode(false);
     if (updateTeamStateObject.status === 'success') {
-      api.success({
-        message: 'Success',
-        description: updateTeamStateObject.message,
-        showProgress: true,
-        duration: 0,
-        onClose: () => {
-          dispatch(idleTeamNameUpdateStatus());
-        },
-      });
+      dispatch(
+        showNotification({
+          type: 'success',
+          title: 'Success',
+          message: updateTeamStateObject.message || '',
+        })
+      );
     }
     if (updateTeamStateObject.status === 'failed') {
-      api.success({
-        message: 'Failed!',
-        description: updateTeamStateObject.message,
-        showProgress: true,
-        duration: 0,
-        onClose: () => {
-          dispatch(idleTeamNameUpdateStatus());
-        },
-      });
+      dispatch(
+        showNotification({
+          type: 'error',
+          title: 'Failed!',
+          message: updateTeamStateObject.message || '',
+        })
+      );
     }
   }, [updateTeamStateObject.status]);
 
   const showModal = () => {
-    setIsModalOpen(true);
+    setOpenTeamUpdateState(true);
   };
 
   const handleOk = () => {
@@ -127,11 +92,7 @@ const Team: React.FC = () => {
 
   const closeEditModal = () => {
     dispatch(resetTeam());
-    setIsModalOpen(false);
-  };
-
-  const toggleTeamNameEditMode = () => {
-    setTeamNameEditMode(true);
+    setOpenTeamUpdateState(false);
   };
 
   const viewTeamDetail = (
@@ -152,7 +113,6 @@ const Team: React.FC = () => {
   ) => {
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
-    setTeamNameEditMode(false);
     if (dataset.teamid) {
       setActionType('update');
       dispatch(getTeamsWithUserByTeamId(dataset.teamid));
@@ -160,17 +120,35 @@ const Team: React.FC = () => {
     }
   };
 
-  const onTeamChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTeamName(event.target.value);
   };
 
-  const updateTeamName = () => {
-    dispatch(
-      updateTeamNameAsync({ teamId: selectedTeamIndex, teamName: teamName })
-    );
+  const showCreateTeamSection = () => {
+    setOpenCreateTeamState(true);
   };
 
-  const createTeam = () => {};
+  const createTeam = (teamName: string) => {
+    if (userDetail?.profileId) {
+      dispatch(
+        createTeamAsync({ teamName, createdById: userDetail?.profileId })
+      );
+      setOpenCreateTeamState(false);
+    }
+  };
+
+  const hideCreateTeamSection = () => {
+    setOpenCreateTeamState(false);
+  };
+
+  const updateTeamName = (teamId: number, teamName: string) => {
+    dispatch(
+      updateTeamNameAsync({
+        teamId,
+        teamName,
+      })
+    );
+  };
 
   const disabled = actionType === 'view';
 
@@ -178,28 +156,42 @@ const Team: React.FC = () => {
 
   return (
     <div>
-      {contextHolder}
-      {isAdmin && (
+      {isAdmin && !openCreateTeamState ? (
         <div className="mt-3 mb-3">
           <Tooltip title="Create new team" placement="right">
             <Button
               type="primary"
               icon={<PlusOutlined />}
               size="middle"
-              onClick={createTeam}
+              onClick={showCreateTeamSection}
             />
           </Tooltip>
+        </div>
+      ) : (
+        <div className="mt-3 mb-4">
+          <div className="pl-4 pt-2 pb-3 w-2/5 bg-orange-50 border-orange-100 border-1">
+            <TeamNameForm
+              onSubmit={createTeam}
+              onCancel={hideCreateTeamSection}
+              type="Create"
+            />
+          </div>
         </div>
       )}
       {teams.status === 'loading' && teams.teams.length === 0 ? (
         <h1>Loading</h1>
       ) : (
         <Table
-          columns={getColumns(viewTeamDetail, initiateUpdateTeam)}
+          columns={getTeamColumns(viewTeamDetail, initiateUpdateTeam)}
           dataSource={data}
         />
       )}
-      <UpdateTeam showModal={isModalOpen} handleCancel={handleCancel} />
+      <UpdateTeam
+        teamState={teamState}
+        showModal={openTeamUpdateState}
+        handleCancel={handleCancel}
+        updateTeamName={updateTeamName}
+      />
     </div>
   );
 };
