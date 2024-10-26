@@ -1,31 +1,26 @@
 import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Modal, Input, Tooltip, Select } from 'antd';
-import type { AutoCompleteProps } from 'antd';
-import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
+import { Button, Modal, Input, Tooltip } from 'antd';
 import TeamUserManagement from '../teamUsersManagement/TeamUserManagement';
-import {
-  getAllTeams,
-  getTeamsWithUserByTeamId,
-  allTeams,
-  selectedTeamId,
-  updateTeamState,
-  updateTeamNameAsync,
-  idleTeamNameUpdateStatus,
-} from '../../../slices/team/teamSlice';
 import { IoMdCreate } from 'react-icons/io';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import * as Types from '../../../utils/types/types';
 
 type UpdateTeamProps = {
+  teamState: Types.TeamState;
   showModal: boolean;
   handleCancel: () => void;
+  updateTeamName: (teamId: number, teamName: string) => void;
 };
 type User = { profileId: number; fname: string; lname: string };
 
-const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
-  const dispatch = useAppDispatch();
-  const teams = useAppSelector(allTeams);
-  const selectedTeamIndex = useAppSelector(selectedTeamId);
-  const updateTeamStateObject = useAppSelector(updateTeamState);
+const UpdateTeam: React.FC<UpdateTeamProps> = ({
+  teamState,
+  showModal,
+  handleCancel,
+  updateTeamName,
+}) => {
+  const teams = teamState.allTeams;
+  const selectedTeamIndex = teamState.selectedTeamId;
   const [teamNameEditMode, setTeamNameEditMode] = useState<boolean>(false);
   const [teamData, setTeamData] = useState<{
     teamname: string;
@@ -48,13 +43,8 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
     handleCancel();
   };
 
-  const updateTeamName = () => {
-    dispatch(
-      updateTeamNameAsync({
-        teamId: selectedTeamIndex,
-        teamName: teamData.teamname,
-      })
-    );
+  const updateTeam = () => {
+    updateTeamName(selectedTeamIndex, teamData.teamname);
   };
 
   const onTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +94,7 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({ showModal, handleCancel }) => {
                           type="primary"
                           icon={<CheckOutlined style={{ color: '#FFF' }} />}
                           size="middle"
-                          onClick={updateTeamName}
+                          onClick={updateTeam}
                         />
                       </Tooltip>
                       &nbsp;
