@@ -7,22 +7,22 @@ import {
   getAllProductsAsync,
   getProductWithTeamAsync,
   updateProductAsync,
-  productListObject,
-  selectedProductId,
   setSelectedProductId,
-  selectedProduct,
   clearSelectedProduct,
-  updateProductFormData,
   clearProductForm,
+  productReducer,
 } from '../../slices/product/productSlice';
-import { getTeamsWithUsersAsync } from '../../slices/team/teamSlice';
+import {
+  allTeams,
+  getAllTeams,
+  getTeamsWithUsersAsync,
+} from '../../slices/team/teamSlice';
 import { getAllUsersAsync } from '../../slices/users/userSlice';
 import Modal from '../../components/modal/Modal';
 import UpdateProduct from '../../components/appComponents/updateProduct/UpdateProduct';
 import { ActionType } from '../../utils/types/types';
 import CreateProduct from '../../components/appComponents/createProduct/CreateProduct';
 import ProductList from '../../components/appComponents/productList/ProductList';
-import { useSelector } from 'react-redux';
 import { showNotification } from '../../slices/notificationSlice/notificationSlice';
 
 const Product: React.FC = () => {
@@ -30,10 +30,12 @@ const Product: React.FC = () => {
   const [actionType, setActionType] = useState<ActionType>('View');
   const [showCreateProductForm, setShowCreateProductForm] =
     useState<boolean>(false);
-  const productListObj = useAppSelector(productListObject);
-  const selectedProdId = useAppSelector(selectedProductId);
-  const selectedProductObj = useAppSelector(selectedProduct);
-  const prodFormData = useSelector(updateProductFormData);
+  const productState = useAppSelector(productReducer);
+  const allTeamsObject = useAppSelector(allTeams);
+  const productListObj = productState.list;
+  const selectedProdId = productState.selectedProductId;
+  const selectedProductObj = productState.selectedProduct;
+  const prodFormData = productState.productFormData;
 
   const dispatch = useAppDispatch();
   const userDetail = AuthUtil.getUserDetail();
@@ -43,6 +45,7 @@ const Product: React.FC = () => {
     dispatch(getAllProductsAsync());
     dispatch(getTeamsWithUsersAsync());
     dispatch(getAllUsersAsync());
+    dispatch(getAllTeams());
   }, []);
 
   const updateProduct = (
@@ -84,7 +87,6 @@ const Product: React.FC = () => {
       console.log('updateProductDetail > showNotification called');
       dispatch(
         showNotification({
-          notification: true,
           type: 'error',
           title: 'Failed.',
           message: 'Bad request',
@@ -96,7 +98,6 @@ const Product: React.FC = () => {
 
   const show = () => {
     showNotification({
-      notification: true,
       type: 'error',
       title: 'Failed.',
       message: 'Bad request',
@@ -167,7 +168,8 @@ const Product: React.FC = () => {
         >
           <UpdateProduct
             type={actionType}
-            selectedProduct={selectedProductObj}
+            productState={productState}
+            teams={allTeamsObject.teams}
             product={product}
             {...editProps}
             onClose={hideProductDetail}
