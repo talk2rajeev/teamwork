@@ -1,14 +1,7 @@
 import * as teamService from "../../services/teamService/team.service.js";
 import { getFormattedTeamsWithUsers } from "../../utils/formatter.js";
 import CustomResponse from "../../utils/customResponse.js";
-
-function getErrorResponse(error, response) {
-  response.success = false;
-  response.status = error.status || 500;
-  response.message = error.message;
-
-  return response;
-}
+import { getErrorResponse } from "../../utils/errorResponse.js";
 
 async function createTeamController(req, res) {
   const { teamName, createdById } = req.body;
