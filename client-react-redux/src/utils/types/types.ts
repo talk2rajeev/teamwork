@@ -158,11 +158,32 @@ export interface TeamType {
 /**
  * Product
  */
+
+export interface ProductState {
+  list: {
+    productList: Array<Product>;
+    status: 'idle' | 'loading' | 'failed';
+  };
+  productCreated?: ProductCreated;
+  selectedProduct: SelectedProduct;
+  selectedProductId: number;
+  productFormData: ProductFormDataInterface;
+  productUpdated?: ProductUpdated;
+}
+
 export interface ProductFormDataInterface {
   productId: number;
   productName?: string;
   product_owner_id?: number;
   teamId?: number;
+}
+
+export type ProductCreated = TeamCreated;
+
+interface ProductUpdated {
+  message?: string;
+  success?: boolean;
+  status?: StatusType;
 }
 
 /**
