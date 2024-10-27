@@ -3,33 +3,10 @@ import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
 import * as Types from '../../utils/types/types';
 import { showNotification } from '../notificationSlice/notificationSlice';
-// import { login, logoutAsyncApi } from './loginAPI';
-
-// type productWithTeam = product & {
-//   team: { teamId: number; teamName: string };
-// };
-
-type productCreated = {
-  message?: string;
-  error?: boolean;
-  errorMessage?: string;
-  status: 'idle' | 'loading' | 'failed';
-};
 
 type ApiResponseStatusType = 'success' | 'failed';
 
-export interface productState {
-  list: {
-    productList: Array<Types.Product>;
-    status: 'idle' | 'loading' | 'failed';
-  };
-  productCreated?: productCreated;
-  selectedProduct: Types.SelectedProduct;
-  selectedProductId: number;
-  productFormData: Types.ProductFormDataInterface;
-}
-
-const initialState: productState = {
+const initialState: Types.ProductState = {
   list: {
     productList: [],
     status: 'idle',
@@ -48,80 +25,67 @@ const initialState: productState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const createProductAsync = createAsyncThunk(
+export const createProductAsync = createAsyncThunk<
+  Types.GenericResponseType<undefined>,
+  Types.ProductReqPayload
+>(
   'auth/createProduct',
   async (reqPayload: Types.ProductReqPayload, thunkAPI) => {
-    const response = await fetcher.post<Types.CreateResponseType>(
+    const response = await fetcher.post<Types.GenericResponseType<undefined>>(
       '/product/createProduct',
       reqPayload
     );
-    if (response.affectedRows === 1) {
-      thunkAPI.dispatch(
-        showNotification({
-          type: 'success',
-          title: 'Success.',
-          message: 'Product created successfully!',
-        })
-      );
-    }
+
     // The value we return becomes the `fulfilled` action payload
     return response;
   }
 );
 
-export const getAllProductsAsync = createAsyncThunk(
-  '/product/getAllProduct',
-  async () => {
-    type responseType = {
-      productId: number;
-      productName: string;
-      product_owner_id: number;
-      product_owner_fname: string;
-      product_owner_lname: string;
-    };
-    const response = await fetcher.get<Array<responseType>>(
-      '/product/getAllProducts'
+export const getAllProductsAsync = createAsyncThunk<
+  Types.GenericResponseType<Types.Product[]>
+>('/product/getAllProduct', async () => {
+  const response = await fetcher.get<
+    Types.GenericResponseType<Types.Product[]>
+  >('/product/getAllProducts');
+  // The value we return becomes the `fulfilled` action payload
+  return response;
+});
+
+export const getProductWithTeamAsync = createAsyncThunk<
+  Types.GenericResponseType<Types.ProductwithTeam[]>,
+  number
+>('/product/getProductWithTeam', async (productId: number) => {
+  const response = await fetcher.get<
+    Types.GenericResponseType<Types.ProductwithTeam[]>
+  >(`/product/getProductById/${productId}`);
+  // The value we return becomes the `fulfilled` action payload
+  console.log('getProductWithTeamAsync > response ', response);
+  return response;
+});
+
+export const updateProductAsync = createAsyncThunk<
+  Types.GenericResponseType<undefined>
+>('product/updateProduct', async (_, thunkAPI) => {
+  const state = thunkAPI.getState() as RootState;
+  const { productId, ...rest } = state.product.productFormData;
+  console.log('updateProductAsync > formData ', rest);
+  const response = await fetcher.put<Types.GenericResponseType<undefined>>(
+    `/product/updateProduct/${productId}`,
+    rest
+  );
+  // The value we return becomes the `fulfilled` action payload
+  thunkAPI.dispatch(getAllProductsAsync());
+  if (response.success) {
+    thunkAPI.dispatch(
+      showNotification({
+        type: 'success',
+        title: 'Success',
+        message: response.message,
+      })
     );
-    // The value we return becomes the `fulfilled` action payload
-    return response;
   }
-);
-
-export const getProductWithTeamAsync = createAsyncThunk(
-  '/product/getProductWithTeam',
-  async (productId: number) => {
-    const response = await fetcher.get<Array<Types.ProductwithTeam>>(
-      `/product/getProductById/${productId}`
-    );
-    // The value we return becomes the `fulfilled` action payload
-    return response;
-  }
-);
-
-export const updateProductAsync = createAsyncThunk(
-  'product/updateProduct',
-  async (_, thunkAPI) => {
-    const state = thunkAPI.getState() as RootState;
-    const { productId, ...rest } = state.product.productFormData;
-    console.log('updateProductAsync > formData ', rest);
-    const response = await fetcher.put<{
-      message: string;
-      status: ApiResponseStatusType;
-    }>(`/product/updateProduct/${productId}`, rest);
-    // The value we return becomes the `fulfilled` action payload
-    thunkAPI.dispatch(getAllProductsAsync());
-    if (response.status === 'success') {
-      thunkAPI.dispatch(
-        showNotification({
-          type: 'success',
-          title: 'Success',
-          message: response.message,
-        })
-      );
-    }
-    return response;
-  }
-);
+  return response;
+});
 
 export const productSlice = createSlice({
   name: 'product',
@@ -136,6 +100,7 @@ export const productSlice = createSlice({
       state.list.productList = [];
     },
     setSelectedProductId: (state, action: PayloadAction<number>) => {
+      console.log('setSelectedProductId ', action.payload);
       state.selectedProductId = action.payload;
     },
     clearSelectedProduct: (state) => {
@@ -179,32 +144,25 @@ export const productSlice = createSlice({
     builder
       .addCase(createProductAsync.pending, (state) => {
         state.productCreated = {
+          type: 'info',
           status: 'loading',
-          message: undefined,
-          error: undefined,
-          errorMessage: undefined,
+          error: false,
         };
       })
       .addCase(createProductAsync.fulfilled, (state, action) => {
         state.productCreated = {
-          message:
-            action.payload.affectedRows === 1
-              ? 'Product created successfully!'
-              : 'product could not be created',
-          error: action.payload.affectedRows === 1,
-          errorMessage:
-            action.payload.affectedRows !== 1
-              ? 'Product not created'
-              : undefined,
+          type: 'success',
           status: 'idle',
+          error: false,
+          message: action.payload.message,
         };
       })
-      .addCase(createProductAsync.rejected, (state) => {
+      .addCase(createProductAsync.rejected, (state, action) => {
         state.productCreated = {
-          message: undefined,
-          error: true,
-          errorMessage: 'Product creation failed!',
+          type: 'error',
           status: 'failed',
+          error: true,
+          message: action.error.message,
         };
       })
 
@@ -214,9 +172,9 @@ export const productSlice = createSlice({
       })
       .addCase(getAllProductsAsync.fulfilled, (state, action) => {
         state.list.status = 'idle';
-        state.list.productList = action.payload;
+        state.list.productList = action.payload.data;
       })
-      .addCase(getAllProductsAsync.rejected, (state) => {
+      .addCase(getAllProductsAsync.rejected, (state, action) => {
         state.list.status = 'failed';
         state.list.productList = [];
       })
@@ -225,12 +183,31 @@ export const productSlice = createSlice({
         state.selectedProduct.status = 'loading';
       })
       .addCase(getProductWithTeamAsync.fulfilled, (state, action) => {
+        console.log('action.payload.data', action.payload.data);
         state.selectedProduct.status = 'idle';
-        state.selectedProduct.product = action.payload;
+        state.selectedProduct.product = action.payload.data;
       })
       .addCase(getProductWithTeamAsync.rejected, (state) => {
         state.selectedProduct.status = 'idle';
         state.selectedProduct.product = [];
+      })
+
+      .addCase(updateProductAsync.pending, (state) => {
+        state.productUpdated = { status: 'loading' };
+      })
+      .addCase(updateProductAsync.fulfilled, (state, action) => {
+        state.productUpdated = {
+          message: action.payload.message,
+          status: 'idle',
+          success: action.payload.success,
+        };
+      })
+      .addCase(updateProductAsync.rejected, (state, action) => {
+        state.productUpdated = {
+          message: action.error.message,
+          status: 'failed',
+          success: false,
+        };
       });
   },
 });
@@ -249,6 +226,7 @@ export const {
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
+export const productReducer = (state: RootState) => state.product;
 export const productListObject = (state: RootState) => state.product.list;
 export const selectedProductId = (state: RootState) =>
   state.product.selectedProductId;
