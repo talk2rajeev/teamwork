@@ -4,7 +4,6 @@ import * as coreComponents from '../../core-components';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
 import * as Types from '../../../utils/types/types';
 import { getProductWithTeam } from '../../../utils/helperFunctions/product/productHelper';
-import { teamWithUsers } from '../../../slices/team/teamSlice';
 import { allUsers } from '../../../slices/users/userSlice';
 import { useDebounce } from '../../../hooks/debounce/debounce';
 import {
@@ -12,34 +11,32 @@ import {
   setProductName,
   setProductTeamId,
   setProductOwnerId,
-  selectedProductId,
 } from '../../../slices/product/productSlice';
-import { GiConfirmed } from 'react-icons/gi';
-import { MdError } from 'react-icons/md';
 
 type UpdateProductProps = {
   type: Types.ActionType;
-  selectedProduct?: Types.SelectedProduct;
+  productState: Types.ProductState;
   product?: Types.Product;
+  teams: Types.Team[];
   onClose: () => void;
   onPrimaryBtnClick: () => void;
 };
 
 const UpdateProduct: React.FC<UpdateProductProps> = ({
   type,
-  selectedProduct,
+  productState,
   product,
+  teams,
   onClose,
   onPrimaryBtnClick,
 }) => {
-  // on update success:: handle it better UX way
-  // on update failure : handle error
-
   const dispatch = useAppDispatch();
-  const teams = useAppSelector(teamWithUsers);
   const users = useAppSelector(allUsers);
-  const productId = useAppSelector(selectedProductId);
-  const productWithTeam = getProductWithTeam(selectedProduct, product);
+  const productId = productState.selectedProductId;
+  const productWithTeam = getProductWithTeam(
+    productState.selectedProduct,
+    product
+  );
   const userList = users.users.map((u) => `${u.fname} ${u.lname}`);
   const [prodName, setProdName] = useState<string>('');
 
@@ -82,7 +79,7 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
 
   const teamOption = teams.map((t) => t.team_name);
 
-  if (selectedProduct?.status === 'loading') {
+  if (productState.selectedProduct?.status === 'loading') {
     return (
       <div className="flex justify-center items-center min-h-72">
         <ImSpinner5 size={36} fill="#0099ff" className="rotating-image" />
