@@ -6,11 +6,9 @@ async function createProduct(productName, profileId, teamId) {
     let query;
     let values;
     if (teamId) {
-      console.log("teamId >> ", teamId);
       query = SQL_QUERIES.product.insertWithTeamQuery;
       values = [productName, profileId, teamId, profileId];
     } else {
-      console.log("teamId >> ", teamId);
       query = SQL_QUERIES.product.insertWithoutTeamQuery;
       values = [productName, profileId, profileId];
     }
