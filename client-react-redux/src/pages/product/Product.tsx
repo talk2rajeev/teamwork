@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AuthUtil } from '../../utils/auth/auth';
 import { Tooltip, Spin, Button } from 'antd';
+import { startCase, camelCase } from 'lodash';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
@@ -11,6 +12,7 @@ import {
   clearSelectedProduct,
   clearProductForm,
   productReducer,
+  resetproductUpdated,
 } from '../../slices/product/productSlice';
 import {
   allTeams,
@@ -48,6 +50,22 @@ const Product: React.FC = () => {
     dispatch(getAllTeams());
   }, []);
 
+  useEffect(() => {
+    if (productState.productUpdated?.message) {
+      const type = productState.productUpdated.success ? 'success' : 'error';
+      dispatch(
+        showNotification({
+          type,
+          title: startCase(camelCase(type)),
+          message: productState.productUpdated?.message,
+        })
+      );
+    }
+    return () => {
+      dispatch(resetproductUpdated());
+    };
+  }, [productState.productUpdated]);
+
   const updateProduct = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
@@ -84,7 +102,6 @@ const Product: React.FC = () => {
     ) {
       dispatch(updateProductAsync());
     } else {
-      console.log('updateProductDetail > showNotification called');
       dispatch(
         showNotification({
           type: 'error',
@@ -94,14 +111,6 @@ const Product: React.FC = () => {
       );
     }
     hideProductDetail();
-  };
-
-  const show = () => {
-    showNotification({
-      type: 'error',
-      title: 'Failed.',
-      message: 'Bad request',
-    });
   };
 
   const createProductDetail = () => {
@@ -147,7 +156,6 @@ const Product: React.FC = () => {
             </Tooltip>
           </div>
         )}
-        <button onClick={show}>notif</button>
         {productListObj.status === 'loading' ? (
           <div className="min-h-screen grid grid-cols-1 gap-4 content-center">
             <Spin size="large" />
