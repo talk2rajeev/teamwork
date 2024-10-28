@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
 import * as Types from '../../utils/types/types';
-import { showNotification } from '../notificationSlice/notificationSlice';
 
 const initialState: Types.TeamState = {
   TeamWithUser: {
