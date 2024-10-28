@@ -1,9 +1,9 @@
-import react, { useState, useEffect, useReducer } from 'react';
-import { Button, Modal, Input, Tooltip } from 'antd';
+import react, { useState } from 'react';
+import { Modal } from 'antd';
 import TeamUserManagement from '../teamUsersManagement/TeamUserManagement';
 import { IoMdCreate } from 'react-icons/io';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import * as Types from '../../../utils/types/types';
+import TeamNameForm from '../../widgets/teamNameForm/TeamNameForm';
 
 type UpdateTeamProps = {
   teamState: Types.TeamState;
@@ -43,12 +43,8 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
     handleCancel();
   };
 
-  const updateTeam = () => {
-    updateTeamName(selectedTeamIndex, teamData.teamname);
-  };
-
-  const onTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamData({ ...teamData, teamname: event.target.value });
+  const updateTeam = (teamName: string) => {
+    updateTeamName(selectedTeamIndex, teamName);
   };
 
   return (
@@ -79,31 +75,13 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
                   </div>
                 ) : (
                   <div className="p-2 grid grid-cols-12 auto-cols-max justify-between gap-1">
-                    <div className="col-span-8">
-                      <label>Team Name</label>
-                      <Input
-                        placeholder="Team name"
+                    <div className="col-span-10">
+                      <TeamNameForm
                         defaultValue={t.team_name}
-                        onChange={onTeamNameChange}
-                        size="middle"
+                        onSubmit={updateTeam}
+                        onCancel={disableTeamEdit}
+                        type="Create"
                       />
-                    </div>
-                    <div className="flex items-end col-span-4">
-                      <Tooltip title="Update Team name" placement="top">
-                        <Button
-                          type="primary"
-                          icon={<CheckOutlined style={{ color: '#FFF' }} />}
-                          size="middle"
-                          onClick={updateTeam}
-                        />
-                      </Tooltip>
-                      &nbsp;
-                      <Tooltip title="Cancel" placement="top">
-                        <Button
-                          icon={<CloseOutlined color="#0099ff" />}
-                          onClick={disableTeamEdit}
-                        />
-                      </Tooltip>
                     </div>
                   </div>
                 )}
