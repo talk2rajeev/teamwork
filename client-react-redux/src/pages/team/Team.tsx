@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tooltip, Button, TableProps } from 'antd';
+import { Table, Tooltip, Button } from 'antd';
+import { startCase, camelCase } from 'lodash';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import UpdateTeam from '../../components/appComponents/updateTeam/UpdateTeam';
 import {
@@ -11,8 +12,6 @@ import {
   resetTeam,
   resetCreateTeamState,
 } from '../../slices/team/teamSlice';
-import * as Types from '../../utils/types/types';
-import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import { PlusOutlined } from '@ant-design/icons';
 import TeamNameForm from '../../components/widgets/teamNameForm/TeamNameForm';
 import { AuthUtil } from '../../utils/auth/auth';
@@ -22,10 +21,9 @@ import { getTeamColumns } from '../../components/appComponents/teamColumn/TeamCo
 const Team: React.FC = () => {
   const dispatch = useAppDispatch();
   const teamState = useAppSelector(teamReducer);
-  const teams = teamState.allTeams; //  useAppSelector(allTeams);
-  const selectedTeamIndex = teamState.selectedTeamId; // useAppSelector(selectedTeamId);
-  const updateTeamStateObject = teamState.updateTeam; // useAppSelector(updateTeamState);
-  const teamCreationResponse = teamState.teamCreated; // useAppSelector(teamCreated);
+  const teams = teamState.allTeams;
+  const updateTeamStateObject = teamState.updateTeam;
+  const teamCreationResponse = teamState.teamCreated;
 
   const [openTeamUpdateState, setOpenTeamUpdateState] =
     useState<boolean>(false);
@@ -43,7 +41,7 @@ const Team: React.FC = () => {
       dispatch(
         showNotification({
           type: teamCreationResponse.type,
-          title: teamCreationResponse.type,
+          title: startCase(camelCase(teamCreationResponse.type)),
           message: teamCreationResponse.message,
         })
       );
@@ -82,10 +80,6 @@ const Team: React.FC = () => {
     setOpenTeamUpdateState(true);
   };
 
-  const handleOk = () => {
-    closeEditModal();
-  };
-
   const handleCancel = () => {
     closeEditModal();
   };
@@ -118,10 +112,6 @@ const Team: React.FC = () => {
       dispatch(getTeamsWithUserByTeamId(dataset.teamid));
       showModal();
     }
-  };
-
-  const onTeamNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamName(event.target.value);
   };
 
   const showCreateTeamSection = () => {
