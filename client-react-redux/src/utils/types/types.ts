@@ -80,6 +80,14 @@ export interface UserType {
   lname: string;
 }
 
+export interface UserCreationReqPaylod {
+  username: string;
+  password: string;
+  fname: string;
+  lnames: string;
+  role_id: number;
+}
+
 /**
  * Team
  */
@@ -204,4 +212,14 @@ export interface NotificationState {
   type?: 'info' | 'success' | 'warning' | 'error';
   title?: string;
   message: string;
+}
+
+export interface Role {
+  roleId: number;
+  roleName: string;
+  createdBy: {
+    profileId: number;
+    fname: string;
+    lname: string;
+  };
 }
