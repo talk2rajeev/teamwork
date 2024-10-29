@@ -75,15 +75,6 @@ export const updateProductAsync = createAsyncThunk<
   );
   // The value we return becomes the `fulfilled` action payload
   thunkAPI.dispatch(getAllProductsAsync());
-  if (response.success) {
-    thunkAPI.dispatch(
-      showNotification({
-        type: 'success',
-        title: 'Success',
-        message: response.message,
-      })
-    );
-  }
   return response;
 });
 
@@ -136,6 +127,9 @@ export const productSlice = createSlice({
     },
     clearProductForm: (state) => {
       state.productFormData = { productId: -1 };
+    },
+    resetproductUpdated: (state) => {
+      state.productUpdated = undefined;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -221,6 +215,7 @@ export const {
   setProductTeamId,
   setProductOwnerId,
   clearProductForm,
+  resetproductUpdated,
 } = productSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
