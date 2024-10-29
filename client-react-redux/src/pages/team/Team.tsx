@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tooltip, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { startCase, camelCase } from 'lodash';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import UpdateTeam from '../../components/appComponents/updateTeam/UpdateTeam';
@@ -12,7 +13,6 @@ import {
   resetTeam,
   resetCreateTeamState,
 } from '../../slices/team/teamSlice';
-import { PlusOutlined } from '@ant-design/icons';
 import TeamNameForm from '../../components/widgets/teamNameForm/TeamNameForm';
 import { AuthUtil } from '../../utils/auth/auth';
 import { showNotification } from '../../slices/notificationSlice/notificationSlice';
