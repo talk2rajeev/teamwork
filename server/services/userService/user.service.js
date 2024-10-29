@@ -5,29 +5,35 @@ import { SQL_QUERIES } from "../../utils/queries.js";
 async function createUserLogin(userData) {
   const { fname, lname, username, password, role_id } = userData;
   const encodedPassword = encodePassword(password);
+  const connection = await pool.getConnection();
+
   try {
-    const [result] = await pool.query(
-      `insert into user_login (username, password) values(?,?)`,
+    await connection.beginTransaction();
+
+    // Insert into user_login
+    const [loginResult] = await connection.query(
+      "INSERT INTO user_login (username, password) VALUES (?, ?)",
       [username, encodedPassword]
     );
-    const loginId = result.insertId;
-    await createUserProfile({ fname, lname, loginId, role_id });
-    return { loginId, fname, lname };
-  } catch (err) {
-    throw new Error(`Failed to create User Login: ${err.message}`);
-  }
-}
+    const loginId = loginResult.insertId;
 
-async function createUserProfile(userData) {
-  const { fname, lname, loginId, role_id } = userData;
-  try {
-    const [result, ...meta] = await pool.query(
-      `insert into user_profile (fname, lname, loginId, role_id) values(?,?,?,?)`,
+    // Insert into user_profile
+    const [profileResult] = await connection.query(
+      "INSERT INTO user_profile (fname, lname, loginId, role_id) VALUES (?, ?, ?, ?)",
       [fname, lname, loginId, role_id]
     );
-    return result.insertId;
-  } catch (err) {
-    throw new Error(`Failed to create User Profile: ${err.message}`);
+
+    await connection.commit();
+    return {
+      affectedRows: loginResult.affectedRows + profileResult.affectedRows,
+    };
+  } catch (error) {
+    await connection.rollback();
+    console.error(`Failed to create User Login: ${error.message}`);
+    throw new Error(`Failed to create User Login: ${error.message}`);
+  } finally {
+    console.error(`releasing connection`);
+    connection.release(); // Ensure connection is released back to pool
   }
 }
 
@@ -95,6 +101,7 @@ async function getAdminUsers() {
     throw new Error(`Failed to get User by id: ${err.message}`);
   }
 }
+
 export {
   getUsers,
   searchUsers,
