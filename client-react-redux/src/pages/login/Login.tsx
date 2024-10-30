@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Alert } from 'antd';
 import { FaBug } from 'react-icons/fa';
 import * as coreComponents from '../../components/core-components';
 import {
@@ -56,11 +57,11 @@ const Login: React.FC = () => {
 
   return (
     <div className="h-screen bg-gray-100 flex justify-center">
-      <div className="w-96 bg-white p-7 self-center">
+      <div className="w-1/4 bg-white p-7 self-center">
         <div className="flex justify-center pb-4">
           <Logo />
         </div>
-        <div className="p-2">
+        <div className="mb-3">
           <coreComponents.Input
             type="text"
             name={inputNames.userName}
@@ -68,7 +69,7 @@ const Login: React.FC = () => {
             onchange={onInputChange}
           />
         </div>
-        <div className="p-2">
+        <div className="mb-3">
           <coreComponents.Input
             type="password"
             name={inputNames.password}
@@ -76,7 +77,7 @@ const Login: React.FC = () => {
             onchange={onInputChange}
           />
         </div>
-        <div className="p-2">
+        <div className="mb-4">
           <coreComponents.Button
             label="Login"
             type="primary"
@@ -84,6 +85,11 @@ const Login: React.FC = () => {
             disabled={isLoginButtonDisabled}
             loading={loading}
           />
+        </div>
+        <div>
+          {!loginDetail.isLogin && loginDetail.message ? (
+            <Alert message={loginDetail.message} type="error" showIcon />
+          ) : null}
         </div>
       </div>
     </div>
