@@ -72,6 +72,20 @@ export interface CreateProductReqPayload {
 /**
  * User
  */
+
+export interface UserState {
+  allUsers: {
+    status: StatusType;
+    users: Array<UserType>;
+  };
+  userCreated?: {
+    status: StatusType;
+    type: 'error' | 'success' | 'info';
+    message?: string;
+  };
+  roles: Role[];
+}
+
 export interface UserType {
   roleName: string;
   roleId: number;
@@ -84,7 +98,12 @@ export interface UserCreationReqPaylod {
   username: string;
   password: string;
   fname: string;
-  lnames: string;
+  lname: string;
+  role_id: number;
+}
+export interface UserUpdateReqPaylod {
+  fname: string;
+  lname: string;
   role_id: number;
 }
 
