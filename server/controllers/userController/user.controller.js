@@ -1,13 +1,23 @@
 import * as userService from "../../services/userService/user.service.js";
+import CustomResponse from "../../utils/customResponse.js";
+import { getErrorResponse } from "../../utils/errorResponse.js";
 
 async function createUserLoginController(req, res) {
   const user = req.body;
+  const response = new CustomResponse(true, "User created Successfully.", 201);
   try {
     // const userId = await userProfileService.saveUserProfile(fname, lname, role);
     const data = await userService.createUserLogin(user);
-    res.status(201).json(data);
+
+    if (data.affectedRows <= 1) {
+      response.success = false;
+      response.message = "Failed to create User.";
+      response.status = 500;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
