@@ -3,20 +3,7 @@ import { RootState, AppThunk } from '../../appStore/store';
 import * as fetcher from '../../services/fetcher/fetcher';
 import * as Types from '../../utils/types/types';
 
-export interface UserState {
-  allUsers: {
-    status: Types.StatusType;
-    users: Array<Types.UserType>;
-  };
-  userCreated?: {
-    status: Types.StatusType;
-    type: 'error' | 'success' | 'info';
-    message?: string;
-  };
-  roles: Types.Role[];
-}
-
-const initialState: UserState = {
+const initialState: Types.UserState = {
   allUsers: {
     status: 'idle',
     users: [],
@@ -55,9 +42,10 @@ export const createNewUsersAsync = createAsyncThunk<
   Types.UserCreationReqPaylod
 >('user/createLogin', async (user: Types.UserCreationReqPaylod, thunkAPI) => {
   const response = await fetcher.post<Types.GenericResponseType<undefined>>(
-    `user/createLogin`,
+    `/user/createLogin`,
     user
   );
+  thunkAPI.dispatch(getAllUsersAsync());
   // The value we return becomes the `fulfilled` action payload
   return response;
 });
@@ -67,7 +55,7 @@ export const getUserRolesAsync = createAsyncThunk<
 >('role/getAllRoles', async () => {
   const response =
     await fetcher.get<Types.GenericResponseType<Types.Role[]>>(
-      `role/getAllRoles`
+      `/role/getAllRoles`
     );
   // The value we return becomes the `fulfilled` action payload
   return response;
@@ -79,6 +67,9 @@ export const userSlice = createSlice({
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     resetUserCreated: (state) => {
+      state.userCreated = undefined;
+    },
+    resetCreateUserState: (state) => {
       state.userCreated = undefined;
     },
   },
@@ -139,6 +130,7 @@ export const userSlice = createSlice({
         };
       })
       .addCase(createNewUsersAsync.rejected, (state, action) => {
+        debugger;
         state.userCreated = {
           status: 'failed',
           message: action.error.message,
@@ -155,7 +147,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { resetUserCreated } = userSlice.actions;
+export const { resetUserCreated, resetCreateUserState } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
