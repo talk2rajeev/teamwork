@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, TableProps, Tooltip, Button, Modal } from 'antd';
+import { Space, Table, TableProps, Tooltip, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { startCase, camelCase } from 'lodash';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import {
   userReducerState,
   getAllUsersAsync,
+  getUserRolesAsync,
+  createNewUsersAsync,
+  resetCreateUserState,
 } from '../../slices/users/userSlice';
 import * as Types from '../../utils/types/types';
 import { IoMdCreate } from 'react-icons/io';
 import { AuthUtil } from '../../utils/auth/auth';
+import CreateUser from '../../components/appComponents/createUser/CreateUser';
+import UpdateUser from '../../components/appComponents/updateUser/UpdateUser';
+import { showNotification } from '../../slices/notificationSlice/notificationSlice';
 
 const getColumns = (
   updateUser: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
@@ -26,7 +33,7 @@ const getColumns = (
     render: (text: string) => <span>{text}</span>,
   },
   {
-    title: 'Role',
+    title: 'App Role',
     dataIndex: 'roleName',
     key: 'roleName',
     render: (text: string) => <span>{text}</span>,
@@ -37,8 +44,8 @@ const getColumns = (
     render: (_, user) => (
       <Space size="middle">
         <span
-          data-action="view"
-          data-productid={user.profileId}
+          data-action="update"
+          data-profileId={user.profileId}
           onClick={updateUser}
         >
           <IoMdCreate
@@ -59,14 +66,63 @@ const Users: React.FC = () => {
 
   const [showCreateUserModal, setShowCreateUserModal] =
     useState<boolean>(false);
+  const [showUpdateUserModal, setShowUpdateUserModal] =
+    useState<boolean>(false);
+  const [selectedUserIdForUpdate, setSelectedUserIdForUpdate] =
+    useState<string>('');
 
   useEffect(() => {
     dispatch(getAllUsersAsync());
   }, []);
 
-  const updateUser = (
+  useEffect(() => {
+    if (
+      userState.userCreated?.type === 'success' ||
+      userState.userCreated?.type === 'error'
+    ) {
+      dispatch(
+        showNotification({
+          type: userState.userCreated?.type,
+          title: startCase(camelCase(userState.userCreated?.type)),
+          message: userState.userCreated.message || '',
+        })
+      );
+    }
+    return () => {
+      dispatch(resetCreateUserState());
+    };
+  }, [userState.userCreated]);
+
+  const openCreateUserModal = () => {
+    dispatch(getUserRolesAsync());
+    setShowCreateUserModal(true);
+  };
+
+  const hideCreateUserModal = () => {
+    setShowCreateUserModal(false);
+  };
+
+  const selectedUserForUpdate = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
-  ) => {};
+  ) => {
+    const targetElement = event.currentTarget as HTMLSpanElement;
+    const dataset = targetElement.dataset;
+    console.log('dataset ', dataset.profileid);
+    setSelectedUserIdForUpdate(dataset.profileid || '');
+    setShowUpdateUserModal(true);
+  };
+
+  const hideUpdateUserModal = () => {
+    setShowUpdateUserModal(false);
+  };
+
+  const updateUser = (formData: any) => {};
+
+  const createUser = (userFormData: Types.UserCreationReqPaylod) => {
+    console.log('userForm ', userFormData);
+    dispatch(createNewUsersAsync(userFormData));
+    setShowCreateUserModal(false);
+  };
 
   return (
     <div>
@@ -77,24 +133,28 @@ const Users: React.FC = () => {
               type="primary"
               icon={<PlusOutlined />}
               size="middle"
-              onClick={() => setShowCreateUserModal(true)}
+              onClick={openCreateUserModal}
             />
           </Tooltip>
         </div>
       )}
       <Table
-        columns={getColumns(updateUser)}
+        columns={getColumns(selectedUserForUpdate)}
         dataSource={userState.allUsers.users}
       />
-      <Modal
-        title="Create User"
-        open={showCreateUserModal}
-        onCancel={() => setShowCreateUserModal(false)}
-        width={800}
-        footer={null}
-      >
-        <h1>Create User</h1>
-      </Modal>
+      <CreateUser
+        userState={userState}
+        showCreateUserModal={showCreateUserModal}
+        hideCreateUserModal={hideCreateUserModal}
+        createUser={createUser}
+      />
+      <UpdateUser
+        userState={userState}
+        selectedUserId={selectedUserIdForUpdate}
+        showUpdateUserModal={showUpdateUserModal}
+        hideUpdateUserModal={hideUpdateUserModal}
+        updateUser={updateUser}
+      />
     </div>
   );
 };
