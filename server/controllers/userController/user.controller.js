@@ -23,16 +23,21 @@ async function createUserLoginController(req, res) {
 
 async function updateUserProfileController(req, res) {
   const userId = req.params.id;
+  console.log("userId ", userId);
   const userData = req.body;
+  const response = new CustomResponse(true, "User Updated Successfully.", 200);
   try {
-    const success = await userService.updateUserProfile(userData, userId);
-    if (success) {
-      res.status(200).json({ message: "User profile updated successfully" });
-    } else {
-      res.status(404).json({ error: "User profile not found" });
+    const data = await userService.updateUserProfile(userData, userId);
+
+    if (data.affectedRows < 1) {
+      response.success = false;
+      response.message = "Failed to Update User.";
+      response.status = 500;
     }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
