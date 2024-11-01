@@ -9,6 +9,8 @@ import {
   getUserRolesAsync,
   createNewUsersAsync,
   resetCreateUserState,
+  updateUserAsync,
+  resetUpdateUserState,
 } from '../../slices/users/userSlice';
 import * as Types from '../../utils/types/types';
 import { IoMdCreate } from 'react-icons/io';
@@ -33,7 +35,7 @@ const getColumns = (
     render: (text: string) => <span>{text}</span>,
   },
   {
-    title: 'App Role',
+    title: 'User Role',
     dataIndex: 'roleName',
     key: 'roleName',
     render: (text: string) => <span>{text}</span>,
@@ -66,13 +68,12 @@ const Users: React.FC = () => {
 
   const [showCreateUserModal, setShowCreateUserModal] =
     useState<boolean>(false);
-  const [showUpdateUserModal, setShowUpdateUserModal] =
-    useState<boolean>(false);
   const [selectedUserIdForUpdate, setSelectedUserIdForUpdate] =
     useState<string>('');
 
   useEffect(() => {
     dispatch(getAllUsersAsync());
+    dispatch(getUserRolesAsync());
   }, []);
 
   useEffect(() => {
@@ -93,8 +94,25 @@ const Users: React.FC = () => {
     };
   }, [userState.userCreated]);
 
+  useEffect(() => {
+    if (
+      userState.userUpdated?.type === 'success' ||
+      userState.userUpdated?.type === 'error'
+    ) {
+      dispatch(
+        showNotification({
+          type: userState.userUpdated?.type,
+          title: startCase(camelCase(userState.userUpdated?.type)),
+          message: userState.userUpdated.message || '',
+        })
+      );
+    }
+    return () => {
+      dispatch(resetUpdateUserState());
+    };
+  }, [userState.userUpdated]);
+
   const openCreateUserModal = () => {
-    dispatch(getUserRolesAsync());
     setShowCreateUserModal(true);
   };
 
@@ -107,19 +125,21 @@ const Users: React.FC = () => {
   ) => {
     const targetElement = event.currentTarget as HTMLSpanElement;
     const dataset = targetElement.dataset;
-    console.log('dataset ', dataset.profileid);
     setSelectedUserIdForUpdate(dataset.profileid || '');
-    setShowUpdateUserModal(true);
   };
 
   const hideUpdateUserModal = () => {
-    setShowUpdateUserModal(false);
+    setSelectedUserIdForUpdate('');
   };
 
-  const updateUser = (formData: any) => {};
+  const updateUser = (formData: any) => {
+    dispatch(
+      updateUserAsync({ ...formData, profileId: selectedUserIdForUpdate })
+    );
+    setSelectedUserIdForUpdate('');
+  };
 
   const createUser = (userFormData: Types.UserCreationReqPaylod) => {
-    console.log('userForm ', userFormData);
     dispatch(createNewUsersAsync(userFormData));
     setShowCreateUserModal(false);
   };
@@ -148,13 +168,14 @@ const Users: React.FC = () => {
         hideCreateUserModal={hideCreateUserModal}
         createUser={createUser}
       />
-      <UpdateUser
-        userState={userState}
-        selectedUserId={selectedUserIdForUpdate}
-        showUpdateUserModal={showUpdateUserModal}
-        hideUpdateUserModal={hideUpdateUserModal}
-        updateUser={updateUser}
-      />
+      {!!selectedUserIdForUpdate && (
+        <UpdateUser
+          userState={userState}
+          selectedUserId={selectedUserIdForUpdate}
+          hideUpdateUserModal={hideUpdateUserModal}
+          updateUser={updateUser}
+        />
+      )}
     </div>
   );
 };
