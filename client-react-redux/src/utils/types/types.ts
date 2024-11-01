@@ -84,6 +84,11 @@ export interface UserState {
     message?: string;
   };
   roles: Role[];
+  userUpdated?: {
+    status: StatusType;
+    type: 'error' | 'success' | 'info';
+    message?: string;
+  };
 }
 
 export interface UserType {
