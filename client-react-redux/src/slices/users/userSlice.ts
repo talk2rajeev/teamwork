@@ -61,6 +61,25 @@ export const getUserRolesAsync = createAsyncThunk<
   return response;
 });
 
+type UserFormDataType = {
+  fname?: string;
+  lname?: string;
+  profileId: string;
+};
+export const updateUserAsync = createAsyncThunk<
+  Types.GenericResponseType<undefined>,
+  UserFormDataType
+>('user/updateProfile', async (UserFormData: UserFormDataType, thunkAPI) => {
+  const { profileId, ...reqPayload } = UserFormData;
+  const response = await fetcher.post<Types.GenericResponseType<undefined>>(
+    `/user/updateProfile/${UserFormData.profileId}`,
+    reqPayload
+  );
+  if (response.success) thunkAPI.dispatch(getAllUsersAsync());
+  // The value we return becomes the `fulfilled` action payload
+  return response;
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -71,6 +90,9 @@ export const userSlice = createSlice({
     },
     resetCreateUserState: (state) => {
       state.userCreated = undefined;
+    },
+    resetUpdateUserState: (state) => {
+      state.userUpdated = undefined;
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -130,7 +152,6 @@ export const userSlice = createSlice({
         };
       })
       .addCase(createNewUsersAsync.rejected, (state, action) => {
-        debugger;
         state.userCreated = {
           status: 'failed',
           message: action.error.message,
@@ -143,11 +164,34 @@ export const userSlice = createSlice({
       })
       .addCase(getUserRolesAsync.rejected, (state, action) => {
         state.roles = [];
+      })
+
+      .addCase(updateUserAsync.pending, (state) => {
+        state.userUpdated = {
+          status: 'loading',
+          message: '',
+          type: 'info',
+        };
+      })
+      .addCase(updateUserAsync.fulfilled, (state, action) => {
+        state.userUpdated = {
+          status: 'idle',
+          message: action.payload.message,
+          type: action.payload.success ? 'success' : 'error',
+        };
+      })
+      .addCase(updateUserAsync.rejected, (state, action) => {
+        state.userUpdated = {
+          status: 'failed',
+          message: action.error.message,
+          type: 'error',
+        };
       });
   },
 });
 
-export const { resetUserCreated, resetCreateUserState } = userSlice.actions;
+export const { resetUserCreated, resetCreateUserState, resetUpdateUserState } =
+  userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
