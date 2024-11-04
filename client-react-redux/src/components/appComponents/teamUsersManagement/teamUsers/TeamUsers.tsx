@@ -18,7 +18,7 @@ const getColumns = (
     key: 'last_name',
   },
   {
-    title: 'Role',
+    title: 'Team Role',
     key: 'role_name',
     dataIndex: 'role_name',
     render: (text) => <Tag color="geekblue">{text}</Tag>,

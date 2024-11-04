@@ -89,7 +89,7 @@ const UpdateUser: React.FC<UpdateUserInterface> = ({
             </div>
           </div>
           <div className="p-2">
-            <div className="text-grey-700">Select Team</div>
+            <div className="text-grey-700">Role</div>
             <Select
               showSearch
               placeholder="Assign Role"
