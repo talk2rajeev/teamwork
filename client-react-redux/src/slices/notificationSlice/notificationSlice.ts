@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../appStore/store';
 import * as Types from '../../utils/types/types';
 
+type NotificationReqpayload = Omit<Types.NotificationState, 'notification'>;
+
 const initialState: Types.NotificationState = {
   notification: false,
   type: 'info',
@@ -16,21 +18,18 @@ export const appNotificationSlice = createSlice({
   reducers: {
     showNotification: (
       state,
-      action: PayloadAction<Types.NotificationState>
+      action: PayloadAction<NotificationReqpayload>
     ) => {
-      state.notification = action.payload.notification;
+      state.notification = true;
       state.type = action.payload.type;
       state.title = action.payload.title;
       state.message = action.payload.message;
     },
-    dismissNotification: (
-      state,
-      action: PayloadAction<Types.NotificationState>
-    ) => {
-      state.notification = action.payload.notification;
-      state.type = action.payload.type;
-      state.title = action.payload.title;
-      state.message = action.payload.message;
+    dismissNotification: (state) => {
+      state.notification = false;
+      state.type = 'info';
+      state.title = '';
+      state.message = '';
     },
   },
 });
