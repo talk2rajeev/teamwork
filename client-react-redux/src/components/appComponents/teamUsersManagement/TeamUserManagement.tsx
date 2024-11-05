@@ -2,11 +2,18 @@ import react, { useState, useEffect } from 'react';
 import { Button, Tooltip, Radio, RadioChangeEvent } from 'antd';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
 import { getAllUsersAsync } from '../../../slices/users/userSlice';
-import { selectedTeamId, allTeams } from '../../../slices/team/teamSlice';
+import {
+  teamReducer,
+  assignUserRoleInTeamAsync,
+  deleteUserFromTeamAsync,
+  resetUpdateTeam,
+  resetDeleteTeamUser,
+} from '../../../slices/team/teamSlice';
 import * as Types from '../../../utils/types/types';
 import TeamUsers from './teamUsers/TeamUsers';
 import { PlusOutlined } from '@ant-design/icons';
 import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropdown';
+import { showNotification } from '../../../slices/notificationSlice/notificationSlice';
 
 type TeamUserManagementProps = {};
 
@@ -16,12 +23,50 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   const [selectedUser, setSelectedUser] = useState<Types.UserType | null>();
   const [roleValue, setRoleValue] = useState<number>(2);
 
-  const selectedTeamIndex = useAppSelector(selectedTeamId);
-  const teams = useAppSelector(allTeams);
+  const teamState = useAppSelector(teamReducer);
+  const selectedTeamIndex = teamState.selectedTeamId;
+  const teams = teamState.allTeams;
 
   const team = teams.teams.find((t) => t.team_id === selectedTeamIndex);
   const teamUsers = team?.users?.map((u) => ({ ...u, key: u.user_profile_id }));
   const teamUsersIds = team?.users?.map((u) => u.user_profile_id) || [];
+
+  useEffect(() => {
+    if (
+      (teamState.updateTeam.message &&
+        teamState.updateTeam.status === 'success') ||
+      teamState.updateTeam.status === 'failed'
+    ) {
+      dispatch(
+        showNotification({
+          type: teamState.updateTeam.status === 'success' ? 'success' : 'error',
+          message: teamState.updateTeam.message ?? '',
+        })
+      );
+    }
+    return () => {
+      dispatch(resetUpdateTeam());
+    };
+  }, [teamState.updateTeam]);
+
+  useEffect(() => {
+    if (
+      (teamState.deleteTeamUser.message &&
+        teamState.deleteTeamUser.status === 'success') ||
+      teamState.deleteTeamUser.status === 'failed'
+    ) {
+      dispatch(
+        showNotification({
+          type:
+            teamState.deleteTeamUser.status === 'success' ? 'success' : 'error',
+          message: teamState.deleteTeamUser.message ?? '',
+        })
+      );
+    }
+    return () => {
+      dispatch(resetDeleteTeamUser());
+    };
+  }, [teamState.deleteTeamUser]);
 
   useEffect(() => {
     dispatch(getAllUsersAsync());
@@ -44,11 +89,11 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     user: Types.TeamUser,
     selectedTeamIndex: number
   ) => {
-    console.log(
-      'delete >  userId: ',
-      user.user_profile_id,
-      'treamId: ',
-      selectedTeamIndex
+    dispatch(
+      deleteUserFromTeamAsync({
+        teamId: selectedTeamIndex,
+        profileId: user.user_profile_id,
+      })
     );
   };
 
@@ -57,12 +102,17 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
   };
 
   const addUserToTeam = () => {
-    const reqPayload = {
-      teamId: selectedTeamIndex,
-      profileId: selectedUser?.profileId,
-      roleId: roleValue,
-    };
-    console.log(reqPayload);
+    if (selectedUser?.profileId) {
+      const reqPayload = {
+        teamId: selectedTeamIndex,
+        profileId: selectedUser.profileId,
+        roleId: roleValue,
+      };
+      if (reqPayload.profileId) {
+        dispatch(assignUserRoleInTeamAsync(reqPayload));
+        setShowAddUserInput(false);
+      }
+    }
   };
 
   return (
@@ -104,9 +154,10 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
         ) : (
           <div>
             <Tooltip title="Add user to team" placement="right">
-              <PlusOutlined
-                size={38}
-                className="cursor-pointer text-gray-500 hover:text-gray-700 rounded-full border-2 border-slate-500 ant-icon-size"
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="middle"
                 onClick={showAddUserInputFiled}
               />
             </Tooltip>
