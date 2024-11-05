@@ -56,7 +56,7 @@ const CreateUser: React.FC<CreateUserInterface> = ({
 
   return (
     <Modal
-      title="Create User"
+      title="Create New User"
       open={showCreateUserModal}
       onCancel={hideCreateUserModal}
       width={800}
