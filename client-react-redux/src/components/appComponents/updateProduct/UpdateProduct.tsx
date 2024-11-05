@@ -123,15 +123,15 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
           />
         </div>
       </div>
-      <div className="grid grid-flow-col auto-cols-max justify-end">
-        <div className="p-2">
+      <div className="grid grid-flow-col auto-cols-max justify-end gap-3">
+        <div className="pb-3">
           <coreComponents.Button
             label="Cancel"
             type="default"
             clickHandler={onClose}
           />
         </div>
-        <div className="p-2">
+        <div className="pb-3">
           {type !== 'View' && (
             <coreComponents.Button
               label={type}
