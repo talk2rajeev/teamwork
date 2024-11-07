@@ -14,6 +14,7 @@ import ProtectedRoute from '../components/appComponents/protectedRoute/Protected
 import { useSelector } from 'react-redux';
 import { RootState } from '../appStore/store';
 import { AuthUtil } from '../utils/auth/auth';
+import EpicDetail from '../pages/epicDetail/EpicDetail';
 
 const AppRoutes: React.FC = () => {
   const loginDetail = useSelector((state: RootState) => state.login);
@@ -42,6 +43,7 @@ const AppRoutes: React.FC = () => {
           </Route>
           <Route path="/:productId/sprint" element={<SprintBoard />} />
           <Route path="epics" element={<Epics />} />
+          <Route path="epics/:epicId" element={<EpicDetail />} />
           <Route path="backlogs" element={<Backlogs />} />
           {/* <Route path="/:productId/sprint" element={<SprintBoard />} />
           </Route> */}
