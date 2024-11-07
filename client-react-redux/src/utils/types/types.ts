@@ -257,6 +257,7 @@ export interface EpicState {
 }
 
 export interface EpicType {
+  epicId: number;
   epicName: string;
   epicDescription: string;
   productName: string;
