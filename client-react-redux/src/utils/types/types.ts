@@ -247,3 +247,20 @@ export interface Role {
     lname: string;
   };
 }
+
+/* Epic */
+export interface EpicState {
+  epics: {
+    status: StatusType;
+    epicList: EpicType[];
+  };
+}
+
+export interface EpicType {
+  epicName: string;
+  epicDescription: string;
+  productName: string;
+  productId: number;
+  created_by_fname: string;
+  created_by_lname: string;
+}
