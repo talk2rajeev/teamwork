@@ -8,6 +8,10 @@ const initialState: Types.EpicState = {
     status: 'idle',
     epicList: [],
   },
+  selectedEpicUserStories: {
+    status: 'idle',
+    epicUserStories: [],
+  },
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -20,6 +24,20 @@ export const getEpicsAsync = createAsyncThunk('epic/getEpics', async () => {
   // The value we return becomes the `fulfilled` action payload
   return response;
 });
+
+export const getUserStoriesByEpicIdAsync = createAsyncThunk<
+  Types.DetailedEpicType[],
+  string
+>(
+  'userStory/getDetailedUserStoriesByEpicId',
+  async (epicId: string, thunkAPI) => {
+    const response = await fetcher.get<Types.DetailedEpicType[]>(
+      `/userStory/getDetailedUserStoriesByEpicId/${epicId}`
+    );
+    // The value we return becomes the `fulfilled` action payload
+    return response;
+  }
+);
 
 export const epicSlice = createSlice({
   name: 'epic',
@@ -42,6 +60,17 @@ export const epicSlice = createSlice({
       })
       .addCase(getEpicsAsync.rejected, (state) => {
         state.epics.status = 'failed';
+      })
+
+      .addCase(getUserStoriesByEpicIdAsync.pending, (state) => {
+        state.selectedEpicUserStories.status = 'loading';
+      })
+      .addCase(getUserStoriesByEpicIdAsync.fulfilled, (state, action) => {
+        state.selectedEpicUserStories.status = 'idle';
+        state.selectedEpicUserStories.epicUserStories = action.payload;
+      })
+      .addCase(getUserStoriesByEpicIdAsync.rejected, (state) => {
+        state.selectedEpicUserStories.status = 'failed';
       });
   },
 });
