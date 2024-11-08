@@ -137,7 +137,7 @@ export const SQL_QUERIES = {
             JOIN sprint sp ON sp.sprintId = us.sprintId
             JOIN user_profile upr ON upr.profileId = us.reporterUserId
             WHERE us.productId = ?`,
-    getDetailedUserStoriesByEpicId: `SELECT us.title, us.description, us.userStoryPoint, us.createdAt, us.userStoryType, us.priority,
+    getDetailedUserStoriesByEpicId: `SELECT us.userStoryId, us.title, us.description, us.userStoryPoint, us.createdAt, us.userStoryType, us.priority,
                 up.fname as assignedToFname, up.lname as assignedToLname, up.profileId as assignedtoId, 
                 s.status, s.statusId,
                 p.productName, p.productId,
