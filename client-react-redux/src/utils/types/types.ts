@@ -254,6 +254,10 @@ export interface EpicState {
     status: StatusType;
     epicList: EpicType[];
   };
+  selectedEpicUserStories: {
+    status: StatusType;
+    epicUserStories: DetailedEpicType[];
+  };
 }
 
 export interface EpicType {
@@ -264,4 +268,28 @@ export interface EpicType {
   productId: number;
   created_by_fname: string;
   created_by_lname: string;
+}
+
+export interface DetailedEpicType {
+  userStoryId: number;
+  title: string;
+  description: string;
+  userStoryPoint: number;
+  createdAt: string;
+  userStoryType: string;
+  priority: string;
+  assignedToFname: string;
+  assignedToLname: string;
+  assignedtoId: number;
+  status: string;
+  statusId: number;
+  productName: string;
+  productId: number;
+  epicName: string;
+  epicId: number;
+  sprintName: string;
+  sprintId: number;
+  reportedByFname: string;
+  reportedByLname: string;
+  sotryReporterid: number;
 }
