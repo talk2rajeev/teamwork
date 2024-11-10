@@ -26,12 +26,12 @@ export const getEpicsAsync = createAsyncThunk('epic/getEpics', async () => {
 });
 
 export const getUserStoriesByEpicIdAsync = createAsyncThunk<
-  Types.DetailedEpicType[],
+  Types.EpicUserStories[],
   string
 >(
   'userStory/getDetailedUserStoriesByEpicId',
   async (epicId: string, thunkAPI) => {
-    const response = await fetcher.get<Types.DetailedEpicType[]>(
+    const response = await fetcher.get<Types.EpicUserStories[]>(
       `/userStory/getDetailedUserStoriesByEpicId/${epicId}`
     );
     // The value we return becomes the `fulfilled` action payload
