@@ -256,7 +256,7 @@ export interface EpicState {
   };
   selectedEpicUserStories: {
     status: StatusType;
-    epicUserStories: DetailedEpicType[];
+    epicUserStories: EpicUserStories[];
   };
 }
 
@@ -270,7 +270,7 @@ export interface EpicType {
   created_by_lname: string;
 }
 
-export interface DetailedEpicType {
+export interface EpicUserStories {
   userStoryId: number;
   title: string;
   description: string;
