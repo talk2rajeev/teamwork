@@ -131,6 +131,10 @@ const EpicDetail: React.FC = () => {
     (e) => e.epicId === Number(params.epicId)
   )?.epicName;
 
+  const epicStories = epicReducer.selectedEpicUserStories.epicUserStories.map(
+    (a) => ({ ...a, key: a.userStoryId })
+  );
+
   return (
     <Layout>
       <Breadcrumb
@@ -151,7 +155,7 @@ const EpicDetail: React.FC = () => {
       <div className="mt-3">
         <Table
           columns={getEpicUserStoriesColumns(viewEpicDetail)}
-          dataSource={epicReducer.selectedEpicUserStories.epicUserStories}
+          dataSource={epicStories}
         />
       </div>
     </Layout>
