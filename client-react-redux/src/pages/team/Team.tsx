@@ -146,7 +146,7 @@ const Team: React.FC = () => {
 
   return (
     <div>
-      {isAdmin && !openCreateTeamState ? (
+      {isAdmin && !openCreateTeamState && (
         <div className="mt-3 mb-3">
           <Tooltip title="Create new team" placement="right">
             <Button
@@ -157,7 +157,8 @@ const Team: React.FC = () => {
             />
           </Tooltip>
         </div>
-      ) : (
+      )}
+      {isAdmin && openCreateTeamState && (
         <div className="mt-3 mb-4">
           <div className="pl-4 pt-2 pb-3 w-2/5 bg-orange-50 border-orange-100 border-1">
             <TeamNameForm
