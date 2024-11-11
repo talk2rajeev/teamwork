@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { AuthUtil } from '../../utils/auth/auth';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../appStore/hooks';
 import { epicState, getEpicsAsync } from '../../slices/epic/epicSlice';
 import EpicList from '../../components/appComponents/epicList/EpicList';
+// import {uniqBy} from 'lodash';
 
 const Epics: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -42,6 +43,19 @@ const Epics: React.FC = () => {
     console.log(dataset);
   };
 
+  const onProductChange = (value: number) => {
+    console.log('onProductChange', value);
+  };
+
+  const onProductSearch = (value: string) => {
+    console.log('onProductSearch ', value);
+  };
+
+  const productOptions = epicReducer.epics.epicList.map((u) => ({
+    value: u.productId,
+    label: u.productName,
+  }));
+
   const epicList = epicReducer.epics.epicList.map((e) => ({
     ...e,
     key: e.epicId,
@@ -64,11 +78,25 @@ const Epics: React.FC = () => {
         <div className="mt-3 mb-4">Create Epic</div>
       )}
 
-      <EpicList
-        updateEpic={updateEpic}
-        viewEpicDetail={viewEpicDetail}
-        epicList={epicList}
-      />
+      <div>
+        <div className="w-72 mb-4">
+          <Select
+            onChange={onProductChange}
+            onSearch={onProductSearch}
+            variant="outlined"
+            placeholder="Filter Epics By Product"
+            showSearch
+            className="w-full"
+            optionFilterProp="label"
+            options={productOptions}
+          />
+        </div>
+        <EpicList
+          updateEpic={updateEpic}
+          viewEpicDetail={viewEpicDetail}
+          epicList={epicList}
+        />
+      </div>
     </Layout>
   );
 };
