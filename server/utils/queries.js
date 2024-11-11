@@ -80,8 +80,13 @@ export const SQL_QUERIES = {
   epic: {
     createEpicQuery:
       "insert into epic (epicName, epicDescription, createdById, productId) values(?,?,?,?)",
-    getEpics: `SELECT e.epicId, e.epicName, e.epicDescription, p.productName, p.productId, up.fname as created_by_fname, up.lname as created_by_lname FROM epic e JOIN product p ON e.productId = p.productId
- JOIN user_profile up ON up.profileId = e.createdById`,
+    getEpics: `SELECT DISTINCt e.epicId, e.epicName, e.epicDescription, p.productName, p.productId, t.teamName, up.fname as created_by_fname, up.lname as created_by_lname 
+      FROM epic e 
+      JOIN user_profile up ON up.profileId = e.createdById 
+      JOIN product p ON e.productId = p.productId
+      JOIN team t ON t.teamId = p.teamId
+      JOIN user_team_role ut ON t.teamId = ut.teamId
+      where ut.profileId =? OR e.createdById = ?;`,
     getEpicById: "select * from epic WHERE epicId = ?",
     getEpicsByProductIdQuery: `SELECT * FROM epic WHERE productId = ?`,
     getEpicByProductId: "select * from epic where epicId = ?",
