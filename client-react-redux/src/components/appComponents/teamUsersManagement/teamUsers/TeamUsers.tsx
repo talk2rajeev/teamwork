@@ -4,7 +4,8 @@ import * as Types from '../../../../utils/types/types';
 import TeamDeleteButton from '../teamDeleteButton/TeamDeleteButton';
 
 const getColumns = (
-  deleteUser: (user: Types.TeamUser) => void
+  deleteUser: (user: Types.TeamUser) => void,
+  isAdmin: boolean
 ): TableProps<Types.TeamUser>['columns'] => [
   {
     title: 'First Name',
@@ -26,9 +27,8 @@ const getColumns = (
   {
     title: 'Action',
     key: 'action',
-    render: (_, record) => (
-      <TeamDeleteButton deleteUser={deleteUser} record={record} />
-    ),
+    render: (_, record) =>
+      isAdmin && <TeamDeleteButton deleteUser={deleteUser} record={record} />,
   },
 ];
 
@@ -36,12 +36,14 @@ interface TeamUsersProps {
   deleteUser: (user: Types.TeamUser, selectedTeamIndex: number) => void;
   teamUsers?: Array<Types.TeamUser>;
   selectedTeamIndex: number;
+  isAdmin: boolean;
 }
 
 const TeamUsers: React.FC<TeamUsersProps> = ({
   deleteUser,
   teamUsers,
   selectedTeamIndex,
+  isAdmin,
 }) => {
   const removeUser = (user: Types.TeamUser) => {
     deleteUser(user, selectedTeamIndex);
@@ -51,7 +53,9 @@ const TeamUsers: React.FC<TeamUsersProps> = ({
     return <div>No User Assigned to team yet.</div>;
   }
 
-  return <Table columns={getColumns(removeUser)} dataSource={teamUsers} />;
+  return (
+    <Table columns={getColumns(removeUser, isAdmin)} dataSource={teamUsers} />
+  );
 };
 
 export default TeamUsers;
