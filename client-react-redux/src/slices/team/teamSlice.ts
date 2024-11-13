@@ -39,8 +39,9 @@ export const createTeamAsync = createAsyncThunk<
 >('team/createTeam', async (reqPayload: ReqPayloadType, thunkAPI) => {
   const response = await fetcher.post<Types.GenericResponseType<undefined>>(
     '/team/createTeam',
-    { teamNames: reqPayload.teamName, createdById: reqPayload.createdById }
+    { teamName: reqPayload.teamName, createdById: reqPayload.createdById }
   );
+  thunkAPI.dispatch(getAllTeams());
   // The value we return becomes the `fulfilled` action payload
   return response;
 });
