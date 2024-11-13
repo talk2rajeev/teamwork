@@ -4,6 +4,7 @@ import TeamUserManagement from '../teamUsersManagement/TeamUserManagement';
 import { IoMdCreate } from 'react-icons/io';
 import * as Types from '../../../utils/types/types';
 import TeamNameForm from '../../widgets/teamNameForm/TeamNameForm';
+import { AuthUtil } from '../../../utils/auth/auth';
 
 type UpdateTeamProps = {
   teamState: Types.TeamState;
@@ -19,6 +20,8 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
   handleCancel,
   updateTeamName,
 }) => {
+  const userDetail = AuthUtil.getUserDetail();
+  const isAdmin = userDetail?.roleId && userDetail?.roleId === 1;
   const teams = teamState.allTeams;
   const selectedTeamIndex = teamState.selectedTeamId;
   const [teamNameEditMode, setTeamNameEditMode] = useState<boolean>(false);
@@ -47,6 +50,10 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
     updateTeamName(selectedTeamIndex, teamName);
   };
 
+  const canUserUpdateTeam = (created_by_profile_id: number) => {
+    return isAdmin || created_by_profile_id === userDetail?.profileId;
+  };
+
   return (
     <div className="user-story-container bg-white p-2 min-h-96 grid grid-cols-1 content-between">
       <Modal
@@ -67,11 +74,13 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
                       <span>Team Name:</span>
                       <span>{t.team_name}</span>
                     </div>
-                    <IoMdCreate
-                      size="16"
-                      className="cursor-pointer text-gray-500 hover:text-gray-700"
-                      onClick={enableTeamNameEdit}
-                    />
+                    {canUserUpdateTeam(t.created_by_profile_id) && (
+                      <IoMdCreate
+                        size="16"
+                        className="cursor-pointer text-gray-500 hover:text-gray-700"
+                        onClick={enableTeamNameEdit}
+                      />
+                    )}
                   </div>
                 ) : (
                   <div className="p-2 grid grid-cols-12 auto-cols-max justify-between gap-1">
@@ -85,7 +94,9 @@ const UpdateTeam: React.FC<UpdateTeamProps> = ({
                     </div>
                   </div>
                 )}
-                <TeamUserManagement />
+                <TeamUserManagement
+                  canUserUpdate={canUserUpdateTeam(t.created_by_profile_id)}
+                />
               </div>
             );
           })}
