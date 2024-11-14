@@ -4,6 +4,7 @@ import loginReducer from '../slices/login/loginSlice';
 import productReducer from '../slices/product/productSlice';
 import teamReducer from '../slices/team/teamSlice';
 import userReducer from '../slices/users/userSlice';
+import epicReducer from '../slices/epic/epicSlice';
 import NotificationReducer from '../slices/notificationSlice/notificationSlice';
 
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     team: teamReducer,
     user: userReducer,
     appNotification: NotificationReducer,
+    epic: epicReducer,
   },
 });
 

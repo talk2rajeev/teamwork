@@ -69,6 +69,7 @@ const CreateTeam: React.FC<CreateTeamProps> = ({ showModal, closeModal }) => {
               deleteUser={deleteUserFromTeam}
               teamUsers={[]}
               selectedTeamIndex={-1}
+              isAdmin={false}
             />
           </div>
         </div>
