@@ -15,9 +15,13 @@ import { PlusOutlined } from '@ant-design/icons';
 import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropdown';
 import { showNotification } from '../../../slices/notificationSlice/notificationSlice';
 
-type TeamUserManagementProps = {};
+type TeamUserManagementProps = {
+  canUserUpdate: boolean;
+};
 
-const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
+const TeamUserManagement: React.FC<TeamUserManagementProps> = ({
+  canUserUpdate,
+}) => {
   const dispatch = useAppDispatch();
   const [showAddUserInput, setShowAddUserInput] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<Types.UserType | null>();
@@ -119,7 +123,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
     <div>
       <h3 className="text-sm font-bold mt-2 pt-2">Manage team Users</h3>
       <div className="pt-3 mb-2">
-        {showAddUserInput ? (
+        {showAddUserInput && canUserUpdate && (
           <div className="grid grid-flow-col auto-cols-max gap-x-4 py-4 px-2 bg-orange-50">
             <UserSearchDropdown
               onUserSelect={onUserSelect}
@@ -151,7 +155,8 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
               </Button>
             </div>
           </div>
-        ) : (
+        )}
+        {!showAddUserInput && canUserUpdate && (
           <div>
             <Tooltip title="Add user to team" placement="right">
               <Button
@@ -168,6 +173,7 @@ const TeamUserManagement: React.FC<TeamUserManagementProps> = () => {
         deleteUser={deleteUserFromTeam}
         teamUsers={teamUsers}
         selectedTeamIndex={selectedTeamIndex}
+        isAdmin={canUserUpdate}
       />
     </div>
   );
