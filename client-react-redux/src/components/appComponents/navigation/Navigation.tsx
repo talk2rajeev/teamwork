@@ -1,10 +1,52 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavItems } from '../../../utils/constants';
+import { NavItems, NavItemType, EPICS, SPRINT } from '../../../utils/constants';
+import { Popover } from 'antd';
 // import { useAppSelector, useAppDispatch } from '../../app/hooks';
 // import { selectCount } from '../../features/counter/counterSlice';
 import { RootState } from '../../../appStore/store';
+
+const getMenuWithChild = (item: NavItemType) => {
+  switch (item.label) {
+    case EPICS:
+      return (
+        <Popover
+          placement="topRight"
+          content={getEpicMenu(item?.children || [])}
+          trigger="click"
+        >
+          <span className="text-gray-500 cursor-pointer">{item.label}</span>
+        </Popover>
+      );
+    case SPRINT:
+      return (
+        <Popover placement="topRight" content={getSprintMenu()} trigger="click">
+          <span className="text-gray-500 cursor-pointer">{item.label}</span>
+        </Popover>
+      );
+    default:
+      return null;
+  }
+};
+
+const getEpicMenu = (childMenu: Array<{ path: string; label: string }>) => {
+  return (
+    <div>
+      {childMenu.map((c, index) => (
+        <div key={index}>
+          <NavLink to={c.path} className="block pt-1 pb-1">
+            {c.label}
+          </NavLink>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const getSprintMenu = () => {
+  return <div>This is sprint menu 1</div>;
+};
 
 const Navigation: React.FC = () => {
   // const count = useAppSelector(selectCount);
@@ -19,11 +61,29 @@ const Navigation: React.FC = () => {
           ? item.path
           : item.path.replace('productId', '12345');
         return (
-          <li className="text-sm" key={item.label}>
-            <NavLink to={path} className={isActive}>
-              {item.label}
-            </NavLink>
-          </li>
+          <div key={item.path}>
+            {
+              //   item.children && item.label === EPICS ? (
+              //   <Popover
+              //     placement="topRight"
+              //     content={getEpicMenu(item.children)}
+              //   >
+              //     <span className="text-gray-500 cursor-pointer">
+              //       {item.label}
+              //     </span>
+              //   </Popover>
+              // )
+              item.children ? (
+                getMenuWithChild(item)
+              ) : (
+                <li className="text-sm">
+                  <NavLink to={path} className={isActive}>
+                    {item.label}
+                  </NavLink>
+                </li>
+              )
+            }
+          </div>
         );
       })}
     </ul>
