@@ -6,6 +6,7 @@ import teamReducer from '../slices/team/teamSlice';
 import userReducer from '../slices/users/userSlice';
 import epicReducer from '../slices/epic/epicSlice';
 import NotificationReducer from '../slices/notificationSlice/notificationSlice';
+import sprintReducer from '../slices/sprint/sprintSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     user: userReducer,
     appNotification: NotificationReducer,
     epic: epicReducer,
+    sprint: sprintReducer,
   },
 });
 
