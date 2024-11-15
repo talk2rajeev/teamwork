@@ -293,3 +293,22 @@ export interface EpicUserStories {
   reportedByLname: string;
   sotryReporterid: number;
 }
+
+/* Sprint */
+export interface SprintState {
+  sprint: {
+    sprintList: Array<Sprint>;
+    status: 'idle' | 'loading' | 'failed';
+  };
+  selectedSprint?: Sprint;
+}
+
+export interface Sprint {
+  sprintId: number;
+  sprintName: string;
+  createdById: number;
+  productId: number;
+  createdAt: string;
+  startDate: string;
+  endDate: string;
+}
