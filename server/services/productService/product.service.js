@@ -42,26 +42,6 @@ async function getProductById(id) {
   }
 }
 
-// async function updateProduct(productName, productId, teamId) {
-//   try {
-//     let query, values;
-//     if (!teamId && productName) {
-//       query = SQL_QUERIES.product.updateProductName;
-//       values = [productName, productId];
-//     } else if (teamId && !productName) {
-//       query = SQL_QUERIES.product.updateProductTeam;
-//       values = [teamId, productId];
-//     } else {
-//       query = SQL_QUERIES.product.updateProductNameAndTeam;
-//       values = [productName, productId, teamId];
-//     }
-//     const result = await pool.query(query, values);
-//     return result;
-//   } catch (err) {
-//     throw new Error(`Failed to update product: ${err.message}`);
-//   }
-// }
-
 async function updateProduct(payload, productId) {
   console.log("updateProduct service");
   try {
@@ -72,21 +52,6 @@ async function updateProduct(payload, productId) {
         .join(",") +
       " WHERE productId = ?";
     const params = [...Object.values(payload), productId];
-
-    // let query, values;
-    // if (!teamId && !product_owner_id && productName) {
-    //   query = SQL_QUERIES.product.updateProductName;
-    //   values = [productName, productId];
-    // } else if (teamId && !productName && !product_owner_id) {
-    //   query = SQL_QUERIES.product.updateProductTeam;
-    //   values = [teamId, productId];
-    // } else if (!teamId && !productName && product_owner_id) {
-    //   query = SQL_QUERIES.product.updateProductOwner;
-    //   values = [product_owner_id, productId];
-    // } else {
-    //   query = SQL_QUERIES.product.updateProductNameAndTeam;
-    //   values = [productName, teamId, product_owner_id, productId];
-    // }
     const result = await pool.query(query, params);
     return result;
   } catch (err) {
