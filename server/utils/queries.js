@@ -95,6 +95,8 @@ export const SQL_QUERIES = {
     createSprintQuery:
       "insert into sprint (sprintName, createdById, productId, startDate, endDate) values(?,?,?,?,?)",
     getAllSprintQuery: "SELECT * FROM sprint",
+    searchSprintQuery:
+      "SELECT * FROM sprint WHERE sprintName LIKE CONCAT('%', ? ,'%')",
     getSprintByIdQuery: "SELECT * FROM sprint WHERE sprintId = ?",
     getSprintByProductIdQuery: `SELECT s.sprintId, s.sprintName, s.createdAt, s.startDate, s.endDate,
                 up.fname, up.lname, up.profileId,
