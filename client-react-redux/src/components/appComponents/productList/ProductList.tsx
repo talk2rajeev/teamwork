@@ -1,8 +1,10 @@
 import React from 'react';
-import { Space, Table, TableProps } from 'antd';
+import { Space, Table, Tooltip, Button, TableProps } from 'antd';
 import * as Types from '../../../utils/types/types';
-import { IoMdEye, IoMdCreate } from 'react-icons/io';
 import { AuthUtil } from '../../../utils/auth/auth';
+import { NavLink } from 'react-router-dom';
+import { FaExternalLinkAlt, FaEye, FaPencilAlt } from 'react-icons/fa';
+import { IoMdCreate } from 'react-icons/io';
 
 const getColumns = (
   viewProductDetail: (
@@ -37,27 +39,39 @@ const getColumns = (
       key: 'action',
       render: (_, product) => (
         <Space size="middle">
-          <span
-            data-action="view"
-            data-productid={product.productId}
-            onClick={viewProductDetail}
-          >
-            <IoMdEye
-              size="16"
-              className="cursor-pointer text-gray-500 hover:text-gray-700"
-            />
-          </span>
-          {(isAdmin || product.product_owner_id === userDetail?.profileId) && (
-            <span
-              data-action="edit"
-              data-productid={product.productId}
-              onClick={updateProduct}
+          <Tooltip placement="top" title="Goto sprint board">
+            <NavLink
+              to={`${product.productId}/sprintList`}
+              className="block pt-1 pb-1"
             >
-              <IoMdCreate
+              <FaExternalLinkAlt />
+            </NavLink>
+          </Tooltip>
+          <Tooltip placement="top" title="Product Detail">
+            <span
+              data-action="view"
+              data-productid={product.productId}
+              onClick={viewProductDetail}
+            >
+              <FaEye
                 size="16"
                 className="cursor-pointer text-gray-500 hover:text-gray-700"
               />
             </span>
+          </Tooltip>
+          {(isAdmin || product.product_owner_id === userDetail?.profileId) && (
+            <Tooltip placement="top" title="Edit Product">
+              <span
+                data-action="edit"
+                data-productid={product.productId}
+                onClick={updateProduct}
+              >
+                <IoMdCreate
+                  size="16"
+                  className="cursor-pointer text-gray-500 hover:text-gray-700"
+                />
+              </span>
+            </Tooltip>
           )}
         </Space>
       ),
