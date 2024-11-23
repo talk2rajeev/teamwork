@@ -312,3 +312,48 @@ export interface Sprint {
   startDate: string;
   endDate: string;
 }
+
+/**
+ * User
+ */
+
+export interface UserStoriesState {
+  detailedUserStory: {
+    status: StatusType;
+    userStories: Array<UserStory>;
+  };
+  selectedUserStory: {
+    status: StatusType;
+    userStory?: UserStory;
+  };
+}
+
+export interface UserStory {
+  userStoryId: number;
+  title: string;
+  description: string;
+  userStoryPoint: number;
+  createdAt: string;
+  userStoryType: 'userStory' | 'bug';
+  priority: number | null;
+  assignedToFname: string;
+  assignedToLname: string;
+  assignedtoId: number;
+  status:
+    | 'New'
+    | 'In-progress'
+    | 'Ready for review'
+    | 'Ready for QA'
+    | 'Completed'
+    | 'Closed';
+  statusId: number;
+  productName: string;
+  productId: number;
+  epicName: string;
+  epicId: number;
+  sprintName: string;
+  sprintId: number;
+  reportedByFname: string;
+  reportedByLname: string;
+  sotryReporterid: number;
+}
