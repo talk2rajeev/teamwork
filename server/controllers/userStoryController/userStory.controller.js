@@ -100,11 +100,35 @@ async function getUserStoriesByEpicIdController(req, res) {
   }
 }
 
+async function getDetailedUserStoriesByUserStoryIdController(req, res) {
+  const { productId, sprintId, userStoryId } = req.params;
+  const response = new CustomResponse(true, "", 200, []);
+  try {
+    const data = await userStoryService.getDetailedUserStoriesByUserStoryId(
+      productId,
+      sprintId,
+      userStoryId
+    );
+    response.data = data;
+    if (!data) {
+      response.success = false;
+      response.message = "Failed to get userstories.";
+      response.status = 500;
+    }
+    console.log(response);
+    res.status(response.status).json(response);
+  } catch (error) {
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
+  }
+}
+
 async function getDetailedUserStoriesBySprintIdController(req, res) {
-  const sprintId = req.params.id;
+  const { productId, sprintId } = req.params;
   const response = new CustomResponse(true, "", 200, []);
   try {
     const data = await userStoryService.getDetailedUserStoriesBySprintId(
+      productId,
       sprintId
     );
     response.data = data;
@@ -149,6 +173,7 @@ export {
   getUserStoriesBySprintIdController,
   getUserStoriesByProductIdController,
   getUserStoriesByEpicIdController,
+  getDetailedUserStoriesByUserStoryIdController,
   getDetailedUserStoriesBySprintIdController,
   getDetailedUserStoriesByProductIdController,
   getDetailedUserStoriesByEpicIdController,
