@@ -16,6 +16,8 @@ import { RootState } from '../appStore/store';
 import { AuthUtil } from '../utils/auth/auth';
 import EpicDetail from '../pages/epicDetail/EpicDetail';
 import Layout from '../components/layout/Layout';
+import SprintList from '../pages/sprintList/SprintList';
+import UserStoryDetail from '../pages/userStoryDetail/UserStoryDetail';
 
 const AppRoutes: React.FC = () => {
   const loginDetail = useSelector((state: RootState) => state.login);
@@ -58,11 +60,29 @@ const AppRoutes: React.FC = () => {
               </Layout>
             }
           />
-          <Route path="/:productId/sprint" element={<SprintBoard />} />
-
+          <Route
+            path="/:productId/sprint/:sprintId"
+            element={<SprintBoard />}
+          />
+          <Route
+            path="product/:productId/sprintList"
+            element={<SprintList />}
+          />
+          <Route
+            path="userStoryDetail/:productId/:sprintId/:userStoryId"
+            element={<UserStoryDetail />}
+          />
           <Route path="epics" element={<Epics />} />
           <Route path="epics/:epicId" element={<EpicDetail />} />
           <Route path="backlogs" element={<Backlogs />} />
+          <Route
+            path="*"
+            element={
+              <Layout>
+                <div>Page Not Found</div>
+              </Layout>
+            }
+          />
 
           {/* <Route path="settings/*" element={<Settings />}>
             <Route path="setting1" element={<Settings1 />} />
