@@ -1,0 +1,8 @@
+.userstory-continer-box > div {
+  background-color: #fff;
+  padding: 12px;
+}
+
+.dragging {
+  opacity: 0.5;
+}
