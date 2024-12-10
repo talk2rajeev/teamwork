@@ -326,6 +326,12 @@ export interface UserStoriesState {
     status: StatusType;
     userStory?: UserStory;
   };
+  userStoryUpdated: {
+    status: StatusType;
+    type: 'error' | 'success' | 'info';
+    error?: boolean;
+    message?: string;
+  };
 }
 
 export interface UserStory {
@@ -335,7 +341,7 @@ export interface UserStory {
   userStoryPoint: number;
   createdAt: string;
   userStoryType: 'userStory' | 'bug';
-  priority: number | null;
+  priority: string | null;
   assignedToFname: string;
   assignedToLname: string;
   assignedtoId: number;
@@ -356,4 +362,25 @@ export interface UserStory {
   reportedByFname: string;
   reportedByLname: string;
   sotryReporterid: number;
+}
+
+export interface UserStoryReqPayload {
+  reqUserStoryId: string;
+  reqProductId: string;
+  reqSprintId: string;
+  title?: string;
+  description?: string;
+  statusId?: number;
+  assignedToUserId?: number;
+  userStoryPoint?: number;
+  productId?: number;
+  epicId?: number;
+  sprintId?: number;
+  isDuplicate?: boolean;
+  originalStoryId?: number;
+  priority?: string;
+  assignedToFname?: string;
+  assignedToLname?: string;
+  assignedtoId?: number;
+  sprintName?: string;
 }
