@@ -56,12 +56,20 @@ async function createBugController(req, res) {
 async function updateUserStoryController(req, res) {
   const userStoryId = req.params.id;
   const payload = req.body;
+
+  const response = new CustomResponse(true, "", 200, []);
   try {
-    // const userId = await userProfileService.saveUserProfile(fname, lname, role);
     const data = await userStoryService.updateUserStory(payload, userStoryId);
-    res.status(200).json(data);
+    response.data = data;
+    if (!data) {
+      response.success = false;
+      response.message = "Failed to update userstory.";
+      response.status = 500;
+    }
+    res.status(response.status).json(response);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const errResponse = getErrorResponse(error, response);
+    res.status(errResponse.status).json(errResponse);
   }
 }
 
