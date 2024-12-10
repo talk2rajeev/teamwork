@@ -14,30 +14,6 @@ import {
 
 // <div dangerouslySetInnerHTML={{ __html: e.description }} />
 
-/*
-userStoryId: number;
-  title: string;
-  description: string; <<
-  userStoryPoint: number; <<
-  createdAt: string;
-  userStoryType: string;
-  priority: string;
-  assignedToFname: string; << 
-  assignedToLname: string; << 
-  assignedtoId: number;
-  status: string; << 
-  statusId: number;
-  productName: string; <<
-  productId: number;
-  epicName: string;
-  epicId: number;
-  sprintName: string; <<
-  sprintId: number;
-  reportedByFname: string;
-  reportedByLname: string;
-  sotryReporterid: number;
-*/
-
 export const getEpicUserStoriesColumns = (
   viewEpicDetail: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
 ): TableProps<Types.EpicUserStories>['columns'] => [
@@ -45,7 +21,14 @@ export const getEpicUserStoriesColumns = (
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    render: (text) => <span>{text}</span>,
+    render: (_, userStory) => (
+      <NavLink
+        to={`/userStoryDetail/${userStory.productId}/${userStory.sprintId}/${userStory.userStoryId}`}
+        className="block pt-1 pb-1 text-blue-600"
+      >
+        {userStory.title}
+      </NavLink>
+    ),
   },
   {
     title: 'Story Point',
@@ -63,10 +46,10 @@ export const getEpicUserStoriesColumns = (
     title: 'Assigned To',
     key: 'productOwner',
     dataIndex: 'created_by',
-    render: (_, epic) => (
+    render: (_, userStory) => (
       <Space size="middle">
         <span>
-          {epic.assignedToFname} {epic.assignedToLname}
+          {userStory.assignedToFname} {userStory.assignedToLname}
         </span>
       </Space>
     ),
@@ -81,23 +64,23 @@ export const getEpicUserStoriesColumns = (
     title: 'Sprint Name',
     key: 'sprintName',
     dataIndex: 'sprintName',
-    render: (_, epic) => (
+    render: (_, userStory) => (
       <NavLink
-        to={`/${epic.productId}/sprint`}
+        to={`/${userStory.productId}/sprint/${userStory.sprintId}`}
         className="block pt-1 pb-1 text-blue-600"
       >
-        {epic.sprintName}
+        {userStory.sprintName} {userStory.productId}
       </NavLink>
     ),
   },
   {
     title: 'Action',
     key: 'action',
-    render: (_, epic) => (
+    render: (_, userStory) => (
       <Space size="middle">
         <span
           data-action="view"
-          data-teamid={epic.epicId}
+          data-teamid={userStory.epicId}
           onClick={viewEpicDetail}
         >
           <IoMdEye
