@@ -11,6 +11,10 @@ const initialState: Types.UserStoriesState = {
   selectedUserStory: {
     status: 'idle',
   },
+  userStoryUpdated: {
+    status: 'idle',
+    type: 'info',
+  },
 };
 
 type GetDetailedUserStoriesBySprintIdReqpayload = {
@@ -32,6 +36,34 @@ export const getDetailedUserStoriesBySprintIdAsync = createAsyncThunk<
     return response;
   }
 );
+
+export const updateUserStoryAsync = createAsyncThunk<
+  Types.GenericResponseType<any>,
+  Types.UserStoryReqPayload
+>('/userStory/updateUserStory/', async (reqPayload, thunkAPI) => {
+  const { reqUserStoryId, reqProductId, reqSprintId, ...requestPayload } =
+    reqPayload;
+  console.log(
+    '/userStory/updateUserStory/ ',
+    reqUserStoryId,
+    reqProductId,
+    reqSprintId
+  );
+  const response = await fetcher.put<Types.GenericResponseType<any>>(
+    `/userStory/updateUserStory/${reqUserStoryId}`,
+    requestPayload
+  );
+
+  thunkAPI.dispatch(
+    getDetailedUserStoriesBySprintIdAsync({
+      productId: reqProductId,
+      sprintId: reqSprintId,
+    })
+  );
+
+  // The value we return becomes the `fulfilled` action payload
+  return response;
+});
 
 type GetDetailedUserStoriesByUserStoryIdReqpayload = {
   productId: string;
@@ -95,6 +127,18 @@ export const userStorySlice = createSlice({
       .addCase(getDetailedUserStoriesByUserStoryIdAsync.rejected, (state) => {
         state.selectedUserStory.status = 'failed';
         state.selectedUserStory.userStory = undefined;
+      })
+
+      .addCase(updateUserStoryAsync.pending, (state) => {
+        state.userStoryUpdated.status = 'loading';
+      })
+      .addCase(updateUserStoryAsync.fulfilled, (state, action) => {
+        state.userStoryUpdated.status = 'idle';
+      })
+      .addCase(updateUserStoryAsync.rejected, (state, action) => {
+        state.userStoryUpdated.status = 'failed';
+        state.userStoryUpdated.error = true;
+        state.userStoryUpdated.message = action.error.message;
       });
   },
 });
