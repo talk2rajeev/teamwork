@@ -1,5 +1,5 @@
 import react, { useState, useEffect } from 'react';
-import { Input, Select, Button } from 'antd';
+import { Input, Select, Button, message } from 'antd';
 import { AuthUtil } from '../../../utils/auth/auth';
 import { getAllTeams, allTeams } from '../../../slices/team/teamSlice';
 import { useAppSelector, useAppDispatch } from '../../../appStore/hooks';
@@ -9,6 +9,7 @@ import UserSearchDropdown from '../../widgets/userSearchDropdown/UserSearchDropd
 type CreateProductProps = {};
 
 const CreateProduct: React.FC<CreateProductProps> = ({}) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useAppDispatch();
   const teams = useAppSelector(allTeams);
   const userDetail = AuthUtil.getUserDetail();
@@ -50,7 +51,13 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
       ...createProductForm,
       createdById: userDetail?.profileId,
     };
-    console.log('Product ', formData);
+    if (!formData.productName) {
+      return messageApi.open({
+        type: 'error',
+        content: "ProductName can't be empty.",
+      });
+    }
+    console.log(formData);
   };
 
   const teamOptions = teams.teams.map((t) => ({
@@ -60,6 +67,7 @@ const CreateProduct: React.FC<CreateProductProps> = ({}) => {
 
   return (
     <div className="user-story-container bg-white p-2  min-h-80 grid grid-cols-1 content-between">
+      {contextHolder}
       <div>
         <div className="p-2">
           <div className="text-grey-700">Product Name</div>
